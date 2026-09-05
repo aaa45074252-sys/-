@@ -1,7 +1,13 @@
+// 1. Supabase 클라이언트 연결 설정
+const SUPABASE_URL = "https://xivchaifnztwjyldlphh.supabase.co";
+// ▼ 아래 따옴표 안에 아까 복사한 'sb_publishable_...' 키를 붙여넣어 주세요!
+const SUPABASE_KEY = "sb_publishable_L2H2WzL-L0mOTOwseU_MmQ_POXfn85y"; 
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 let mainMap = null;
 let currentHero = "theseus";
 
-// 1. 지도 초기화
+// 2. 지도 초기화
 function initMainMap() {
   if (!mainMap) {
     mainMap = L.map('mainMap').setView([39.0, 19.0], 5);
@@ -30,19 +36,17 @@ function initMainMap() {
     });
   }
 
-  // 화면 크기 계산 강제 갱신
   setTimeout(() => {
     if (mainMap) mainMap.invalidateSize();
   }, 100);
 }
 
-// 2. 메인 네비게이션
+// 3. 메인 네비게이션
 const mapSection = document.getElementById("mapSection");
 const heroDetailSection = document.getElementById("heroDetailSection");
 const homeMapBtn = document.getElementById("homeMapBtn");
 const heroSelect = document.getElementById("heroSelect");
 
-// 홈(전체 지도) 버튼 클릭 시
 homeMapBtn.addEventListener("click", () => {
   showMapView();
 });
@@ -60,7 +64,6 @@ heroSelect.addEventListener("change", (e) => {
   openHeroView(e.target.value);
 });
 
-// 영웅 상세 페이지 열기
 window.openHeroView = function(heroKey) {
   currentHero = heroKey;
   homeMapBtn.classList.remove("active");
@@ -75,7 +78,7 @@ window.openHeroView = function(heroKey) {
   switchHeroTab("overview");
 };
 
-// 3. 서브 탭 전환
+// 4. 서브 탭 전환
 document.querySelectorAll(".hero-sub-nav .tab-btn").forEach(btn => {
   btn.addEventListener("click", (e) => {
     switchHeroTab(e.target.dataset.tab);
@@ -104,7 +107,7 @@ function switchHeroTab(tabName) {
   }
 }
 
-// 4. 렌더링 함수들
+// 5. 인물 정보 & 명언 & 관계망 렌더링
 function renderOverview() {
   const h = heroDetails[currentHero];
   document.getElementById("overviewBox").innerHTML = `
@@ -185,25 +188,42 @@ function renderNetwork() {
   });
 }
 
-// 5. 토론장 CRUD
-function renderDebates() {
+// 6. 온라인 클라우드 토론장 (서버와 통신하는 부분)
+async function renderDebates() {
   const h = heroDetails[currentHero];
   document.getElementById("debateFormTitle").innerText = `💬 ${h.name}에게 묻고 답하기`;
-
-  const storageKey = `debate_posts_${currentHero}`;
-  const posts = JSON.parse(localStorage.getItem(storageKey)) || [];
   const listContainer = document.getElementById("debateList");
+  listContainer.innerHTML = `<div class="no-posts">서버에서 글 목록을 불러오는 중...</div>`;
 
-  if (posts.length === 0) {
-    listContainer.innerHTML = `<div class="no-posts">아직 등록된 질문이 없습니다.<br>첫 번째 질문을 남겨보세요!</div>`;
-    return;
-  }
+  try {
+    const { data: posts, error: postErr } = await supabaseClient
+      .from('debates')
+      .select('*')
+      .eq('hero', currentHero)
+      .order('created_at', { ascending: false });
 
-  let html = "";
-  posts.forEach(post => {
-    let repliesHtml = "";
-    if (post.replies && post.replies.length > 0) {
-      post.replies.forEach(r => {
+    if (postErr) throw postErr;
+
+    if (!posts || posts.length === 0) {
+      listContainer.innerHTML = `<div class="no-posts">아직 등록된 질문이 없습니다.<br>첫 번째 질문을 남겨보세요!</div>`;
+      return;
+    }
+
+    const postIds = posts.map(p => p.id);
+    const { data: replies, error: replyErr } = await supabaseClient
+      .from('replies')
+      .select('*')
+      .in('debate_id', postIds)
+      .order('created_at', { ascending: true });
+
+    if (replyErr) throw replyErr;
+
+    let html = "";
+    posts.forEach(post => {
+      const postReplies = (replies || []).filter(r => r.debate_id === post.id);
+      
+      let repliesHtml = "";
+      postReplies.forEach(r => {
         repliesHtml += `
           <div class="reply-item">
             <div>
@@ -211,44 +231,49 @@ function renderDebates() {
               <span>${r.text}</span>
             </div>
             <div>
-              <button class="action-btn" onclick="editDebateReply(${post.id}, ${r.id})">수정</button>
-              <button class="action-btn del" onclick="deleteDebateReply(${post.id}, ${r.id})">삭제</button>
+              <button class="action-btn del" onclick="deleteDebateReply(${r.id}, '${r.password}')">삭제</button>
             </div>
           </div>
         `;
       });
-    }
 
-    html += `
-      <div class="debate-post">
-        <div class="post-header">
-          <div>
-            <span class="post-author">👤 ${post.author}</span>
-            <span class="post-date" style="margin-left: 6px;">${post.date}</span>
+      const dateObj = new Date(post.created_at);
+      const dateStr = `${dateObj.getMonth() + 1}/${dateObj.getDate()} ${dateObj.getHours()}:${String(dateObj.getMinutes()).padStart(2, '0')}`;
+
+      html += `
+        <div class="debate-post">
+          <div class="post-header">
+            <div>
+              <span class="post-author">👤 ${post.author}</span>
+              <span class="post-date" style="margin-left: 6px;">${dateStr}</span>
+            </div>
+            <div>
+              <button class="action-btn del" onclick="deleteDebatePost(${post.id}, '${post.password}')">삭제</button>
+            </div>
           </div>
-          <div>
-            <button class="action-btn" onclick="editDebatePost(${post.id})">수정</button>
-            <button class="action-btn del" onclick="deleteDebatePost(${post.id})">삭제</button>
+          <div class="post-content">${post.content}</div>
+          <div class="reply-section">
+            <div class="reply-list">${repliesHtml}</div>
+            <div class="reply-input-row">
+              <input type="text" class="reply-nick" id="replyNick-${post.id}" placeholder="닉네임" maxlength="8">
+              <input type="password" class="reply-nick reply-pwd" id="replyPwd-${post.id}" placeholder="비번" maxlength="8">
+              <input type="text" class="reply-text" id="replyText-${post.id}" placeholder="답변 남기기...">
+              <button class="reply-btn" onclick="addDebateReply(${post.id})">답변</button>
+            </div>
           </div>
         </div>
-        <div class="post-content">${post.content}</div>
-        <div class="reply-section">
-          <div class="reply-list">${repliesHtml}</div>
-          <div class="reply-input-row">
-            <input type="text" class="reply-nick" id="replyNick-${post.id}" placeholder="닉네임" maxlength="8">
-            <input type="password" class="reply-nick reply-pwd" id="replyPwd-${post.id}" placeholder="비번" maxlength="8">
-            <input type="text" class="reply-text" id="replyText-${post.id}" placeholder="답변 남기기...">
-            <button class="reply-btn" onclick="addDebateReply(${post.id})">답변</button>
-          </div>
-        </div>
-      </div>
-    `;
-  });
+      `;
+    });
 
-  listContainer.innerHTML = html;
+    listContainer.innerHTML = html;
+  } catch (err) {
+    console.error(err);
+    listContainer.innerHTML = `<div class="no-posts">데이터를 불러오는 중 오류가 발생했습니다. (SQL 테이블 생성 여부를 확인해 주세요)</div>`;
+  }
 }
 
-window.addDebatePost = function() {
+// 질문 등록
+window.addDebatePost = async function() {
   const authorInput = document.getElementById("debateAuthor");
   const pwdInput = document.getElementById("debatePassword");
   const contentInput = document.getElementById("debateQuestion");
@@ -260,118 +285,72 @@ window.addDebatePost = function() {
   if (!content) return alert("질문 내용을 작성해 주세요.");
   if (!password) return alert("수정/삭제용 비밀번호를 입력해 주세요.");
 
-  const storageKey = `debate_posts_${currentHero}`;
-  const posts = JSON.parse(localStorage.getItem(storageKey)) || [];
-  const now = new Date();
-  const dateStr = `${now.getMonth() + 1}/${now.getDate()} ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
+  const { error } = await supabaseClient.from('debates').insert([{
+    hero: currentHero,
+    author: author,
+    password: password,
+    content: content
+  }]);
 
-  posts.unshift({ id: Date.now(), author, password, content, date: dateStr, replies: [] });
-  localStorage.setItem(storageKey, JSON.stringify(posts));
+  if (error) {
+    alert("등록 실패: " + error.message);
+    return;
+  }
 
   contentInput.value = "";
   pwdInput.value = "";
   renderDebates();
 };
 
-window.deleteDebatePost = function(postId) {
-  const storageKey = `debate_posts_${currentHero}`;
-  let posts = JSON.parse(localStorage.getItem(storageKey)) || [];
-  const target = posts.find(p => p.id === postId);
-  if (!target) return;
-
-  if (target.password) {
-    const inputPwd = prompt("글 등록 시 설정한 비밀번호를 입력하세요:");
-    if (inputPwd === null) return;
-    if (inputPwd !== target.password) return alert("비밀번호가 일치하지 않습니다!");
-  }
+// 질문 삭제
+window.deleteDebatePost = async function(postId, originPwd) {
+  const inputPwd = prompt("글 등록 시 설정한 비밀번호를 입력하세요:");
+  if (inputPwd === null) return;
+  if (inputPwd !== originPwd) return alert("비밀번호가 일치하지 않습니다!");
 
   if (confirm("정말 이 질문을 삭제하시겠습니까?")) {
-    posts = posts.filter(p => p.id !== postId);
-    localStorage.setItem(storageKey, JSON.stringify(posts));
-    renderDebates();
+    const { error } = await supabaseClient.from('debates').delete().eq('id', postId);
+    if (error) alert("삭제 실패: " + error.message);
+    else renderDebates();
   }
 };
 
-window.editDebatePost = function(postId) {
-  const storageKey = `debate_posts_${currentHero}`;
-  const posts = JSON.parse(localStorage.getItem(storageKey)) || [];
-  const target = posts.find(p => p.id === postId);
-  if (!target) return;
-
-  const inputPwd = prompt("비밀번호를 입력하세요:");
-  if (inputPwd === null) return;
-  if (inputPwd !== target.password) return alert("비밀번호가 일치하지 않습니다!");
-
-  const newContent = prompt("수정할 내용을 입력하세요:", target.content);
-  if (newContent && newContent.trim()) {
-    target.content = newContent.trim();
-    localStorage.setItem(storageKey, JSON.stringify(posts));
-    renderDebates();
-  }
-};
-
-window.addDebateReply = function(postId) {
+// 답변 등록
+window.addDebateReply = async function(postId) {
   const nick = document.getElementById(`replyNick-${postId}`).value.trim() || "익명";
   const pwd = document.getElementById(`replyPwd-${postId}`).value.trim();
   const text = document.getElementById(`replyText-${postId}`).value.trim();
 
   if (!text) return alert("답변 내용을 입력하세요.");
-  if (!pwd) return alert("답변 수정/삭제용 비밀번호를 입력하세요.");
+  if (!pwd) return alert("답변 삭제용 비밀번호를 입력하세요.");
 
-  const storageKey = `debate_posts_${currentHero}`;
-  const posts = JSON.parse(localStorage.getItem(storageKey)) || [];
-  const target = posts.find(p => p.id === postId);
+  const { error } = await supabaseClient.from('replies').insert([{
+    debate_id: postId,
+    author: nick,
+    password: pwd,
+    text: text
+  }]);
 
-  if (target) {
-    if (!target.replies) target.replies = [];
-    target.replies.push({ id: Date.now(), author: nick, password: pwd, text });
-    localStorage.setItem(storageKey, JSON.stringify(posts));
-    renderDebates();
+  if (error) {
+    alert("답변 등록 실패: " + error.message);
+    return;
   }
+
+  renderDebates();
 };
 
-window.deleteDebateReply = function(postId, replyId) {
-  const storageKey = `debate_posts_${currentHero}`;
-  const posts = JSON.parse(localStorage.getItem(storageKey)) || [];
-  const target = posts.find(p => p.id === postId);
-  if (!target) return;
-
-  const r = target.replies.find(item => item.id === replyId);
-  if (!r) return;
-
-  if (r.password) {
-    const inputPwd = prompt("답변 비밀번호를 입력하세요:");
-    if (inputPwd === null) return;
-    if (inputPwd !== r.password) return alert("비밀번호가 일치하지 않습니다!");
-  }
-
-  if (confirm("답변을 삭제하시겠습니까?")) {
-    target.replies = target.replies.filter(item => item.id !== replyId);
-    localStorage.setItem(storageKey, JSON.stringify(posts));
-    renderDebates();
-  }
-};
-
-window.editDebateReply = function(postId, replyId) {
-  const storageKey = `debate_posts_${currentHero}`;
-  const posts = JSON.parse(localStorage.getItem(storageKey)) || [];
-  const target = posts.find(p => p.id === postId);
-  if (!target) return;
-
-  const r = target.replies.find(item => item.id === replyId);
-  if (!r) return;
-
+// 답변 삭제
+window.deleteDebateReply = async function(replyId, originPwd) {
   const inputPwd = prompt("답변 비밀번호를 입력하세요:");
   if (inputPwd === null) return;
-  if (inputPwd !== r.password) return alert("비밀번호가 일치하지 않습니다!");
+  if (inputPwd !== originPwd) return alert("비밀번호가 일치하지 않습니다!");
 
-  const newText = prompt("수정할 답변을 입력하세요:", r.text);
-  if (newText && newText.trim()) {
-    r.text = newText.trim();
-    localStorage.setItem(storageKey, JSON.stringify(posts));
-    renderDebates();
+  if (confirm("답변을 삭제하시겠습니까?")) {
+    const { error } = await supabaseClient.from('replies').delete().eq('id', replyId);
+    if (error) alert("삭제 실패: " + error.message);
+    else renderDebates();
   }
 };
 
-// 최초 실행: 첫 화면으로 지도 열기
+// 첫 화면 실행
 showMapView();
