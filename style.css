@@ -1,13 +1,69 @@
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body { width: 100%; height: 100%; overflow: hidden; background: #12100e; color: #f0e6d2; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 
-/* 상단 헤더 */
-header { height: 50px; background: #1c1613; padding: 0 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #b89047; z-index: 1000; position: relative; }
-.header-left h1 { font-size: 15px; color: #e5be75; font-weight: bold; }
-.header-right { display: flex; gap: 8px; align-items: center; }
-.nav-btn { background: #332720; color: #e5be75; border: 1px solid #b89047; padding: 6px 10px; border-radius: 6px; font-size: 12px; cursor: pointer; }
-.nav-btn.active { background: #b89047; color: #12100e; font-weight: bold; }
-.hero-select { background: #241c18; color: #fff; border: 1px solid #786458; padding: 6px 8px; border-radius: 6px; font-size: 12px; outline: none; }
+/* 상단 헤더 (모바일 한 줄 정렬 최적화) */
+header {
+  height: 50px;
+  background: #1c1613;
+  padding: 0 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #b89047;
+  z-index: 1000;
+  position: relative;
+  gap: 8px;
+}
+
+.header-left {
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+.header-left h1 {
+  font-size: 14px;
+  color: #e5be75;
+  font-weight: bold;
+  white-space: nowrap;      /* 줄바꿈 절대 금지 */
+  overflow: hidden;         /* 화면이 아주 작으면 넘치는 글자 숨김 */
+  text-overflow: ellipsis;  /* 너무 좁을 땐 말줄임표(...) 표시 */
+}
+
+.header-right {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-shrink: 0;           /* 버튼 영역 크기 축소 방지 */
+}
+
+.nav-btn {
+  background: #332720;
+  color: #e5be75;
+  border: 1px solid #b89047;
+  padding: 5px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  cursor: pointer;
+  white-space: nowrap;      /* 버튼 글자 1줄 고정 */
+}
+
+.nav-btn.active {
+  background: #b89047;
+  color: #12100e;
+  font-weight: bold;
+}
+
+.hero-select {
+  background: #241c18;
+  color: #fff;
+  border: 1px solid #786458;
+  padding: 5px 6px;
+  border-radius: 6px;
+  font-size: 11px;
+  outline: none;
+  max-width: 110px;         /* 드롭다운 폭 제한 */
+  white-space: nowrap;
+}
 
 /* 메인 화면 분기 (핵심: !important 로 겹침 방지) */
 .main-view { display: none !important; width: 100%; height: calc(100vh - 50px); position: relative; }
