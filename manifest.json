@@ -1,14 +1,20 @@
 {
-  "name": "플루타르코스 비교 열전 아카이브",
+  "name": "플루타르코스 영웅전 아카이브",
   "short_name": "플루타르코스",
+  "description": "플루타르코스 비교 열전 인터랙티브 지도 및 인물 관계망 디지털 아카이브",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#141210",
-  "theme_color": "#221a17",
-  "orientation": "portrait-primary",
+  "background_color": "#12100e",
+  "theme_color": "#1e1714",
+  "orientation": "portrait",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/3248/3248842.png",
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
     }
