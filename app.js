@@ -186,12 +186,11 @@ function renderQuotes() {
 }
 
 // 탭 4: 토론장 렌더링
-// 토론 게시글 불러오기 및 렌더링
+// 토론 게시글 렌더링 (수정/삭제 버튼 포함)
 function renderDebates() {
   const h = heroDetails[currentHero];
   document.getElementById("debateFormTitle").innerText = `💬 ${h.name}에게 묻고 답하기`;
 
-  // 영웅별로 독립된 토론 목록 저장소 키
   const storageKey = `debate_posts_${currentHero}`;
   const posts = JSON.parse(localStorage.getItem(storageKey)) || [];
   const listContainer = document.getElementById("debateList");
@@ -203,14 +202,20 @@ function renderDebates() {
 
   let html = "";
   posts.forEach(post => {
-    // 답변 목록 렌더링
+    // 답변(댓글) 목록
     let repliesHtml = "";
     if (post.replies && post.replies.length > 0) {
       post.replies.forEach(r => {
         repliesHtml += `
           <div class="reply-item">
-            <span class="reply-author">${r.author}:</span>
-            <span>${r.text}</span>
+            <div class="reply-main">
+              <span class="reply-author">${r.author}:</span>
+              <span>${r.text}</span>
+            </div>
+            <div class="reply-actions">
+              <button class="action-btn" onclick="editDebateReply(${post.id}, ${r.id})">수정</button>
+              <button class="action-btn del" onclick="deleteDebateReply(${post.id}, ${r.id})">삭제</button>
+            </div>
           </div>
         `;
       });
@@ -219,16 +224,23 @@ function renderDebates() {
     html += `
       <div class="debate-post">
         <div class="post-header">
-          <span class="post-author">👤 ${post.author}</span>
-          <span class="post-date">${post.date}</span>
+          <div>
+            <span class="post-author">👤 ${post.author}</span>
+            <span class="post-date" style="margin-left: 8px;">${post.date}</span>
+          </div>
+          <div class="post-actions">
+            <button class="action-btn" onclick="editDebatePost(${post.id})">수정</button>
+            <button class="action-btn del" onclick="deleteDebatePost(${post.id})">삭제</button>
+          </div>
         </div>
-        <div class="post-content">${post.content}</div>
+        <div class="post-content" id="postContent-${post.id}">${post.content}</div>
 
         <div class="reply-section">
           <div class="reply-list">${repliesHtml}</div>
           <div class="reply-input-row">
-            <input type="text" class="reply-nick" id="replyNick-${post.id}" placeholder="닉네임" maxlength="10">
-            <input type="text" class="reply-text" id="replyText-${post.id}" placeholder="답변 남기기...">
+            <input type="text" class="reply-nick" id="replyNick-${post.id}" placeholder="닉네임" maxlength="8">
+            <input type="password" class="reply-nick reply-pwd" id="replyPwd-${post.id}" placeholder="비밀번호" maxlength="8">
+            <input type="text" class="reply-text" id="replyText-${post.id}" placeholder="답변 달기...">
             <button class="reply-btn" onclick="addDebateReply(${post.id})">답변</button>
           </div>
         </div>
@@ -239,17 +251,18 @@ function renderDebates() {
   listContainer.innerHTML = html;
 }
 
-// 새 질문 추가 함수
+// 1. 새 질문 등록
 window.addDebatePost = function() {
   const authorInput = document.getElementById("debateAuthor");
+  const pwdInput = document.getElementById("debatePassword");
   const contentInput = document.getElementById("debateQuestion");
+
   const author = authorInput.value.trim() || "익명";
+  const password = pwdInput.value.trim();
   const content = contentInput.value.trim();
 
-  if (!content) {
-    alert("질문 내용을 작성해 주세요.");
-    return;
-  }
+  if (!content) return alert("질문 내용을 작성해 주세요.");
+  if (!password) return alert("수정/삭제를 위한 비밀번호를 입력해 주세요.");
 
   const storageKey = `debate_posts_${currentHero}`;
   const posts = JSON.parse(localStorage.getItem(storageKey)) || [];
@@ -257,32 +270,70 @@ window.addDebatePost = function() {
   const now = new Date();
   const dateStr = `${now.getMonth() + 1}월 ${now.getDate()}일 ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
 
-  const newPost = {
+  posts.unshift({
     id: Date.now(),
     author: author,
+    password: password,
     content: content,
     date: dateStr,
     replies: []
-  };
+  });
 
-  posts.unshift(newPost); // 최신 글이 위로 오도록 추가
   localStorage.setItem(storageKey, JSON.stringify(posts));
-
   contentInput.value = "";
+  pwdInput.value = "";
   renderDebates();
 };
 
-// 답변(댓글) 추가 함수
+// 2. 질문 수정
+window.editDebatePost = function(postId) {
+  const storageKey = `debate_posts_${currentHero}`;
+  const posts = JSON.parse(localStorage.getItem(storageKey)) || [];
+  const target = posts.find(p => p.id === postId);
+  if (!target) return;
+
+  const inputPwd = prompt("글 등록 시 설정한 비밀번호를 입력하세요:");
+  if (inputPwd === null) return;
+  if (inputPwd !== target.password) return alert("비밀번호가 일치하지 않습니다!");
+
+  const newContent = prompt("수정할 내용을 입력하세요:", target.content);
+  if (newContent !== null && newContent.trim() !== "") {
+    target.content = newContent.trim();
+    localStorage.setItem(storageKey, JSON.stringify(posts));
+    renderDebates();
+  }
+};
+
+// 3. 질문 삭제
+window.deleteDebatePost = function(postId) {
+  const storageKey = `debate_posts_${currentHero}`;
+  let posts = JSON.parse(localStorage.getItem(storageKey)) || [];
+  const target = posts.find(p => p.id === postId);
+  if (!target) return;
+
+  const inputPwd = prompt("글 등록 시 설정한 비밀번호를 입력하세요:");
+  if (inputPwd === null) return;
+  if (inputPwd !== target.password) return alert("비밀번호가 일치하지 않습니다!");
+
+  if (confirm("정말 이 질문을 삭제하시겠습니까? (달린 답변도 함께 삭제됩니다)")) {
+    posts = posts.filter(p => p.id !== postId);
+    localStorage.setItem(storageKey, JSON.stringify(posts));
+    renderDebates();
+  }
+};
+
+// 4. 새 답변 등록
 window.addDebateReply = function(postId) {
   const nickInput = document.getElementById(`replyNick-${postId}`);
+  const pwdInput = document.getElementById(`replyPwd-${postId}`);
   const textInput = document.getElementById(`replyText-${postId}`);
+
   const author = nickInput.value.trim() || "익명";
+  const password = pwdInput.value.trim();
   const text = textInput.value.trim();
 
-  if (!text) {
-    alert("답변 내용을 작성해 주세요.");
-    return;
-  }
+  if (!text) return alert("답변 내용을 작성해 주세요.");
+  if (!password) return alert("답변 수정/삭제를 위한 비밀번호를 입력해 주세요.");
 
   const storageKey = `debate_posts_${currentHero}`;
   const posts = JSON.parse(localStorage.getItem(storageKey)) || [];
@@ -290,7 +341,55 @@ window.addDebateReply = function(postId) {
 
   if (targetPost) {
     if (!targetPost.replies) targetPost.replies = [];
-    targetPost.replies.push({ author, text });
+    targetPost.replies.push({
+      id: Date.now(),
+      author: author,
+      password: password,
+      text: text
+    });
+    localStorage.setItem(storageKey, JSON.stringify(posts));
+    renderDebates();
+  }
+};
+
+// 5. 답변 수정
+window.editDebateReply = function(postId, replyId) {
+  const storageKey = `debate_posts_${currentHero}`;
+  const posts = JSON.parse(localStorage.getItem(storageKey)) || [];
+  const targetPost = posts.find(p => p.id === postId);
+  if (!targetPost) return;
+
+  const targetReply = targetPost.replies.find(r => r.id === replyId);
+  if (!targetReply) return;
+
+  const inputPwd = prompt("답변 등록 시 설정한 비밀번호를 입력하세요:");
+  if (inputPwd === null) return;
+  if (inputPwd !== targetReply.password) return alert("비밀번호가 일치하지 않습니다!");
+
+  const newText = prompt("수정할 답변을 입력하세요:", targetReply.text);
+  if (newText !== null && newText.trim() !== "") {
+    targetReply.text = newText.trim();
+    localStorage.setItem(storageKey, JSON.stringify(posts));
+    renderDebates();
+  }
+};
+
+// 6. 답변 삭제
+window.deleteDebateReply = function(postId, replyId) {
+  const storageKey = `debate_posts_${currentHero}`;
+  const posts = JSON.parse(localStorage.getItem(storageKey)) || [];
+  const targetPost = posts.find(p => p.id === postId);
+  if (!targetPost) return;
+
+  const targetReply = targetPost.replies.find(r => r.id === replyId);
+  if (!targetReply) return;
+
+  const inputPwd = prompt("답변 등록 시 설정한 비밀번호를 입력하세요:");
+  if (inputPwd === null) return;
+  if (inputPwd !== targetReply.password) return alert("비밀번호가 일치하지 않습니다!");
+
+  if (confirm("이 답변을 삭제하시겠습니까?")) {
+    targetPost.replies = targetPost.replies.filter(r => r.id !== replyId);
     localStorage.setItem(storageKey, JSON.stringify(posts));
     renderDebates();
   }
