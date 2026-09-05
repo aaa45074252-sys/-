@@ -147,7 +147,7 @@ function renderNetwork() {
   const simulation = d3.forceSimulation(nodes)
     .force("link", d3.forceLink(links).id(d => d.id).distance(90))
     .force("charge", d3.forceManyBody().strength(-250))
-    .force("center", d3.forceCenter(width / 2, height / 2));
+    .force("center", d3.forceCenter(width / 2, (height / 2) - 30));
 
   const link = g.append("g").selectAll("line").data(links).enter().append("line")
     .attr("stroke", "#665243").attr("stroke-width", 2);
