@@ -1,63 +1,66 @@
 let mainMap = null;
 let currentHero = "theseus";
 
-// 1. 지도 초기화 (지중해 전체가 시원하게 보이도록 중심 배치)
+// 1. 지도 초기화
 function initMainMap() {
-  if (mainMap) return;
+  if (!mainMap) {
+    mainMap = L.map('mainMap').setView([39.0, 19.0], 5);
+    L.tileLayer('https://mt0.google.com/vt/lyrs=m&hl=ko&x={x}&y={y}&z={z}', {
+      maxZoom: 18, attribution: '© Google Maps'
+    }).addTo(mainMap);
 
-  mainMap = L.map('mainMap').setView([39.0, 19.0], 5); // 그리스-이탈리아 중간
+    allMapEvents.forEach(evt => {
+      const icon = L.divIcon({
+        className: `custom-pin ${evt.pinClass}`,
+        iconSize: [18, 18],
+        iconAnchor: [9, 9]
+      });
 
-  L.tileLayer('https://mt0.google.com/vt/lyrs=m&hl=ko&x={x}&y={y}&z={z}', {
-    maxZoom: 18, attribution: '© Google Maps'
-  }).addTo(mainMap);
-
-  // 모든 영웅 사건 핀 꽂기
-  allMapEvents.forEach(evt => {
-    // 커스텀 원형 마커 생성
-    const icon = L.divIcon({
-      className: `custom-pin ${evt.pinClass}`,
-      iconSize: [16, 16],
-      iconAnchor: [8, 8]
+      const marker = L.marker([evt.lat, evt.lng], { icon: icon }).addTo(mainMap);
+      const popupContent = `
+        <div class="popup-inner">
+          <h4>[${evt.heroName}] ${evt.title}</h4>
+          <p>${evt.desc}</p>
+          <button class="popup-btn" onclick="openHeroView('${evt.hero}')">
+            👤 ${evt.heroName} 상세 보기 &gt;
+          </button>
+        </div>
+      `;
+      marker.bindPopup(popupContent);
     });
+  }
 
-    const marker = L.marker([evt.lat, evt.lng], { icon: icon }).addTo(mainMap);
-    
-    // 팝업 내용 + '영웅 보러가기' 버튼
-    const popupContent = `
-      <div class="popup-inner">
-        <h4>[${evt.heroName}] ${evt.title}</h4>
-        <p>${evt.desc}</p>
-        <button class="popup-btn" onclick="openHeroView('${evt.hero}')">
-          👤 ${evt.heroName} 상세 보기 &gt;
-        </button>
-      </div>
-    `;
-    marker.bindPopup(popupContent);
-  });
+  // 화면 크기 계산 강제 갱신
+  setTimeout(() => {
+    if (mainMap) mainMap.invalidateSize();
+  }, 100);
 }
 
-// 2. 화면 전환: 지도(홈) vs 영웅 상세
+// 2. 메인 네비게이션
 const mapSection = document.getElementById("mapSection");
 const heroDetailSection = document.getElementById("heroDetailSection");
 const homeMapBtn = document.getElementById("homeMapBtn");
 const heroSelect = document.getElementById("heroSelect");
 
-// 홈(지도) 버튼 클릭
+// 홈(전체 지도) 버튼 클릭 시
 homeMapBtn.addEventListener("click", () => {
+  showMapView();
+});
+
+function showMapView() {
   homeMapBtn.classList.add("active");
   heroSelect.value = "";
   mapSection.classList.add("active");
   heroDetailSection.classList.remove("active");
   document.getElementById("appTitle").innerText = "🏛️ 플루타르코스 세계 지도";
-  if (mainMap) setTimeout(() => mainMap.invalidateSize(), 150);
-});
+  initMainMap();
+}
 
-// 우측 상단 영웅 셀렉트 박스 변경 시
 heroSelect.addEventListener("change", (e) => {
   openHeroView(e.target.value);
 });
 
-// 영웅 상세 페이지 열기 함수 (지도 팝업 버튼 클릭 시에도 실행)
+// 영웅 상세 페이지 열기
 window.openHeroView = function(heroKey) {
   currentHero = heroKey;
   homeMapBtn.classList.remove("active");
@@ -69,15 +72,13 @@ window.openHeroView = function(heroKey) {
   const heroData = heroDetails[heroKey];
   document.getElementById("appTitle").innerText = `🏛️ ${heroData.name}`;
 
-  // 첫 번째 탭(개요)으로 초기화
   switchHeroTab("overview");
 };
 
-// 3. 영웅 상세 화면 내 4개 서브 탭 전환
+// 3. 서브 탭 전환
 document.querySelectorAll(".hero-sub-nav .tab-btn").forEach(btn => {
   btn.addEventListener("click", (e) => {
-    const tab = e.target.dataset.tab;
-    switchHeroTab(tab);
+    switchHeroTab(e.target.dataset.tab);
   });
 });
 
@@ -103,7 +104,7 @@ function switchHeroTab(tabName) {
   }
 }
 
-// 탭 1: 개요 렌더링
+// 4. 렌더링 함수들
 function renderOverview() {
   const h = heroDetails[currentHero];
   document.getElementById("overviewBox").innerHTML = `
@@ -114,14 +115,28 @@ function renderOverview() {
   `;
 }
 
-// 탭 2: 관계망 렌더링 (D3)
+function renderQuotes() {
+  const h = heroDetails[currentHero];
+  let html = "";
+  h.quotes.forEach(q => {
+    html += `
+      <div class="card">
+        <h3>${q.text}</h3>
+        <p style="color:#aaa;margin-top:6px;">📌 ${q.desc}</p>
+      </div>
+    `;
+  });
+  document.getElementById("quotesBox").innerHTML = html;
+}
+
 function renderNetwork() {
   const h = heroDetails[currentHero];
   const svg = d3.select("#networkSvg");
   svg.selectAll("*").remove();
 
-  const width = document.getElementById("tabNetwork").clientWidth;
-  const height = document.getElementById("tabNetwork").clientHeight || 450;
+  const wrap = document.getElementById("tabNetwork");
+  const width = wrap.clientWidth || 360;
+  const height = wrap.clientHeight || 450;
 
   const g = svg.append("g");
   svg.call(d3.zoom().scaleExtent([0.5, 2.5]).on("zoom", (e) => g.attr("transform", e.transform)));
@@ -130,8 +145,8 @@ function renderNetwork() {
   const links = JSON.parse(JSON.stringify(h.graph.links));
 
   const simulation = d3.forceSimulation(nodes)
-    .force("link", d3.forceLink(links).id(d => d.id).distance(100))
-    .force("charge", d3.forceManyBody().strength(-300))
+    .force("link", d3.forceLink(links).id(d => d.id).distance(90))
+    .force("charge", d3.forceManyBody().strength(-250))
     .force("center", d3.forceCenter(width / 2, height / 2));
 
   const link = g.append("g").selectAll("line").data(links).enter().append("line")
@@ -170,23 +185,7 @@ function renderNetwork() {
   });
 }
 
-// 탭 3: 중요 문장 렌더링
-function renderQuotes() {
-  const h = heroDetails[currentHero];
-  let html = "";
-  h.quotes.forEach(q => {
-    html += `
-      <div class="card">
-        <h3>${q.text}</h3>
-        <p style="color:#aaa;margin-top:6px;">📌 ${q.desc}</p>
-      </div>
-    `;
-  });
-  document.getElementById("quotesBox").innerHTML = html;
-}
-
-// 탭 4: 토론장 렌더링
-// 토론 게시글 렌더링 (수정/삭제 버튼 포함)
+// 5. 토론장 CRUD
 function renderDebates() {
   const h = heroDetails[currentHero];
   document.getElementById("debateFormTitle").innerText = `💬 ${h.name}에게 묻고 답하기`;
@@ -202,17 +201,16 @@ function renderDebates() {
 
   let html = "";
   posts.forEach(post => {
-    // 답변(댓글) 목록
     let repliesHtml = "";
     if (post.replies && post.replies.length > 0) {
       post.replies.forEach(r => {
         repliesHtml += `
           <div class="reply-item">
-            <div class="reply-main">
+            <div>
               <span class="reply-author">${r.author}:</span>
               <span>${r.text}</span>
             </div>
-            <div class="reply-actions">
+            <div>
               <button class="action-btn" onclick="editDebateReply(${post.id}, ${r.id})">수정</button>
               <button class="action-btn del" onclick="deleteDebateReply(${post.id}, ${r.id})">삭제</button>
             </div>
@@ -226,21 +224,20 @@ function renderDebates() {
         <div class="post-header">
           <div>
             <span class="post-author">👤 ${post.author}</span>
-            <span class="post-date" style="margin-left: 8px;">${post.date}</span>
+            <span class="post-date" style="margin-left: 6px;">${post.date}</span>
           </div>
-          <div class="post-actions">
+          <div>
             <button class="action-btn" onclick="editDebatePost(${post.id})">수정</button>
             <button class="action-btn del" onclick="deleteDebatePost(${post.id})">삭제</button>
           </div>
         </div>
-        <div class="post-content" id="postContent-${post.id}">${post.content}</div>
-
+        <div class="post-content">${post.content}</div>
         <div class="reply-section">
           <div class="reply-list">${repliesHtml}</div>
           <div class="reply-input-row">
             <input type="text" class="reply-nick" id="replyNick-${post.id}" placeholder="닉네임" maxlength="8">
-            <input type="password" class="reply-nick reply-pwd" id="replyPwd-${post.id}" placeholder="비밀번호" maxlength="8">
-            <input type="text" class="reply-text" id="replyText-${post.id}" placeholder="답변 달기...">
+            <input type="password" class="reply-nick reply-pwd" id="replyPwd-${post.id}" placeholder="비번" maxlength="8">
+            <input type="text" class="reply-text" id="replyText-${post.id}" placeholder="답변 남기기...">
             <button class="reply-btn" onclick="addDebateReply(${post.id})">답변</button>
           </div>
         </div>
@@ -251,7 +248,6 @@ function renderDebates() {
   listContainer.innerHTML = html;
 }
 
-// 1. 새 질문 등록
 window.addDebatePost = function() {
   const authorInput = document.getElementById("debateAuthor");
   const pwdInput = document.getElementById("debatePassword");
@@ -262,137 +258,120 @@ window.addDebatePost = function() {
   const content = contentInput.value.trim();
 
   if (!content) return alert("질문 내용을 작성해 주세요.");
-  if (!password) return alert("수정/삭제를 위한 비밀번호를 입력해 주세요.");
+  if (!password) return alert("수정/삭제용 비밀번호를 입력해 주세요.");
 
   const storageKey = `debate_posts_${currentHero}`;
   const posts = JSON.parse(localStorage.getItem(storageKey)) || [];
-
   const now = new Date();
-  const dateStr = `${now.getMonth() + 1}월 ${now.getDate()}일 ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
+  const dateStr = `${now.getMonth() + 1}/${now.getDate()} ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
 
-  posts.unshift({
-    id: Date.now(),
-    author: author,
-    password: password,
-    content: content,
-    date: dateStr,
-    replies: []
-  });
-
+  posts.unshift({ id: Date.now(), author, password, content, date: dateStr, replies: [] });
   localStorage.setItem(storageKey, JSON.stringify(posts));
+
   contentInput.value = "";
   pwdInput.value = "";
   renderDebates();
 };
 
-// 2. 질문 수정
-window.editDebatePost = function(postId) {
-  const storageKey = `debate_posts_${currentHero}`;
-  const posts = JSON.parse(localStorage.getItem(storageKey)) || [];
-  const target = posts.find(p => p.id === postId);
-  if (!target) return;
-
-  const inputPwd = prompt("글 등록 시 설정한 비밀번호를 입력하세요:");
-  if (inputPwd === null) return;
-  if (inputPwd !== target.password) return alert("비밀번호가 일치하지 않습니다!");
-
-  const newContent = prompt("수정할 내용을 입력하세요:", target.content);
-  if (newContent !== null && newContent.trim() !== "") {
-    target.content = newContent.trim();
-    localStorage.setItem(storageKey, JSON.stringify(posts));
-    renderDebates();
-  }
-};
-
-// 3. 질문 삭제
 window.deleteDebatePost = function(postId) {
   const storageKey = `debate_posts_${currentHero}`;
   let posts = JSON.parse(localStorage.getItem(storageKey)) || [];
   const target = posts.find(p => p.id === postId);
   if (!target) return;
 
-  const inputPwd = prompt("글 등록 시 설정한 비밀번호를 입력하세요:");
-  if (inputPwd === null) return;
-  if (inputPwd !== target.password) return alert("비밀번호가 일치하지 않습니다!");
+  if (target.password) {
+    const inputPwd = prompt("글 등록 시 설정한 비밀번호를 입력하세요:");
+    if (inputPwd === null) return;
+    if (inputPwd !== target.password) return alert("비밀번호가 일치하지 않습니다!");
+  }
 
-  if (confirm("정말 이 질문을 삭제하시겠습니까? (달린 답변도 함께 삭제됩니다)")) {
+  if (confirm("정말 이 질문을 삭제하시겠습니까?")) {
     posts = posts.filter(p => p.id !== postId);
     localStorage.setItem(storageKey, JSON.stringify(posts));
     renderDebates();
   }
 };
 
-// 4. 새 답변 등록
-window.addDebateReply = function(postId) {
-  const nickInput = document.getElementById(`replyNick-${postId}`);
-  const pwdInput = document.getElementById(`replyPwd-${postId}`);
-  const textInput = document.getElementById(`replyText-${postId}`);
-
-  const author = nickInput.value.trim() || "익명";
-  const password = pwdInput.value.trim();
-  const text = textInput.value.trim();
-
-  if (!text) return alert("답변 내용을 작성해 주세요.");
-  if (!password) return alert("답변 수정/삭제를 위한 비밀번호를 입력해 주세요.");
-
+window.editDebatePost = function(postId) {
   const storageKey = `debate_posts_${currentHero}`;
   const posts = JSON.parse(localStorage.getItem(storageKey)) || [];
-  const targetPost = posts.find(p => p.id === postId);
+  const target = posts.find(p => p.id === postId);
+  if (!target) return;
 
-  if (targetPost) {
-    if (!targetPost.replies) targetPost.replies = [];
-    targetPost.replies.push({
-      id: Date.now(),
-      author: author,
-      password: password,
-      text: text
-    });
-    localStorage.setItem(storageKey, JSON.stringify(posts));
-    renderDebates();
-  }
-};
-
-// 5. 답변 수정
-window.editDebateReply = function(postId, replyId) {
-  const storageKey = `debate_posts_${currentHero}`;
-  const posts = JSON.parse(localStorage.getItem(storageKey)) || [];
-  const targetPost = posts.find(p => p.id === postId);
-  if (!targetPost) return;
-
-  const targetReply = targetPost.replies.find(r => r.id === replyId);
-  if (!targetReply) return;
-
-  const inputPwd = prompt("답변 등록 시 설정한 비밀번호를 입력하세요:");
+  const inputPwd = prompt("비밀번호를 입력하세요:");
   if (inputPwd === null) return;
-  if (inputPwd !== targetReply.password) return alert("비밀번호가 일치하지 않습니다!");
+  if (inputPwd !== target.password) return alert("비밀번호가 일치하지 않습니다!");
 
-  const newText = prompt("수정할 답변을 입력하세요:", targetReply.text);
-  if (newText !== null && newText.trim() !== "") {
-    targetReply.text = newText.trim();
+  const newContent = prompt("수정할 내용을 입력하세요:", target.content);
+  if (newContent && newContent.trim()) {
+    target.content = newContent.trim();
     localStorage.setItem(storageKey, JSON.stringify(posts));
     renderDebates();
   }
 };
 
-// 6. 답변 삭제
+window.addDebateReply = function(postId) {
+  const nick = document.getElementById(`replyNick-${postId}`).value.trim() || "익명";
+  const pwd = document.getElementById(`replyPwd-${postId}`).value.trim();
+  const text = document.getElementById(`replyText-${postId}`).value.trim();
+
+  if (!text) return alert("답변 내용을 입력하세요.");
+  if (!pwd) return alert("답변 수정/삭제용 비밀번호를 입력하세요.");
+
+  const storageKey = `debate_posts_${currentHero}`;
+  const posts = JSON.parse(localStorage.getItem(storageKey)) || [];
+  const target = posts.find(p => p.id === postId);
+
+  if (target) {
+    if (!target.replies) target.replies = [];
+    target.replies.push({ id: Date.now(), author: nick, password: pwd, text });
+    localStorage.setItem(storageKey, JSON.stringify(posts));
+    renderDebates();
+  }
+};
+
 window.deleteDebateReply = function(postId, replyId) {
   const storageKey = `debate_posts_${currentHero}`;
   const posts = JSON.parse(localStorage.getItem(storageKey)) || [];
-  const targetPost = posts.find(p => p.id === postId);
-  if (!targetPost) return;
+  const target = posts.find(p => p.id === postId);
+  if (!target) return;
 
-  const targetReply = targetPost.replies.find(r => r.id === replyId);
-  if (!targetReply) return;
+  const r = target.replies.find(item => item.id === replyId);
+  if (!r) return;
 
-  const inputPwd = prompt("답변 등록 시 설정한 비밀번호를 입력하세요:");
-  if (inputPwd === null) return;
-  if (inputPwd !== targetReply.password) return alert("비밀번호가 일치하지 않습니다!");
+  if (r.password) {
+    const inputPwd = prompt("답변 비밀번호를 입력하세요:");
+    if (inputPwd === null) return;
+    if (inputPwd !== r.password) return alert("비밀번호가 일치하지 않습니다!");
+  }
 
-  if (confirm("이 답변을 삭제하시겠습니까?")) {
-    targetPost.replies = targetPost.replies.filter(r => r.id !== replyId);
+  if (confirm("답변을 삭제하시겠습니까?")) {
+    target.replies = target.replies.filter(item => item.id !== replyId);
     localStorage.setItem(storageKey, JSON.stringify(posts));
     renderDebates();
   }
 };
-// 최초 실행: 지도 화면 시작
-initMainMap();
+
+window.editDebateReply = function(postId, replyId) {
+  const storageKey = `debate_posts_${currentHero}`;
+  const posts = JSON.parse(localStorage.getItem(storageKey)) || [];
+  const target = posts.find(p => p.id === postId);
+  if (!target) return;
+
+  const r = target.replies.find(item => item.id === replyId);
+  if (!r) return;
+
+  const inputPwd = prompt("답변 비밀번호를 입력하세요:");
+  if (inputPwd === null) return;
+  if (inputPwd !== r.password) return alert("비밀번호가 일치하지 않습니다!");
+
+  const newText = prompt("수정할 답변을 입력하세요:", r.text);
+  if (newText && newText.trim()) {
+    r.text = newText.trim();
+    localStorage.setItem(storageKey, JSON.stringify(posts));
+    renderDebates();
+  }
+};
+
+// 최초 실행: 첫 화면으로 지도 열기
+showMapView();
