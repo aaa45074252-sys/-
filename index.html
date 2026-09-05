@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>플루타르코스 비교 열전 아카이브</title>
+  
+  <!-- 웹앱(PWA) 모바일 설정 -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#221a17">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <!-- 지도 라이브러리 및 스타일시트 -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <h1>🏛️ 플루타르코스 비교 열전</h1>
+      <select class="hero-select" id="heroSelect" onchange="changeHero(this.value)">
+        <option value="theseus">테세우스 (아테네 건국 영웅)</option>
+        <option value="romulus">로물루스 (로마 건국 시조)</option>
+      </select>
+    </div>
+    <div class="header-actions">
+      <button class="btn-tool" onclick="exportData()">💾 백업 저장</button>
+      <button class="btn-tool" onclick="document.getElementById('importFile').click()">📂 불러오기</button>
+      <input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(event)">
+    </div>
+  </header>
+
+  <nav class="sub-nav">
+    <button class="view-tab-btn active" onclick="switchView('overview', this)">🏛️ 인물 개요</button>
+    <button class="view-tab-btn" onclick="switchView('map', this)">🗺️ 여정 및 유적지 (지도)</button>
+    <button class="view-tab-btn" onclick="switchView('quotes', this)">📜 책 속 인상 깊은 문장</button>
+    <button class="view-tab-btn" onclick="switchView('relics', this)">⚔️ 캐릭터 & 서사 관계망</button>
+  </nav>
+
+  <!-- 1. 인물 개요 패널 -->
+  <div class="view-panel active" id="overviewPanel">
+    <div class="overview-container" id="overviewContent"></div>
+  </div>
+
+  <!-- 2. 지도 패널 -->
+  <div class="view-panel" id="mapViewPanel">
+    <div id="map"></div>
+    <div class="playback-bar">
+      <button class="play-btn" id="playBtn" onclick="toggleTour()">▶</button>
+      <span class="playback-status" id="tourStatus">여정 탐방 시작</span>
+    </div>
+    <div id="sidebar">
+      <div class="sidebar-content">
+        <div class="form-box" id="formBox">
+          <h3 id="formTitle">📍 새 여정 지점 등록</h3>
+          <div id="coordText" style="font-size:11px;color:#777;margin-bottom:6px;">지도를 클릭해 위치를 지정하세요.</div>
+          <input type="hidden" id="editPlaceId"><input type="hidden" id="inputLat"><input type="hidden" id="inputLng"><input type="hidden" id="existingImage">
+          <input type="text" id="inputName" placeholder="장소명">
+          <textarea id="inputStory" placeholder="1. 신화/역사 줄거리"></textarea>
+          <textarea id="inputInsight" placeholder="2. 플루타르코스의 시선/해석"></textarea>
+          <textarea id="inputQuestion" placeholder="3. 생각해볼 토론 질문"></textarea>
+          <input type="file" id="inputImageFile" accept="image/*">
+          <div class="btn-group">
+            <button class="submit-btn" id="submitBtn" onclick="savePlace()">등록하기</button>
+            <button class="cancel-btn" id="cancelBtn" onclick="resetForm()">취소</button>
+          </div>
+        </div>
+        <div id="placeList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. 명문장 패널 -->
+  <div class="view-panel" id="quotesPanel">
+    <div class="quotes-container" id="quotesContent"></div>
+  </div>
+
+  <!-- 4. 캐릭터 및 유기적 서사 관계망 패널 -->
+  <div class="view-panel" id="relicsPanel">
+    <div class="narrative-wrapper">
+      <div class="narrative-header">
+        <h2 id="narrativeTitle">서사 로드맵</h2>
+        <p id="narrativeSub">영웅의 생애 마일스톤과 인물·사물의 유기적 상호작용</p>
+      </div>
+      <div class="narrative-canvas" id="narrativeCanvasContent"></div>
+    </div>
+  </div>
+
+  <!-- 분리된 자바스크립트 파일 로드 -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+  <script>
+    // PWA 서비스 워커 등록
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    }
+  </script>
+</body>
+</html>
