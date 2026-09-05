@@ -1,49 +1,47 @@
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-body { display: flex; flex-direction: column; height: 100vh; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #12100e; color: #f0e6d2; overflow: hidden; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: #12100e; color: #f0e6d2; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 
 /* 상단 헤더 */
-header { background: #1c1613; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #b89047; z-index: 1000; }
+header { height: 50px; background: #1c1613; padding: 0 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #b89047; z-index: 1000; position: relative; }
 .header-left h1 { font-size: 15px; color: #e5be75; font-weight: bold; }
 .header-right { display: flex; gap: 8px; align-items: center; }
 .nav-btn { background: #332720; color: #e5be75; border: 1px solid #b89047; padding: 6px 10px; border-radius: 6px; font-size: 12px; cursor: pointer; }
 .nav-btn.active { background: #b89047; color: #12100e; font-weight: bold; }
 .hero-select { background: #241c18; color: #fff; border: 1px solid #786458; padding: 6px 8px; border-radius: 6px; font-size: 12px; outline: none; }
 
-/* 메인 화면 전환 */
-.main-view { display: none; width: 100%; height: calc(100vh - 54px); position: relative; }
-.main-view.active { display: block; }
+/* 메인 화면 분기 (핵심: !important 로 겹침 방지) */
+.main-view { display: none !important; width: 100%; height: calc(100vh - 50px); position: relative; }
+.main-view.active { display: block !important; }
 
-/* 1. 첫 화면: 전체 지도 */
-#mainMap { width: 100%; height: 100%; }
+/* 1. 지도 화면 */
+#mapSection { width: 100%; height: calc(100vh - 50px); }
+#mainMap { width: 100%; height: 100%; background: #181512; }
 .map-legend { position: absolute; bottom: 16px; left: 16px; z-index: 999; background: rgba(24, 18, 15, 0.9); border: 1px solid #b89047; padding: 8px 12px; border-radius: 8px; font-size: 12px; display: flex; gap: 12px; }
 .legend-item { display: flex; align-items: center; gap: 6px; }
 .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
 .dot.gold { background: #e5be75; border: 2px solid #fff; }
 .dot.crimson { background: #ef4444; border: 2px solid #fff; }
 
-/* 지도 마커 커스텀 */
 .custom-pin { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 6px rgba(0,0,0,0.6); }
 .pin-theseus { background: #e5be75; }
 .pin-romulus { background: #ef4444; }
 
-/* 팝업 스타일 */
 .leaflet-popup-content-wrapper { background: #1c1613; color: #f0e6d2; border: 1px solid #b89047; }
 .leaflet-popup-tip { background: #1c1613; }
 .popup-inner h4 { color: #e5be75; margin-bottom: 4px; font-size: 14px; }
 .popup-inner p { font-size: 12px; color: #ccc; margin-bottom: 8px; line-height: 1.4; }
-.popup-btn { background: #b89047; color: #111; border: none; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; width: 100%; }
+.popup-btn { background: #b89047; color: #111; border: none; padding: 5px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; width: 100%; }
 
-/* 2. 영웅 상세 페이지 서브 탭 */
+/* 2. 영웅 상세 화면 */
 #heroDetailSection { overflow-y: auto; background: #12100e; }
-.hero-sub-nav { display: flex; background: #1f1814; border-bottom: 1px solid #3d2f27; overflow-x: auto; }
-.tab-btn { flex: 1; min-width: 80px; padding: 12px 6px; background: none; border: none; color: #999; font-size: 13px; font-weight: bold; cursor: pointer; border-bottom: 3px solid transparent; }
+.hero-sub-nav { display: flex; background: #1f1814; border-bottom: 1px solid #3d2f27; position: sticky; top: 0; z-index: 100; }
+.tab-btn { flex: 1; padding: 12px 6px; background: none; border: none; color: #999; font-size: 13px; font-weight: bold; cursor: pointer; border-bottom: 3px solid transparent; }
 .tab-btn.active { color: #e5be75; border-bottom: 3px solid #e5be75; background: rgba(184, 144, 71, 0.1); }
 
-.tab-content { display: none; padding: 16px; }
-.tab-content.active { display: block; }
+.tab-content { display: none !important; padding: 16px; }
+.tab-content.active { display: block !important; }
 .content-box { max-width: 800px; margin: 0 auto; }
 
-/* 개요/문장/토론 카드 공통 */
 .card { background: #1c1613; border: 1px solid #3d3027; border-radius: 8px; padding: 14px; margin-bottom: 12px; font-size: 13px; }
 .card h3 { color: #e5be75; margin-bottom: 6px; font-size: 15px; }
 .card p { color: #ddd; line-height: 1.5; }
@@ -52,51 +50,36 @@ header { background: #1c1613; padding: 10px 16px; display: flex; justify-content
 .network-wrap { width: 100%; height: calc(100vh - 120px); position: relative; background: #0c0a09; }
 #networkSvg { width: 100%; height: 100%; }
 .node-inspector { position: absolute; bottom: 12px; left: 12px; right: 12px; background: rgba(28, 22, 19, 0.95); border: 1px solid #b89047; border-radius: 8px; padding: 12px; z-index: 100; }
-.node-inspector.hidden { display: none; }
+.node-inspector.hidden { display: none !important; }
 .ins-badge { font-size: 10px; background: #e5be75; color: #111; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
 .close-btn { position: absolute; top: 8px; right: 8px; background: none; border: none; color: #aaa; font-size: 16px; cursor: pointer; }
 .ins-insight { font-size: 11px; color: #e5be75; margin-top: 6px; background: #261d17; padding: 6px; border-radius: 4px; }
 
-/* 토론장 전용 스타일 */
+/* 토론장 */
 .debate-form-card { background: #1c1613; border: 1px solid #b89047; border-radius: 8px; padding: 16px; margin-bottom: 20px; }
-.debate-form-card h3 { color: #e5be75; font-size: 16px; margin-bottom: 4px; }
-.form-subtext { font-size: 11px; color: #8c8072; margin-bottom: 12px; }
-.input-row input { width: 100%; max-width: 200px; padding: 8px; background: #261d17; border: 1px solid #4a3c30; border-radius: 4px; color: #fff; font-size: 12px; margin-bottom: 8px; }
-.debate-form-card textarea { width: 100%; height: 70px; padding: 8px; background: #261d17; border: 1px solid #4a3c30; border-radius: 4px; color: #fff; font-size: 13px; resize: vertical; margin-bottom: 8px; }
-.submit-debate-btn { background: #b89047; color: #111; border: none; padding: 8px 16px; border-radius: 4px; font-weight: bold; font-size: 12px; cursor: pointer; float: right; }
+.debate-form-card h3 { color: #e5be75; font-size: 15px; margin-bottom: 4px; }
+.form-subtext { font-size: 11px; color: #8c8072; margin-bottom: 10px; }
+.input-row { display: flex; gap: 8px; margin-bottom: 8px; }
+.input-row input { flex: 1; padding: 8px; background: #261d17; border: 1px solid #4a3c30; border-radius: 4px; color: #fff; font-size: 12px; }
+.debate-form-card textarea { width: 100%; height: 60px; padding: 8px; background: #261d17; border: 1px solid #4a3c30; border-radius: 4px; color: #fff; font-size: 12px; resize: vertical; margin-bottom: 8px; }
+.submit-debate-btn { background: #b89047; color: #111; border: none; padding: 7px 14px; border-radius: 4px; font-weight: bold; font-size: 12px; cursor: pointer; float: right; }
 .debate-form-card::after { content: ""; display: block; clear: both; }
 
-/* 질문 카드 */
-.debate-post { background: #1c1613; border: 1px solid #3d3027; border-radius: 8px; padding: 14px; margin-bottom: 14px; }
-.post-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 12px; }
+.debate-post { background: #1c1613; border: 1px solid #3d3027; border-radius: 8px; padding: 12px; margin-bottom: 12px; }
+.post-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 12px; }
 .post-author { color: #e5be75; font-weight: bold; }
 .post-date { color: #777; font-size: 10px; }
-.post-content { font-size: 13px; color: #eee; line-height: 1.5; margin-bottom: 12px; white-space: pre-wrap; }
-
-/* 답변(댓글) 영역 */
-.reply-section { background: #161210; border-radius: 6px; padding: 10px; border-top: 1px solid #2e241e; }
-.reply-list { margin-bottom: 8px; }
-.reply-item { font-size: 12px; color: #ccc; padding: 4px 0; border-bottom: 1px dashed #261d18; }
-.reply-author { color: #3b82f6; font-weight: bold; margin-right: 6px; }
-
-/* 답변 입력 줄 */
-.reply-input-row { display: flex; gap: 6px; margin-top: 8px; }
-.reply-nick { width: 90px; padding: 6px; background: #221a16; border: 1px solid #3d2f26; border-radius: 4px; color: #fff; font-size: 11px; }
-.reply-text { flex: 1; padding: 6px; background: #221a16; border: 1px solid #3d2f26; border-radius: 4px; color: #fff; font-size: 11px; }
-.reply-btn { background: #473a34; color: #eeddcc; border: 1px solid #6b574e; border-radius: 4px; padding: 0 10px; font-size: 11px; cursor: pointer; }
-.reply-btn:hover { background: #5c4b44; }
-.no-posts { text-align: center; color: #666; font-size: 13px; padding: 30px 0; }
-
-/* 수정 / 삭제 버튼 및 비밀번호 입력 스타일 */
-.post-actions, .reply-actions { display: flex; gap: 6px; align-items: center; }
+.post-content { font-size: 13px; color: #eee; line-height: 1.4; margin-bottom: 10px; white-space: pre-wrap; }
 .action-btn { background: none; border: none; color: #8c8072; font-size: 11px; cursor: pointer; padding: 2px 4px; }
 .action-btn:hover { color: #e5be75; }
 .action-btn.del:hover { color: #ef4444; }
 
-.input-row { display: flex; gap: 8px; margin-bottom: 8px; }
-.input-row input { flex: 1; padding: 8px; background: #261d17; border: 1px solid #4a3c30; border-radius: 4px; color: #fff; font-size: 12px; }
-
-/* 댓글 항목 가로 정렬 */
-.reply-item { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #ccc; padding: 6px 0; border-bottom: 1px dashed #261d18; }
-.reply-main { flex: 1; margin-right: 8px; }
-.reply-pwd { width: 65px; }
+.reply-section { background: #161210; border-radius: 6px; padding: 8px; border-top: 1px solid #2e241e; }
+.reply-item { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #ccc; padding: 4px 0; border-bottom: 1px dashed #261d18; }
+.reply-author { color: #3b82f6; font-weight: bold; margin-right: 4px; }
+.reply-input-row { display: flex; gap: 4px; margin-top: 6px; }
+.reply-nick { width: 70px; padding: 5px; background: #221a16; border: 1px solid #3d2f26; border-radius: 4px; color: #fff; font-size: 11px; }
+.reply-pwd { width: 55px; }
+.reply-text { flex: 1; padding: 5px; background: #221a16; border: 1px solid #3d2f26; border-radius: 4px; color: #fff; font-size: 11px; }
+.reply-btn { background: #473a34; color: #eeddcc; border: 1px solid #6b574e; border-radius: 4px; padding: 0 8px; font-size: 11px; cursor: pointer; }
+.no-posts { text-align: center; color: #666; font-size: 12px; padding: 20px 0; }
