@@ -186,19 +186,114 @@ function renderQuotes() {
 }
 
 // 탭 4: 토론장 렌더링
+// 토론 게시글 불러오기 및 렌더링
 function renderDebates() {
   const h = heroDetails[currentHero];
+  document.getElementById("debateFormTitle").innerText = `💬 ${h.name}에게 묻고 답하기`;
+
+  // 영웅별로 독립된 토론 목록 저장소 키
+  const storageKey = `debate_posts_${currentHero}`;
+  const posts = JSON.parse(localStorage.getItem(storageKey)) || [];
+  const listContainer = document.getElementById("debateList");
+
+  if (posts.length === 0) {
+    listContainer.innerHTML = `<div class="no-posts">아직 등록된 질문이 없습니다.<br>첫 번째 질문을 남겨보세요!</div>`;
+    return;
+  }
+
   let html = "";
-  h.debates.forEach(d => {
+  posts.forEach(post => {
+    // 답변 목록 렌더링
+    let repliesHtml = "";
+    if (post.replies && post.replies.length > 0) {
+      post.replies.forEach(r => {
+        repliesHtml += `
+          <div class="reply-item">
+            <span class="reply-author">${r.author}:</span>
+            <span>${r.text}</span>
+          </div>
+        `;
+      });
+    }
+
     html += `
-      <div class="card">
-        <h3 style="color:#e5be75;">⚖️ ${d.topic}</h3>
-        <p style="margin-top:8px;">${d.desc}</p>
+      <div class="debate-post">
+        <div class="post-header">
+          <span class="post-author">👤 ${post.author}</span>
+          <span class="post-date">${post.date}</span>
+        </div>
+        <div class="post-content">${post.content}</div>
+
+        <div class="reply-section">
+          <div class="reply-list">${repliesHtml}</div>
+          <div class="reply-input-row">
+            <input type="text" class="reply-nick" id="replyNick-${post.id}" placeholder="닉네임" maxlength="10">
+            <input type="text" class="reply-text" id="replyText-${post.id}" placeholder="답변 남기기...">
+            <button class="reply-btn" onclick="addDebateReply(${post.id})">답변</button>
+          </div>
+        </div>
       </div>
     `;
   });
-  document.getElementById("debateBox").innerHTML = html;
+
+  listContainer.innerHTML = html;
 }
 
+// 새 질문 추가 함수
+window.addDebatePost = function() {
+  const authorInput = document.getElementById("debateAuthor");
+  const contentInput = document.getElementById("debateQuestion");
+  const author = authorInput.value.trim() || "익명";
+  const content = contentInput.value.trim();
+
+  if (!content) {
+    alert("질문 내용을 작성해 주세요.");
+    return;
+  }
+
+  const storageKey = `debate_posts_${currentHero}`;
+  const posts = JSON.parse(localStorage.getItem(storageKey)) || [];
+
+  const now = new Date();
+  const dateStr = `${now.getMonth() + 1}월 ${now.getDate()}일 ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+  const newPost = {
+    id: Date.now(),
+    author: author,
+    content: content,
+    date: dateStr,
+    replies: []
+  };
+
+  posts.unshift(newPost); // 최신 글이 위로 오도록 추가
+  localStorage.setItem(storageKey, JSON.stringify(posts));
+
+  contentInput.value = "";
+  renderDebates();
+};
+
+// 답변(댓글) 추가 함수
+window.addDebateReply = function(postId) {
+  const nickInput = document.getElementById(`replyNick-${postId}`);
+  const textInput = document.getElementById(`replyText-${postId}`);
+  const author = nickInput.value.trim() || "익명";
+  const text = textInput.value.trim();
+
+  if (!text) {
+    alert("답변 내용을 작성해 주세요.");
+    return;
+  }
+
+  const storageKey = `debate_posts_${currentHero}`;
+  const posts = JSON.parse(localStorage.getItem(storageKey)) || [];
+  const targetPost = posts.find(p => p.id === postId);
+
+  if (targetPost) {
+    if (!targetPost.replies) targetPost.replies = [];
+    targetPost.replies.push({ author, text });
+    localStorage.setItem(storageKey, JSON.stringify(posts));
+    renderDebates();
+  }
+};
 // 최초 실행: 지도 화면 시작
 initMainMap();
