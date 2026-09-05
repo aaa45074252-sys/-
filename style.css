@@ -86,3 +86,17 @@ header { background: #1c1613; padding: 10px 16px; display: flex; justify-content
 .reply-btn { background: #473a34; color: #eeddcc; border: 1px solid #6b574e; border-radius: 4px; padding: 0 10px; font-size: 11px; cursor: pointer; }
 .reply-btn:hover { background: #5c4b44; }
 .no-posts { text-align: center; color: #666; font-size: 13px; padding: 30px 0; }
+
+/* 수정 / 삭제 버튼 및 비밀번호 입력 스타일 */
+.post-actions, .reply-actions { display: flex; gap: 6px; align-items: center; }
+.action-btn { background: none; border: none; color: #8c8072; font-size: 11px; cursor: pointer; padding: 2px 4px; }
+.action-btn:hover { color: #e5be75; }
+.action-btn.del:hover { color: #ef4444; }
+
+.input-row { display: flex; gap: 8px; margin-bottom: 8px; }
+.input-row input { flex: 1; padding: 8px; background: #261d17; border: 1px solid #4a3c30; border-radius: 4px; color: #fff; font-size: 12px; }
+
+/* 댓글 항목 가로 정렬 */
+.reply-item { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #ccc; padding: 6px 0; border-bottom: 1px dashed #261d18; }
+.reply-main { flex: 1; margin-right: 8px; }
+.reply-pwd { width: 65px; }
