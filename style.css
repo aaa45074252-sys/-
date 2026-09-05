@@ -1,65 +1,58 @@
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-body { display: flex; flex-direction: column; height: 100vh; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #12100e; color: #eee; overflow: hidden; }
+body { display: flex; flex-direction: column; height: 100vh; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #12100e; color: #f0e6d2; overflow: hidden; }
 
 /* 상단 헤더 */
-header { background: #1e1714; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #b89047; z-index: 1000; }
-.brand { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 8px; }
-.brand h1 { font-size: 16px; color: #e5be75; font-weight: 700; white-space: nowrap; }
-.hero-select { background: #3b312c; color: #fff; border: 1px solid #786458; padding: 6px 10px; border-radius: 6px; font-size: 13px; outline: none; }
+header { background: #1c1613; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #b89047; z-index: 1000; }
+.header-left h1 { font-size: 15px; color: #e5be75; font-weight: bold; }
+.header-right { display: flex; gap: 8px; align-items: center; }
+.nav-btn { background: #332720; color: #e5be75; border: 1px solid #b89047; padding: 6px 10px; border-radius: 6px; font-size: 12px; cursor: pointer; }
+.nav-btn.active { background: #b89047; color: #12100e; font-weight: bold; }
+.hero-select { background: #241c18; color: #fff; border: 1px solid #786458; padding: 6px 8px; border-radius: 6px; font-size: 12px; outline: none; }
 
-/* 모바일 가로 스크롤 메뉴 탭 */
-.sub-nav { background: #261d18; border-bottom: 1px solid #3d2f27; display: flex; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
-.sub-nav::-webkit-scrollbar { display: none; }
-.view-tab-btn { background: transparent; border: none; color: #999; padding: 10px 14px; font-size: 13px; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; flex-shrink: 0; }
-.view-tab-btn.active { color: #e5be75; border-bottom: 3px solid #e5be75; background: rgba(184, 144, 71, 0.12); }
+/* 메인 화면 전환 */
+.main-view { display: none; width: 100%; height: calc(100vh - 54px); position: relative; }
+.main-view.active { display: block; }
 
-/* 화면 탭 전환 */
-.view-panel { display: none !important; width: 100%; height: calc(100vh - 88px); overflow-y: auto; }
-.view-panel.active { display: block !important; }
-#mapViewPanel.active { display: flex !important; flex-direction: column; overflow: hidden; }
+/* 1. 첫 화면: 전체 지도 */
+#mainMap { width: 100%; height: 100%; }
+.map-legend { position: absolute; bottom: 16px; left: 16px; z-index: 999; background: rgba(24, 18, 15, 0.9); border: 1px solid #b89047; padding: 8px 12px; border-radius: 8px; font-size: 12px; display: flex; gap: 12px; }
+.legend-item { display: flex; align-items: center; gap: 6px; }
+.dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+.dot.gold { background: #e5be75; border: 2px solid #fff; }
+.dot.crimson { background: #ef4444; border: 2px solid #fff; }
 
-/* 1. 개요 */
-.overview-container { padding: 16px; max-width: 800px; margin: 0 auto; }
-.overview-hero-card { background: #1c1815; border-radius: 10px; border: 1px solid #3d3229; padding: 20px; margin-bottom: 16px; }
-.overview-hero-card h2 { font-size: 20px; color: #e5be75; margin-bottom: 6px; }
-.overview-tagline { font-size: 13px; color: #a89f91; margin-bottom: 16px; }
-.info-box { background: #25201b; border: 1px solid #3d3229; padding: 12px; border-radius: 6px; margin-bottom: 10px; font-size: 13px; }
-.info-box h4 { color: #e5be75; margin-bottom: 4px; }
-.plutarch-verdict { background: #2d241d; padding: 14px; border-radius: 6px; border-left: 4px solid #b89047; font-size: 13px; line-height: 1.5; color: #ddd; }
+/* 지도 마커 커스텀 */
+.custom-pin { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 6px rgba(0,0,0,0.6); }
+.pin-theseus { background: #e5be75; }
+.pin-romulus { background: #ef4444; }
 
-/* 2. 지도 (스마트폰: 위 지도, 아래 목록) */
-#map { flex: 1.2; width: 100%; min-height: 240px; }
-#sidebar { flex: 1; background: #1b1714; border-top: 1px solid #382c23; overflow-y: auto; }
-.sidebar-content { padding: 12px; }
-.playback-bar { position: absolute; top: 10px; right: 10px; z-index: 999; background: rgba(25, 20, 17, 0.85); padding: 6px 12px; border-radius: 20px; border: 1px solid #b89047; display: flex; align-items: center; gap: 8px; font-size: 12px; }
-.play-btn { background: #b89047; border: none; width: 26px; height: 26px; border-radius: 50%; font-weight: bold; cursor: pointer; }
-.card { background: #241e19; margin-bottom: 10px; border-radius: 6px; border: 1px solid #3a2e24; padding: 10px; font-size: 13px; }
-.step-badge { background: #b89047; color: #111; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 8px; margin-right: 4px; }
+/* 팝업 스타일 */
+.leaflet-popup-content-wrapper { background: #1c1613; color: #f0e6d2; border: 1px solid #b89047; }
+.leaflet-popup-tip { background: #1c1613; }
+.popup-inner h4 { color: #e5be75; margin-bottom: 4px; font-size: 14px; }
+.popup-inner p { font-size: 12px; color: #ccc; margin-bottom: 8px; line-height: 1.4; }
+.popup-btn { background: #b89047; color: #111; border: none; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; width: 100%; }
 
-/* 3. 명문장 */
-.quotes-container { padding: 16px; max-width: 800px; margin: 0 auto; }
-.quote-card { background: #1c1815; border-left: 4px solid #b89047; padding: 16px; margin-bottom: 14px; border-radius: 6px; font-size: 14px; }
-.quote-text { font-style: italic; color: #f3ebd8; margin-bottom: 8px; line-height: 1.5; }
-.quote-context { font-size: 12px; color: #a89f91; }
+/* 2. 영웅 상세 페이지 서브 탭 */
+#heroDetailSection { overflow-y: auto; background: #12100e; }
+.hero-sub-nav { display: flex; background: #1f1814; border-bottom: 1px solid #3d2f27; overflow-x: auto; }
+.tab-btn { flex: 1; min-width: 80px; padding: 12px 6px; background: none; border: none; color: #999; font-size: 13px; font-weight: bold; cursor: pointer; border-bottom: 3px solid transparent; }
+.tab-btn.active { color: #e5be75; border-bottom: 3px solid #e5be75; background: rgba(184, 144, 71, 0.1); }
 
-/* 4. D3 살아있는 관계망 */
-#graphViewPanel { position: relative; width: 100%; height: calc(100vh - 88px); background: #0d0b0a; touch-action: none; }
+.tab-content { display: none; padding: 16px; }
+.tab-content.active { display: block; }
+.content-box { max-width: 800px; margin: 0 auto; }
+
+/* 개요/문장/토론 카드 공통 */
+.card { background: #1c1613; border: 1px solid #3d3027; border-radius: 8px; padding: 14px; margin-bottom: 12px; font-size: 13px; }
+.card h3 { color: #e5be75; margin-bottom: 6px; font-size: 15px; }
+.card p { color: #ddd; line-height: 1.5; }
+
+/* 관계망 */
+.network-wrap { width: 100%; height: calc(100vh - 120px); position: relative; background: #0c0a09; }
 #networkSvg { width: 100%; height: 100%; }
-.graph-hud { position: absolute; top: 12px; left: 14px; pointer-events: none; }
-.graph-hud h2 { font-size: 16px; color: #e5be75; }
-.graph-hud p { font-size: 11px; color: #888; }
-.node-inspector { position: absolute; bottom: 12px; left: 12px; right: 12px; background: rgba(28, 23, 20, 0.95); border: 1px solid #b89047; border-radius: 8px; padding: 14px; z-index: 100; }
+.node-inspector { position: absolute; bottom: 12px; left: 12px; right: 12px; background: rgba(28, 22, 19, 0.95); border: 1px solid #b89047; border-radius: 8px; padding: 12px; z-index: 100; }
 .node-inspector.hidden { display: none; }
-.inspector-tag { font-size: 9px; font-weight: bold; padding: 2px 6px; border-radius: 6px; background: #e5be75; color: #111; }
-.inspector-title { font-size: 15px; font-weight: bold; color: #fff; margin: 4px 0; }
-.inspector-desc { font-size: 12px; color: #ccc; margin-bottom: 6px; }
-.inspector-insight { font-size: 11px; color: #e5be75; background: #221b16; padding: 6px; border-radius: 4px; }
-.inspector-close { position: absolute; top: 8px; right: 8px; background: none; border: none; color: #888; font-size: 16px; cursor: pointer; }
-
-/* PC 모니터 화면 (가로 분할 전환) */
-@media (min-width: 768px) {
-  #mapViewPanel.active { flex-direction: row; }
-  #map { flex: 2; height: 100%; }
-  #sidebar { flex: 1; border-top: none; border-left: 1px solid #382c23; height: 100%; }
-  .node-inspector { left: auto; right: 20px; bottom: 20px; width: 320px; }
-}
+.ins-badge { font-size: 10px; background: #e5be75; color: #111; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+.close-btn { position: absolute; top: 8px; right: 8px; background: none; border: none; color: #aaa; font-size: 16px; cursor: pointer; }
+.ins-insight { font-size: 11px; color: #e5be75; margin-top: 6px; background: #261d17; padding: 6px; border-radius: 4px; }
