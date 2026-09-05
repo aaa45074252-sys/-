@@ -70,7 +70,21 @@
     </div>
 
     <div class="tab-content" id="tabDebate">
-      <div class="content-box" id="debateBox"></div>
+      <div class="content-box">
+        
+        <div class="debate-form-card">
+          <h3 id="debateFormTitle">💬 테세우스에게 묻고 답하기</h3>
+          <p class="form-subtext">자유롭게 질문이나 생각을 남겨주세요. (익명 참여)</p>
+          <div class="input-row">
+            <input type="text" id="debateAuthor" placeholder="닉네임 (예: 아테네시민)" maxlength="12">
+          </div>
+          <textarea id="debateQuestion" placeholder="질문이나 토론하고 싶은 주제를 적어주세요..."></textarea>
+          <button class="submit-debate-btn" onclick="addDebatePost()">질문 등록하기</button>
+        </div>
+
+        <div id="debateList"></div>
+
+      </div>
     </div>
   </section>
 
