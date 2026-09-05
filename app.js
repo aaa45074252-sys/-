@@ -1,171 +1,204 @@
-let currentHeroKey = 'theseus';
-let currentView = 'overview';
-let activeMap = null;
-let markers = [];
-let polyline = null;
-let simulation = null;
+let mainMap = null;
+let currentHero = "theseus";
 
-// 메뉴 탭 전환 이벤트
-document.querySelectorAll('.view-tab-btn').forEach(btn => {
-  btn.addEventListener('click', (e) => {
-    document.querySelectorAll('.view-tab-btn').forEach(b => b.classList.remove('active'));
-    e.target.classList.add('active');
+// 1. 지도 초기화 (지중해 전체가 시원하게 보이도록 중심 배치)
+function initMainMap() {
+  if (mainMap) return;
 
-    const target = e.target.dataset.target;
-    currentView = target;
-    document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+  mainMap = L.map('mainMap').setView([39.0, 19.0], 5); // 그리스-이탈리아 중간
 
-    if (target === 'overview') {
-      document.getElementById('overviewPanel').classList.add('active');
-      renderOverview();
-    } else if (target === 'map') {
-      document.getElementById('mapViewPanel').classList.add('active');
-      setTimeout(() => {
-        if (!activeMap) initMap();
-        activeMap.invalidateSize();
-        renderMap();
-      }, 150);
-    } else if (target === 'quotes') {
-      document.getElementById('quotesPanel').classList.add('active');
-      renderQuotes();
-    } else if (target === 'network') {
-      document.getElementById('graphViewPanel').classList.add('active');
-      setTimeout(initNetworkGraph, 100);
-    }
+  L.tileLayer('https://mt0.google.com/vt/lyrs=m&hl=ko&x={x}&y={y}&z={z}', {
+    maxZoom: 18, attribution: '© Google Maps'
+  }).addTo(mainMap);
+
+  // 모든 영웅 사건 핀 꽂기
+  allMapEvents.forEach(evt => {
+    // 커스텀 원형 마커 생성
+    const icon = L.divIcon({
+      className: `custom-pin ${evt.pinClass}`,
+      iconSize: [16, 16],
+      iconAnchor: [8, 8]
+    });
+
+    const marker = L.marker([evt.lat, evt.lng], { icon: icon }).addTo(mainMap);
+    
+    // 팝업 내용 + '영웅 보러가기' 버튼
+    const popupContent = `
+      <div class="popup-inner">
+        <h4>[${evt.heroName}] ${evt.title}</h4>
+        <p>${evt.desc}</p>
+        <button class="popup-btn" onclick="openHeroView('${evt.hero}')">
+          👤 ${evt.heroName} 상세 보기 &gt;
+        </button>
+      </div>
+    `;
+    marker.bindPopup(popupContent);
+  });
+}
+
+// 2. 화면 전환: 지도(홈) vs 영웅 상세
+const mapSection = document.getElementById("mapSection");
+const heroDetailSection = document.getElementById("heroDetailSection");
+const homeMapBtn = document.getElementById("homeMapBtn");
+const heroSelect = document.getElementById("heroSelect");
+
+// 홈(지도) 버튼 클릭
+homeMapBtn.addEventListener("click", () => {
+  homeMapBtn.classList.add("active");
+  heroSelect.value = "";
+  mapSection.classList.add("active");
+  heroDetailSection.classList.remove("active");
+  document.getElementById("appTitle").innerText = "🏛️ 플루타르코스 세계 지도";
+  if (mainMap) setTimeout(() => mainMap.invalidateSize(), 150);
+});
+
+// 우측 상단 영웅 셀렉트 박스 변경 시
+heroSelect.addEventListener("change", (e) => {
+  openHeroView(e.target.value);
+});
+
+// 영웅 상세 페이지 열기 함수 (지도 팝업 버튼 클릭 시에도 실행)
+window.openHeroView = function(heroKey) {
+  currentHero = heroKey;
+  homeMapBtn.classList.remove("active");
+  heroSelect.value = heroKey;
+
+  mapSection.classList.remove("active");
+  heroDetailSection.classList.add("active");
+
+  const heroData = heroDetails[heroKey];
+  document.getElementById("appTitle").innerText = `🏛️ ${heroData.name}`;
+
+  // 첫 번째 탭(개요)으로 초기화
+  switchHeroTab("overview");
+};
+
+// 3. 영웅 상세 화면 내 4개 서브 탭 전환
+document.querySelectorAll(".hero-sub-nav .tab-btn").forEach(btn => {
+  btn.addEventListener("click", (e) => {
+    const tab = e.target.dataset.tab;
+    switchHeroTab(tab);
   });
 });
 
-// 영웅 드롭다운 선택
-document.getElementById('heroSelect').addEventListener('change', (e) => {
-  currentHeroKey = e.target.value;
-  if (currentView === 'overview') renderOverview();
-  else if (currentView === 'quotes') renderQuotes();
-  else if (currentView === 'network') initNetworkGraph();
-  else if (currentView === 'map' && activeMap) {
-    activeMap.setView(heroDatabase[currentHeroKey].center, heroDatabase[currentHeroKey].zoom);
-    renderMap();
-  }
-});
+function switchHeroTab(tabName) {
+  document.querySelectorAll(".hero-sub-nav .tab-btn").forEach(b => b.classList.remove("active"));
+  document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
 
-// 개요 화면 표시
+  const targetBtn = document.querySelector(`.hero-sub-nav .tab-btn[data-tab="${tabName}"]`);
+  if (targetBtn) targetBtn.classList.add("active");
+
+  if (tabName === "overview") {
+    document.getElementById("tabOverview").classList.add("active");
+    renderOverview();
+  } else if (tabName === "network") {
+    document.getElementById("tabNetwork").classList.add("active");
+    setTimeout(renderNetwork, 100);
+  } else if (tabName === "quotes") {
+    document.getElementById("tabQuotes").classList.add("active");
+    renderQuotes();
+  } else if (tabName === "debate") {
+    document.getElementById("tabDebate").classList.add("active");
+    renderDebates();
+  }
+}
+
+// 탭 1: 개요 렌더링
 function renderOverview() {
-  const hero = heroDatabase[currentHeroKey];
-  document.getElementById('overviewContent').innerHTML = `
-    <div class="overview-hero-card">
-      <h2>${hero.name}</h2>
-      <div class="overview-tagline">${hero.tagline}</div>
-      <div class="info-box"><h4>🏛️ 출생</h4><p>${hero.overview.lineage}</p></div>
-      <div class="info-box"><h4>⚔️ 업적</h4><p>${hero.overview.achievements}</p></div>
-      <div class="info-box"><h4>👤 기질</h4><p>${hero.overview.personality}</p></div>
-      <div class="plutarch-verdict"><h4>📖 총평</h4><p>${hero.overview.verdict}</p></div>
-    </div>
+  const h = heroDetails[currentHero];
+  document.getElementById("overviewBox").innerHTML = `
+    <div class="card"><h3>🏛️ 출생과 기원</h3><p>${h.overview.birth}</p></div>
+    <div class="card"><h3>⚔️ 핵심 업적</h3><p>${h.overview.feat}</p></div>
+    <div class="card"><h3>👤 성격과 기질</h3><p>${h.overview.character}</p></div>
+    <div class="card"><h3>📖 플루타르코스의 총평</h3><p>${h.overview.verdict}</p></div>
   `;
 }
 
-// 명문장 화면 표시
-function renderQuotes() {
-  const hero = heroDatabase[currentHeroKey];
-  let html = `<h2 style="color:#e5be75;margin-bottom:14px;font-size:18px;">📜 원문 명문장</h2>`;
-  hero.quotes.forEach(q => {
-    html += `
-      <div class="quote-card">
-        <div class="quote-text">${q.text}</div>
-        <div class="quote-context">📌 ${q.context}</div>
-      </div>
-    `;
-  });
-  document.getElementById('quotesContent').innerHTML = html;
-}
-
-// 지도 초기화
-function initMap() {
-  activeMap = L.map('map').setView(heroDatabase[currentHeroKey].center, heroDatabase[currentHeroKey].zoom);
-  L.tileLayer('https://mt0.google.com/vt/lyrs=m&hl=ko&x={x}&y={y}&z={z}', {
-    maxZoom: 19, attribution: '© Google Maps'
-  }).addTo(activeMap);
-}
-
-function renderMap() {
-  if (!activeMap) return;
-  markers.forEach(m => activeMap.removeLayer(m));
-  markers = [];
-  if (polyline) activeMap.removeLayer(polyline);
-
-  const hero = heroDatabase[currentHeroKey];
-  const listContainer = document.getElementById("placeList");
-  listContainer.innerHTML = "";
-  const path = [];
-
-  hero.places.forEach((p, idx) => {
-    path.push([p.lat, p.lng]);
-    const marker = L.marker([p.lat, p.lng]).addTo(activeMap);
-    marker.bindPopup(`<strong>${p.name}</strong><br>${p.story}`);
-    markers.push(marker);
-
-    const card = document.createElement("div");
-    card.className = "card";
-    card.innerHTML = `<span class="step-badge">${idx + 1}</span><strong>${p.name}</strong><p style="color:#aaa;margin-top:4px;">${p.story}</p>`;
-    card.onclick = () => { activeMap.setView([p.lat, p.lng], 9); marker.openPopup(); };
-    listContainer.appendChild(card);
-  });
-
-  if (path.length > 1) {
-    polyline = L.polyline(path, { color: '#a63121', weight: 3, dashArray: '6, 8' }).addTo(activeMap);
-  }
-}
-
-// D3 물리 엔진 그래프 (터치/마우스 드래그)
-function initNetworkGraph() {
-  const hero = heroDatabase[currentHeroKey];
-  document.getElementById("graphHeroTitle").innerText = `${hero.name}의 관계망`;
+// 탭 2: 관계망 렌더링 (D3)
+function renderNetwork() {
+  const h = heroDetails[currentHero];
   const svg = d3.select("#networkSvg");
   svg.selectAll("*").remove();
 
-  const width = document.getElementById("graphViewPanel").clientWidth;
-  const height = document.getElementById("graphViewPanel").clientHeight;
+  const width = document.getElementById("tabNetwork").clientWidth;
+  const height = document.getElementById("tabNetwork").clientHeight || 450;
 
   const g = svg.append("g");
-  svg.call(d3.zoom().scaleExtent([0.5, 2]).on("zoom", (e) => g.attr("transform", e.transform)));
+  svg.call(d3.zoom().scaleExtent([0.5, 2.5]).on("zoom", (e) => g.attr("transform", e.transform)));
 
-  const nodesData = JSON.parse(JSON.stringify(hero.graph.nodes));
-  const linksData = JSON.parse(JSON.stringify(hero.graph.links));
+  const nodes = JSON.parse(JSON.stringify(h.graph.nodes));
+  const links = JSON.parse(JSON.stringify(h.graph.links));
 
-  simulation = d3.forceSimulation(nodesData)
-    .force("link", d3.forceLink(linksData).id(d => d.id).distance(80))
-    .force("charge", d3.forceManyBody().strength(-200))
-    .force("center", d3.forceCenter(width / 2, height / 2))
-    .force("collision", d3.forceCollide().radius(d => d.r + 10));
+  const simulation = d3.forceSimulation(nodes)
+    .force("link", d3.forceLink(links).id(d => d.id).distance(100))
+    .force("charge", d3.forceManyBody().strength(-300))
+    .force("center", d3.forceCenter(width / 2, height / 2));
 
-  const link = g.append("g").selectAll("line").data(linksData).enter().append("line")
-    .attr("stroke", "#554336").attr("stroke-width", 1.5);
+  const link = g.append("g").selectAll("line").data(links).enter().append("line")
+    .attr("stroke", "#665243").attr("stroke-width", 2);
 
-  const node = g.append("g").selectAll("g").data(nodesData).enter().append("g")
+  const linkText = g.append("g").selectAll("text").data(links).enter().append("text")
+    .attr("text-anchor", "middle").attr("fill", "#c5b59f").attr("font-size", "10px").attr("dy", -4)
+    .text(d => d.label);
+
+  const node = g.append("g").selectAll("g").data(nodes).enter().append("g")
     .call(d3.drag()
       .on("start", (e, d) => { if (!e.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
       .on("drag", (e, d) => { d.fx = e.x; d.fy = e.y; })
       .on("end", (e, d) => { if (!e.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; }));
 
-  node.append("circle").attr("r", d => d.r).attr("fill", d => d.color).attr("stroke", "#fff").attr("stroke-width", 1.5);
-  node.append("text").attr("dy", d => d.r + 12).attr("text-anchor", "middle")
-    .attr("fill", "#ccc").attr("font-size", "10px").text(d => d.name);
+  node.append("circle").attr("r", d => d.r).attr("fill", d => d.color).attr("stroke", "#fff").attr("stroke-width", 2);
+  node.append("text").attr("dy", d => d.r + 14).attr("text-anchor", "middle").attr("fill", "#eee").attr("font-size", "11px").text(d => d.name);
 
   node.on("click", (e, d) => {
     e.stopPropagation();
     const ins = document.getElementById("nodeInspector");
-    document.getElementById("insTitle").innerText = d.name;
+    document.getElementById("insType").innerText = d.type;
+    document.getElementById("insName").innerText = d.name;
     document.getElementById("insDesc").innerText = d.desc;
-    document.getElementById("insInsight").innerText = d.insight;
+    document.getElementById("insInsight").innerText = `💡 ${d.insight}`;
     ins.classList.remove("hidden");
   });
 
   svg.on("click", () => document.getElementById("nodeInspector").classList.add("hidden"));
-  document.getElementById("closeInspectorBtn").onclick = () => document.getElementById("nodeInspector").classList.add("hidden");
+  document.getElementById("closeInsBtn").onclick = () => document.getElementById("nodeInspector").classList.add("hidden");
 
   simulation.on("tick", () => {
     link.attr("x1", d => d.source.x).attr("y1", d => d.source.y).attr("x2", d => d.target.x).attr("y2", d => d.target.y);
+    linkText.attr("x", d => (d.source.x + d.target.x) / 2).attr("y", d => (d.source.y + d.target.y) / 2);
     node.attr("transform", d => `translate(${d.x},${d.y})`);
   });
 }
 
-// 첫 실행 시 개요 화면 출력
-renderOverview();
+// 탭 3: 중요 문장 렌더링
+function renderQuotes() {
+  const h = heroDetails[currentHero];
+  let html = "";
+  h.quotes.forEach(q => {
+    html += `
+      <div class="card">
+        <h3>${q.text}</h3>
+        <p style="color:#aaa;margin-top:6px;">📌 ${q.desc}</p>
+      </div>
+    `;
+  });
+  document.getElementById("quotesBox").innerHTML = html;
+}
+
+// 탭 4: 토론장 렌더링
+function renderDebates() {
+  const h = heroDetails[currentHero];
+  let html = "";
+  h.debates.forEach(d => {
+    html += `
+      <div class="card">
+        <h3 style="color:#e5be75;">⚖️ ${d.topic}</h3>
+        <p style="margin-top:8px;">${d.desc}</p>
+      </div>
+    `;
+  });
+  document.getElementById("debateBox").innerHTML = html;
+}
+
+// 최초 실행: 지도 화면 시작
+initMainMap();
