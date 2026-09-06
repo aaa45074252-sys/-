@@ -10,16 +10,19 @@ let currentHero = "theseus";
 // 2. 지도 초기화
 function initMainMap() {
   if (!mainMap) {
-    mainMap = L.map('mainMap').setView([39.0, 19.0], 5);
+    mainMap = L.map('mainMap').setView([39.9, 18.0], 5);
     L.tileLayer('https://mt0.google.com/vt/lyrs=m&hl=ko&x={x}&y={y}&z={z}', {
       maxZoom: 18, attribution: '© Google Maps'
     }).addTo(mainMap);
 
     allMapEvents.forEach(evt => {
+      // 32x32 도트 스프라이트를 품은 커스텀 핀
+      const spriteHtml = HERO_SPRITES[evt.hero] || "";
       const icon = L.divIcon({
-        className: `custom-pin ${evt.pinClass}`,
-        iconSize: [18, 18],
-        iconAnchor: [9, 9]
+        className: 'pixel-pin-container',
+        html: `<div class="pixel-pin-body">${spriteHtml}</div>`,
+        iconSize: [38, 38],
+        iconAnchor: [19, 36]
       });
 
       const marker = L.marker([evt.lat, evt.lng], { icon: icon }).addTo(mainMap);
@@ -110,7 +113,22 @@ function switchHeroTab(tabName) {
 // 5. 인물 정보 & 명언 & 관계망 렌더링
 function renderOverview() {
   const h = heroDetails[currentHero];
+  const spriteHtml = HERO_SPRITES[currentHero] || "";
+  
+  const heroRole = currentHero === "theseus" ? "아테네의 통합자이자 건국 영웅" : "영원한 제국 로마의 초대 국왕";
+  const heroTagline = currentHero === "theseus" 
+    ? "“청동 몽둥이로 불의를 꺾고 크레타의 미궁을 돌파한 자”"
+    : "“늑대의 젖을 먹고 자라 팔라티노 언덕에 성벽을 쌓은 자”";
+
   document.getElementById("overviewBox").innerHTML = `
+    <div class="hero-pixel-status">
+      <div class="pixel-avatar-box">${spriteHtml}</div>
+      <div class="pixel-status-info">
+        <span class="pixel-title-badge">${heroRole}</span>
+        <h2>${h.name}</h2>
+        <p>${heroTagline}</p>
+      </div>
+    </div>
     <div class="card"><h3>🏛️ 출생과 기원</h3><p>${h.overview.birth}</p></div>
     <div class="card"><h3>⚔️ 핵심 업적</h3><p>${h.overview.feat}</p></div>
     <div class="card"><h3>👤 성격과 기질</h3><p>${h.overview.character}</p></div>
@@ -148,8 +166,8 @@ function renderNetwork() {
   const links = JSON.parse(JSON.stringify(h.graph.links));
 
   const simulation = d3.forceSimulation(nodes)
-    .force("link", d3.forceLink(links).id(d => d.id).distance(90))
-    .force("charge", d3.forceManyBody().strength(-250))
+    .force("link", d3.forceLink(links).id(d => d.id).distance(100))
+    .force("charge", d3.forceManyBody().strength(-280))
     .force("center", d3.forceCenter(width / 2, (height / 2) - 30));
 
   const link = g.append("g").selectAll("line").data(links).enter().append("line")
@@ -165,8 +183,28 @@ function renderNetwork() {
       .on("drag", (e, d) => { d.fx = e.x; d.fy = e.y; })
       .on("end", (e, d) => { if (!e.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; }));
 
-  node.append("circle").attr("r", d => d.r).attr("fill", d => d.color).attr("stroke", "#fff").attr("stroke-width", 2);
-  node.append("text").attr("dy", d => d.r + 14).attr("text-anchor", "middle").attr("fill", "#eee").attr("font-size", "11px").text(d => d.name);
+  // 중심 영웅은 도트 스프라이트(foreignObject), 주변 인물은 기존 원형으로 렌더링
+  node.each(function(d) {
+    const el = d3.select(this);
+    if (d.id === currentHero) {
+      el.append("foreignObject")
+        .attr("x", -24)
+        .attr("y", -24)
+        .attr("width", 48)
+        .attr("height", 48)
+        .html(`<div style="width:100%;height:100%;filter:drop-shadow(0 0 6px #e5be75);">${HERO_SPRITES[currentHero]}</div>`);
+    } else {
+      el.append("circle").attr("r", d.r).attr("fill", d.color).attr("stroke", "#fff").attr("stroke-width", 2);
+    }
+  });
+
+  node.append("text")
+    .attr("dy", d => d.id === currentHero ? 32 : d.r + 14)
+    .attr("text-anchor", "middle")
+    .attr("fill", "#eee")
+    .attr("font-size", "11px")
+    .attr("font-weight", d => d.id === currentHero ? "bold" : "normal")
+    .text(d => d.name);
 
   node.on("click", (e, d) => {
     e.stopPropagation();
