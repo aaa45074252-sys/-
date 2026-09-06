@@ -1,0 +1,56 @@
+<svg viewBox="0 0 64 48" width="280" height="210" xmlns="http://www.w3.org/2000/svg" style="background:#2b2622; border-radius:6px; image-rendering:pixelated; border:2px solid #8c6f48;">
+  <!-- 하늘과 배경 석조 기둥 -->
+  <rect x="0" y="0" width="64" height="34" fill="#3a3832"/>
+  <rect x="36" y="4" width="20" height="30" fill="#4d4438"/>
+  <rect x="34" y="2" width="24" height="3" fill="#665c4d"/>
+  
+  <!-- 배경 숲 음영 -->
+  <rect x="10" y="2" width="14" height="6" fill="#2d3326"/>
+  <rect x="6" y="5" width="20" height="6" fill="#242b1e"/>
+
+  <!-- 지면 (바닥 흙) -->
+  <rect x="0" y="34" width="64" height="14" fill="#261e18"/>
+  <rect x="0" y="34" width="64" height="2" fill="#3d3126"/>
+
+  <!-- 들려 올려지는 거대한 사각 바위 (대각선 배치 느낌) -->
+  <polygon points="18,34 38,28 44,38 24,44" fill="#8c8274"/>
+  <polygon points="20,35 38,29 42,37 24,43" fill="#a39889"/>
+  <!-- 바위 밑 숨겨진 아이게우스의 황금 칼 빛 -->
+  <rect x="26" y="37" width="8" height="2" fill="#e5be75"/>
+
+  <!-- [우측] 어머니 아이트라 (푸른 옷 + 주황빛 치마 + 가리키는 손) -->
+  <!-- 머리 & 얼굴 -->
+  <rect x="42" y="14" width="5" height="5" fill="#e2b998"/>
+  <rect x="43" y="13" width="4" height="2" fill="#5a3d28"/> <!-- 갈색 머리 -->
+  <!-- 상체 (푸른 튜닉) -->
+  <rect x="41" y="19" width="7" height="8" fill="#3a5f78"/>
+  <rect x="42" y="20" width="4" height="6" fill="#527f9e"/>
+  <!-- 가리키는 오른팔 -->
+  <rect x="38" y="22" width="3" height="3" fill="#e2b998"/>
+  <rect x="36" y="25" width="3" height="3" fill="#e2b998"/>
+  <!-- 하체 (주황/벽돌색 긴 치마) -->
+  <rect x="40" y="27" width="9" height="11" fill="#a45235"/>
+  <rect x="42" y="30" width="7" height="9" fill="#bc6646"/>
+  <!-- 샌들 발 -->
+  <rect x="43" y="38" width="3" height="2" fill="#7a3e26"/>
+
+  <!-- [좌측] 테세우스 (붉은 펄럭이는 망토 + 허리 숙여 돌을 드는 역동적 포즈) -->
+  <!-- 펄럭이는 붉은 망토 백그라운드 -->
+  <rect x="12" y="15" width="8" height="8" fill="#882222"/>
+  <rect x="10" y="17" width="6" height="7" fill="#6a1a1a"/>
+  <!-- 머리 & 숙인 상체 -->
+  <rect x="25" y="18" width="5" height="5" fill="#dfb391"/>
+  <rect x="26" y="17" width="4" height="2" fill="#442a1b"/> <!-- 곱슬머리 -->
+  <!-- 붉은 튜닉 상체 -->
+  <rect x="20" y="21" width="8" height="8" fill="#b33333"/>
+  <!-- 돌을 잡고 끌어올리는 두 팔 -->
+  <rect x="21" y="25" width="3" height="7" fill="#dfb391"/>
+  <rect x="23" y="30" width="3" height="4" fill="#dfb391"/>
+  <!-- 허벅지와 다리 (굽힌 자세) -->
+  <rect x="15" y="27" width="6" height="5" fill="#992828"/>
+  <rect x="13" y="32" width="4" height="7" fill="#dfb391"/>
+  <rect x="19" y="32" width="4" height="8" fill="#dfb391"/>
+  <!-- 가죽 샌들 -->
+  <rect x="11" y="37" width="5" height="2" fill="#662211"/>
+  <rect x="19" y="38" width="4" height="2" fill="#662211"/>
+</svg>
