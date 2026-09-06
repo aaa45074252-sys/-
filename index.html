@@ -2,129 +2,94 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>플루타르코스 비교열전 아카이브</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>플루타르코스 비교 열전 아카이브</title>
   
-  <!-- Leaflet CSS -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1e1714">
+
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <!-- D3.js -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://d3js.org/d3.v7.min.js"></script>
-  <!-- Supabase JS -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- 스타일 시트 -->
-  <link rel="stylesheet" href="style.css">
+
+  <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
-  <div class="app-container">
-    <!-- 헤더 영역 -->
-    <header class="main-header">
-      <h1>🏛️ 플루타르코스 영웅 열전</h1>
-      <div class="hero-selector-wrapper">
-        <label for="heroSelect">영웅 선택:</label>
-        <select id="heroSelect">
-          <option value="theseus" selected>테세우스 (아테네)</option>
-          <option value="romulus">로물루스 (로마)</option>
-        </select>
-      </div>
-    </header>
 
-    <!-- 탭 네비게이션 메뉴 (지도가 맨 앞 & 활성화) -->
-    <nav class="tabs-nav">
-      <button class="tab-btn active" data-tab="map">🗺️ 전체 지도</button>
-      <button class="tab-btn" data-tab="overview">🏛️ 개요</button>
-      <button class="tab-btn" data-tab="network">🕸️ 관계망</button>
-      <button class="tab-btn" data-tab="quest">📜 영웅 퀘스트</button>
-      <button class="tab-btn" data-tab="quotes">📖 명언</button>
-      <button class="tab-btn" data-tab="debate">💬 토론장</button>
+  <header>
+    <div class="header-left">
+      <h1 id="appTitle">🏛️ 플루타르코스 세계 지도</h1>
+    </div>
+    
+    <div class="header-right">
+      <button class="nav-btn active" id="homeMapBtn">🗺️ 전체 지도</button>
+      <select class="hero-select" id="heroSelect">
+        <option value="" disabled selected>👤 영웅 상세 보기</option>
+        <option value="theseus">테세우스 (아테네)</option>
+        <option value="romulus">로물루스 (로마)</option>
+      </select>
+    </div>
+  </header>
+
+  <section class="main-view active" id="mapSection">
+    <div id="mainMap"></div>
+    <div class="map-legend">
+      <span class="legend-item"><span class="dot gold"></span> 테세우스 사건</span>
+      <span class="legend-item"><span class="dot crimson"></span> 로물루스 사건</span>
+    </div>
+  </section>
+
+  <section class="main-view" id="heroDetailSection">
+    
+    <nav class="hero-sub-nav">
+      <button class="tab-btn active" data-tab="overview">🏛️ 개요</button>
+      <button class="tab-btn" data-tab="network">🌐 관계망</button>
+      <button class="tab-btn" data-tab="quotes">📜 중요 문장</button>
+      <button class="tab-btn" data-tab="debate">⚖️ 토론장</button>
     </nav>
 
-    <!-- 탭 콘텐츠 본문 -->
-    <main class="content-area">
-      <!-- 1. 지도 탭 (기본 활성화: active) -->
-      <section id="tab-map" class="tab-pane active">
-        <div id="mainMap" class="map-box"></div>
-      </section>
+    <div class="tab-content active" id="tabOverview">
+      <div class="content-box" id="overviewBox"></div>
+    </div>
 
-      <!-- 2. 개요 탭 -->
-      <section id="tab-overview" class="tab-pane">
-        <div id="overviewBox"></div>
-      </section>
-
-      <!-- 3. 관계망 탭 -->
-      <section id="tab-network" class="tab-pane">
-        <div class="network-container">
-          <svg id="networkSvg"></svg>
-          <div id="nodeInspector" class="inspector-card hidden">
-            <button id="closeInsBtn" class="close-btn">×</button>
-            <span id="insType" class="ins-badge"></span>
-            <h4 id="insName"></h4>
-            <p id="insDesc"></p>
-            <div id="insInsight" class="ins-insight"></div>
-          </div>
+    <div class="tab-content" id="tabNetwork">
+      <div class="network-wrap">
+        <svg id="networkSvg"></svg>
+        <div class="node-inspector hidden" id="nodeInspector">
+          <button class="close-btn" id="closeInsBtn">✕</button>
+          <span class="ins-badge" id="insType">역할</span>
+          <h3 id="insName">이름</h3>
+          <p id="insDesc">설명</p>
+          <div class="ins-insight" id="insInsight">통찰</div>
         </div>
-      </section>
+      </div>
+    </div>
 
-      <!-- 4. 영웅 퀘스트 탭 (플루타르코스의 천칭) -->
-      <section id="tab-quest" class="tab-pane">
-        <div class="quest-layout">
-          <div class="scales-hud">
-            <div class="hud-header">
-              <span class="hud-title">⚖️ 플루타르코스의 천칭</span>
-              <span id="questHeroBadge" class="quest-hero-badge">테세우스</span>
-            </div>
-            <div class="stat-bars">
-              <div class="stat-item">
-                <span class="stat-label">용기 (Andreia)</span>
-                <div class="bar-bg"><div id="statCourage" class="bar-fill courage" style="width: 50%;"></div></div>
-                <span id="valCourage" class="stat-val">50</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-label">신중 (Sophrosyne)</span>
-                <div class="bar-bg"><div id="statPrudence" class="bar-fill prudence" style="width: 50%;"></div></div>
-                <span id="valPrudence" class="stat-val">50</span>
-              </div>
-              <div class="stat-item">
-                <span class="stat-label">정의 (Dikaiosyne)</span>
-                <div class="bar-bg"><div id="statJustice" class="bar-fill justice" style="width: 50%;"></div></div>
-                <span id="valJustice" class="stat-val">50</span>
-              </div>
-            </div>
+    <div class="tab-content" id="tabQuotes">
+      <div class="content-box" id="quotesBox"></div>
+    </div>
+
+    <div class="tab-content" id="tabDebate">
+      <div class="content-box">
+        
+       <div class="debate-form-card">
+          <h3 id="debateFormTitle">💬 질문과 답변</h3>
+          <p class="form-subtext">자유롭게 생각을 남겨주세요. (수정/삭제용 비밀번호 입력)</p>
+          <div class="input-row">
+            <input type="text" id="debateAuthor" placeholder="닉네임" maxlength="10">
+            <input type="password" id="debatePassword" placeholder="비밀번호(4자리)" maxlength="8">
           </div>
-
-          <div class="quest-dialog-card">
-            <div class="quest-step-badge" id="questStepNum">CHAPTER 1</div>
-            <h3 id="questTitle">선택의 갈림길</h3>
-            <div class="quest-story" id="questStory">여정을 시작합니다.</div>
-            <div class="quest-choices" id="questChoices"></div>
-          </div>
+          <textarea id="debateQuestion" placeholder="질문이나 토론하고 싶은 주제를 적어주세요..."></textarea>
+          <button class="submit-debate-btn" onclick="addDebatePost()">질문 등록하기</button>
         </div>
-      </section>
+        <div id="debateList"></div>
 
-      <!-- 5. 명언 탭 -->
-      <section id="tab-quotes" class="tab-pane">
-        <div id="quotesBox" class="quotes-grid"></div>
-      </section>
+      </div>
+    </div>
+  </section>
 
-      <!-- 6. 토론 탭 -->
-      <section id="tab-debate" class="tab-pane">
-        <div class="debate-wrapper">
-          <form id="debateForm" class="debate-form">
-            <h3>💬 생각 나누기</h3>
-            <input type="text" id="debAuthor" placeholder="작성자 닉네임" required>
-            <input type="password" id="debPassword" placeholder="비밀번호 (4자리)" required>
-            <textarea id="debContent" rows="3" placeholder="영웅의 선택이나 덕목에 대한 생각을 남겨보세요..." required></textarea>
-            <button type="submit" class="submit-btn">의견 등록</button>
-          </form>
-          <div id="debateList" class="debate-list"></div>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <!-- 스크립트 -->
-  <script src="data.js"></script>
-  <script src="app.js"></script>
+  <script src="data.js?v=3"></script>
+  <script src="app.js?v=3"></script>
 </body>
 </html>
