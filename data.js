@@ -1,64 +1,31 @@
-// 전체 지도에 뿌려줄 모든 영웅의 사건 목록
-const allMapEvents = [
-  // 테세우스 사건들 (골드)
-  {
-    hero: "theseus",
-    heroName: "테세우스",
-    color: "gold",
-    pinClass: "pin-theseus",
-    title: "트로이젠 (출생과 바위 시험)",
-    desc: "바위를 들어 올려 부친의 칼과 샌들을 얻어 아테네를 향한 대장정을 시작함.",
-    lat: 37.5008, lng: 23.3644
-  },
-  {
-    hero: "theseus",
-    heroName: "테세우스",
-    color: "gold",
-    pinClass: "pin-theseus",
-    title: "아테네 (시노이키스모스 연방 선포)",
-    desc: "흩어진 아티카 부족들을 통합하여 시민 평등에 기반한 연방 정부를 수립함.",
-    lat: 37.9715, lng: 23.7257
-  },
-  {
-    hero: "theseus",
-    heroName: "테세우스",
-    color: "gold",
-    pinClass: "pin-theseus",
-    title: "크레타 크노소스 (미노타우로스 처단)",
-    desc: "아리아드네의 실타래를 이용해 미궁의 괴물을 쓰러뜨리고 공납의 비극을 끝냄.",
-    lat: 35.2984, lng: 25.1595
-  },
+// 32x32 도트 이미지 SVG 문자열
+const HERO_SPRITES = {
+  theseus: `<svg viewBox="0 0 32 32" width="100%" height="100%" style="image-rendering:pixelated;shape-rendering:crispEdges;"><rect x="11" y="3" width="10" height="4" fill="#b45309"/><rect x="9" y="5" width="14" height="6" fill="#d97706"/><rect x="11" y="4" width="6" height="3" fill="#f59e0b"/><rect x="10" y="8" width="12" height="2" fill="#eab308"/><rect x="12" y="8" width="3" height="1" fill="#fef08a"/><rect x="10" y="10" width="12" height="6" fill="#fed7aa"/><rect x="11" y="11" width="2" height="2" fill="#1e293b"/><rect x="17" y="11" width="2" height="2" fill="#1e293b"/><rect x="12" y="11" width="1" height="1" fill="#ffffff"/><rect x="18" y="11" width="1" height="1" fill="#ffffff"/><rect x="14" y="13" width="2" height="1" fill="#fb923c"/><rect x="13" y="15" width="4" height="1" fill="#ea580c"/><rect x="11" y="16" width="10" height="8" fill="#f8fafc"/><rect x="10" y="17" width="2" height="7" fill="#cbd5e1"/><rect x="20" y="17" width="2" height="7" fill="#cbd5e1"/><rect x="12" y="16" width="2" height="3" fill="#78350f"/><rect x="14" y="19" width="2" height="3" fill="#78350f"/><rect x="10" y="23" width="12" height="2" fill="#78350f"/><rect x="15" y="23" width="2" height="2" fill="#fbbf24"/><rect x="7" y="17" width="4" height="3" fill="#fed7aa"/><rect x="9" y="19" width="3" height="3" fill="#fed7aa"/><rect x="21" y="17" width="4" height="3" fill="#fed7aa"/><rect x="19" y="19" width="3" height="3" fill="#fed7aa"/><rect x="11" y="20" width="3" height="3" fill="#f97316"/><rect x="17" y="19" width="3" height="3" fill="#f97316"/><rect x="21" y="8" width="6" height="6" fill="#3e2723"/><rect x="22" y="9" width="4" height="4" fill="#5d4037"/><rect x="23" y="10" width="2" height="2" fill="#d7ccc8"/><rect x="19" y="13" width="3" height="4" fill="#4e342e"/><rect x="16" y="16" width="3" height="4" fill="#3e2723"/><rect x="13" y="21" width="3" height="4" fill="#4e342e"/><rect x="10" y="24" width="3" height="4" fill="#3e2723"/><rect x="8" y="27" width="3" height="3" fill="#2d1a10"/><rect x="11" y="25" width="3" height="3" fill="#fed7aa"/><rect x="17" y="25" width="3" height="3" fill="#fed7aa"/><rect x="11" y="27" width="3" height="2" fill="#78350f"/><rect x="17" y="27" width="3" height="2" fill="#78350f"/><rect x="10" y="29" width="4" height="2" fill="#451a03"/><rect x="17" y="29" width="4" height="2" fill="#451a03"/></svg>`,
 
-  // 로물루스 사건들 (크림슨/레드)
+  romulus: `<svg viewBox="0 0 32 32" width="100%" height="100%" style="image-rendering:pixelated;shape-rendering:crispEdges;"><rect x="13" y="1" width="6" height="2" fill="#dc2626"/><rect x="11" y="2" width="10" height="2" fill="#b91c1c"/><rect x="10" y="3" width="12" height="1" fill="#991b1b"/><rect x="11" y="4" width="10" height="5" fill="#d97706"/><rect x="13" y="4" width="6" height="2" fill="#fcd34d"/><rect x="10" y="7" width="2" height="4" fill="#b45309"/><rect x="20" y="7" width="2" height="4" fill="#b45309"/><rect x="12" y="7" width="8" height="5" fill="#fed7aa"/><rect x="13" y="8" width="2" height="2" fill="#0f172a"/><rect x="17" y="8" width="2" height="2" fill="#0f172a"/><rect x="14" y="8" width="1" height="1" fill="#ffffff"/><rect x="18" y="8" width="1" height="1" fill="#ffffff"/><rect x="15" y="10" width="2" height="1" fill="#fb923c"/><rect x="14" y="11" width="4" height="1" fill="#ea580c"/><rect x="7" y="11" width="4" height="12" fill="#991b1b"/><rect x="6" y="13" width="2" height="10" fill="#7f1d1d"/><rect x="11" y="12" width="10" height="9" fill="#b45309"/><rect x="12" y="13" width="8" height="6" fill="#d97706"/><rect x="14" y="14" width="4" height="4" fill="#f59e0b"/><rect x="10" y="12" width="2" height="3" fill="#fcd34d"/><rect x="20" y="12" width="2" height="3" fill="#fcd34d"/><rect x="6" y="15" width="5" height="10" fill="#b91c1c"/><rect x="7" y="16" width="3" height="8" fill="#dc2626"/><rect x="8" y="19" width="2" height="2" fill="#fbbf24"/><rect x="24" y="2" width="1" height="4" fill="#f1f5f9"/><rect x="23" y="4" width="3" height="2" fill="#94a3b8"/><rect x="24" y="6" width="1" height="23" fill="#5c3a1e"/><rect x="22" y="16" width="3" height="3" fill="#fed7aa"/><rect x="11" y="21" width="10" height="2" fill="#78350f"/><rect x="15" y="21" width="2" height="2" fill="#fbbf24"/><rect x="12" y="23" width="2" height="3" fill="#9a3412"/><rect x="15" y="23" width="2" height="3" fill="#78350f"/><rect x="18" y="23" width="2" height="3" fill="#9a3412"/><rect x="12" y="26" width="3" height="3" fill="#fed7aa"/><rect x="17" y="26" width="3" height="3" fill="#fed7aa"/><rect x="11" y="29" width="4" height="2" fill="#451a03"/><rect x="17" y="29" width="4" height="2" fill="#451a03"/></svg>`
+};
+
+// 대표 도시 1곳씩만 남긴 지도 이벤트
+const allMapEvents = [
   {
-    hero: "romulus",
-    heroName: "로물루스",
-    color: "crimson",
-    pinClass: "pin-romulus",
-    title: "알바 롱가 (쌍둥이의 탄생과 유기)",
-    desc: "티베리스 강에 버려졌으나 암늑대 루파의 젖을 먹고 목동 파우스툴루스 손에 자람.",
-    lat: 41.7483, lng: 12.6500
+    hero: "theseus",
+    heroName: "테세우스",
+    title: "아테네 (통합과 민주정의 기틀)",
+    desc: "아티카 지방의 흩어진 마을들을 하나로 통합(시노이키스모스)하여 위대한 도시국가 아테네의 번영을 열었습니다.",
+    lat: 37.9838,
+    lng: 23.7275
   },
   {
     hero: "romulus",
     heroName: "로물루스",
-    color: "crimson",
-    pinClass: "pin-romulus",
-    title: "팔라티노 언덕 (로마 성벽과 형제 살해)",
-    desc: "도시의 경계선을 넘으며 조롱한 쌍둥이 동생 레무스를 베고 로마를 세움.",
-    lat: 41.8892, lng: 12.4875
-  },
-  {
-    hero: "romulus",
-    heroName: "로물루스",
-    color: "crimson",
-    pinClass: "pin-romulus",
-    title: "사비니 전장 (여인들의 중재와 공동 통치)",
-    desc: "약탈당했던 사비니 여인들의 중재로 타티우스 왕과 화해하고 두 민족을 통합함.",
-    lat: 41.8925, lng: 12.4853
+    title: "로마 (팔라티노 언덕의 건국)",
+    desc: "기원전 753년, 팔라티노 언덕에 성벽의 경계를 긋고 망명자들을 받아들여 영원한 제국 로마를 세웠습니다.",
+    lat: 41.8902,
+    lng: 12.4922
   }
 ];
 
+// heroDetails(개요, 명언, 그래프)는 기존 내용 그대로 유지
 // 각 영웅의 4대 탭 세부 데이터 (개요, 관계망, 중요문장, 토론장)
 const heroDetails = {
   theseus: {
