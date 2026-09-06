@@ -1,31 +1,41 @@
+// --- Supabase 안전 설정 (키가 없거나 임시 주소여도 사이트 전체가 멈추지 않음) ---
+let supabase = null;
+try {
+  // 실제 키가 있으시다면 따옴표 안에 넣어주세요. 지금은 비워두셔도 지도/퀘스트/관계망 정상 작동합니다.
+  const SUPABASE_URL = ""; 
+  const SUPABASE_ANON_KEY = "";
+  if (SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase) {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+} catch (e) {
+  console.warn("Supabase 연결 대기 중 (다른 기능은 정상 동작)");
+}
 
-// --- Supabase 설정 ---
-const SUPABASE_URL = "https://xivchaifnztwjyldlphh.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_L2H2WzL-L0mOTOwseU_MmQ_POXfn85y";
-const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
-
-// --- 전역 상태: 첫 화면을 'map'으로 고정 ⭐ ---
+// --- 전역 상태 ---
 let currentHero = "theseus";
 let currentTab = "map"; 
 let mainMap = null;
 
-// 천칭 퀘스트 전역 상태
+// 천칭 퀘스트 상태
 let questStats = { courage: 50, prudence: 50, justice: 50 };
 let currentQuestStep = 0;
-let questMapMarker = null;
 
 // --- 초기화 실행 ---
 document.addEventListener("DOMContentLoaded", () => {
   setupNavigation();
-  renderCurrentView();
+  // 첫 화면(지도) 강제 실행
+  initMainMap();
 });
 
-// 영웅 전환 드롭다운 및 탭 이벤트 바인딩
+// 영웅 선택 및 탭 전환 이벤트 바인딩
 function setupNavigation() {
-  document.getElementById("heroSelect").addEventListener("change", (e) => {
-    currentHero = e.target.value;
-    renderCurrentView();
-  });
+  const heroSelect = document.getElementById("heroSelect");
+  if (heroSelect) {
+    heroSelect.addEventListener("change", (e) => {
+      currentHero = e.target.value;
+      renderCurrentView();
+    });
+  }
 
   const tabButtons = document.querySelectorAll(".tab-btn");
   tabButtons.forEach(btn => {
@@ -45,7 +55,7 @@ function setupNavigation() {
   });
 }
 
-// 현재 탭 렌더링
+// 탭 라우터
 function renderCurrentView() {
   if (currentTab === "map") initMainMap();
   else if (currentTab === "overview") renderOverview();
@@ -55,51 +65,63 @@ function renderCurrentView() {
   else if (currentTab === "debate") loadDebates();
 }
 
-// 1. 지도 탭 (첫 화면: 도트 영웅 핀 배치)
+// 1. 지도 탭 (안정적인 OpenStreetMap 타일 및 도트 핀)
 function initMainMap() {
+  const mapContainer = document.getElementById('mainMap');
+  if (!mapContainer) return;
+
   if (!mainMap) {
-    mainMap = L.map('mainMap').setView([39.9, 18.0], 5);
-    L.tileLayer('https://mt0.google.com/vt/lyrs=m&hl=ko&x={x}&y={y}&z={z}', {
-      maxZoom: 18, attribution: '© Google Maps'
+    // 지중해 중심 좌표
+    mainMap = L.map('mainMap').setView([39.5, 18.5], 5);
+    
+    // 전 세계 공용으로 100% 열리는 타일 레이어
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '© OpenStreetMap'
     }).addTo(mainMap);
 
-    allMapEvents.forEach(evt => {
-      const spriteHtml = HERO_SPRITES[evt.hero] || "";
-      const icon = L.divIcon({
-        className: 'pixel-pin-container',
-        html: `<div class="pixel-pin-body">${spriteHtml}</div>`,
-        iconSize: [38, 38],
-        iconAnchor: [19, 36]
-      });
+    // 테세우스 & 로물루스 도트 핀 꽂기
+    if (typeof allMapEvents !== 'undefined') {
+      allMapEvents.forEach(evt => {
+        const spriteHtml = (typeof HERO_SPRITES !== 'undefined' && HERO_SPRITES[evt.hero]) ? HERO_SPRITES[evt.hero] : "";
+        const icon = L.divIcon({
+          className: 'pixel-pin-container',
+          html: `<div class="pixel-pin-body">${spriteHtml}</div>`,
+          iconSize: [38, 38],
+          iconAnchor: [19, 36]
+        });
 
-      const marker = L.marker([evt.lat, evt.lng], { icon: icon }).addTo(mainMap);
-      marker.bindPopup(`
-        <div class="popup-inner">
-          <h4>[${evt.heroName}] ${evt.title}</h4>
-          <p>${evt.desc}</p>
-          <button class="popup-btn" onclick="openHeroTab('${evt.hero}')">👤 ${evt.heroName} 상세 보기 &gt;</button>
-        </div>
-      `);
-    });
+        const marker = L.marker([evt.lat, evt.lng], { icon: icon }).addTo(mainMap);
+        marker.bindPopup(`
+          <div class="popup-inner">
+            <h4>[${evt.heroName}] ${evt.title}</h4>
+            <p>${evt.desc}</p>
+            <button class="popup-btn" onclick="openHeroTab('${evt.hero}')">👤 ${evt.heroName} 상세 보기 &gt;</button>
+          </div>
+        `);
+      });
+    }
   }
 
+  // 지도가 잘리지 않고 꽉 차게 리사이즈 보정
   setTimeout(() => {
     if (mainMap) mainMap.invalidateSize();
-  }, 100);
+  }, 200);
 }
 
-// 핀 팝업에서 영웅 상세 탭으로 넘어가기
 function openHeroTab(heroKey) {
   currentHero = heroKey;
-  document.getElementById("heroSelect").value = heroKey;
+  const heroSelect = document.getElementById("heroSelect");
+  if (heroSelect) heroSelect.value = heroKey;
   const overviewBtn = document.querySelector(`.tab-btn[data-tab="overview"]`);
   if (overviewBtn) overviewBtn.click();
 }
 
-// 2. 개요 탭 (도트 스테이터스 카드)
+// 2. 개요 탭 (도트 상태창)
 function renderOverview() {
+  if (typeof heroDetails === 'undefined') return;
   const h = heroDetails[currentHero];
-  const spriteHtml = HERO_SPRITES[currentHero] || "";
+  const spriteHtml = (typeof HERO_SPRITES !== 'undefined' && HERO_SPRITES[currentHero]) ? HERO_SPRITES[currentHero] : "";
   const heroRole = currentHero === "theseus" ? "아테네의 통합자이자 건국 영웅" : "영원한 제국 로마의 초대 국왕";
   const heroTagline = currentHero === "theseus"
     ? "“청동 몽둥이로 불의를 꺾고 크레타의 미궁을 돌파한 자”"
@@ -121,8 +143,9 @@ function renderOverview() {
   `;
 }
 
-// 3. 관계망 탭 (중심 노드 도트화)
+// 3. 관계망 탭 (D3 인터랙티브 + 중앙 도트 영웅)
 function renderNetwork() {
+  if (typeof heroDetails === 'undefined' || typeof d3 === 'undefined') return;
   const h = heroDetails[currentHero];
   const svg = d3.select("#networkSvg");
   svg.selectAll("*").remove();
@@ -195,7 +218,7 @@ function renderNetwork() {
   });
 }
 
-// 4. 영웅 퀘스트 & 플루타르코스의 천칭 엔진
+// 4. 영웅 퀘스트 (천칭 HUD & 스토리 선택)
 function initQuest() {
   questStats = { courage: 50, prudence: 50, justice: 50 };
   currentQuestStep = 0;
@@ -209,12 +232,15 @@ function updateScalesHUD() {
   ['courage', 'prudence', 'justice'].forEach(stat => {
     questStats[stat] = Math.max(0, Math.min(100, questStats[stat]));
     const key = stat.charAt(0).toUpperCase() + stat.slice(1);
-    document.getElementById(`stat${key}`).style.width = `${questStats[stat]}%`;
-    document.getElementById(`val${key}`).innerText = questStats[stat];
+    const fillEl = document.getElementById(`stat${key}`);
+    const valEl = document.getElementById(`val${key}`);
+    if (fillEl) fillEl.style.width = `${questStats[stat]}%`;
+    if (valEl) valEl.innerText = questStats[stat];
   });
 }
 
 function loadQuestStep() {
+  if (typeof HERO_QUESTS === 'undefined') return;
   const steps = HERO_QUESTS[currentHero];
   if (!steps || currentQuestStep >= steps.length) {
     showQuestVerdict();
@@ -268,6 +294,7 @@ function showQuestVerdict() {
 
 // 5. 명언 탭
 function renderQuotes() {
+  if (typeof heroDetails === 'undefined') return;
   const h = heroDetails[currentHero];
   const box = document.getElementById("quotesBox");
   box.innerHTML = h.quotes.map(q => `
@@ -278,13 +305,15 @@ function renderQuotes() {
   `).join("");
 }
 
-// 6. 토론장 (Supabase 연동)
+// 6. 토론장
 const debateForm = document.getElementById("debateForm");
 if (debateForm) {
   debateForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-    if (!supabase) return alert("Supabase 설정을 확인해주세요.");
-
+    if (!supabase) {
+      alert("토론장 서버 설정이 비어있습니다. (추후 Supabase 연동 시 활성화됩니다)");
+      return;
+    }
     const author = document.getElementById("debAuthor").value.trim();
     const password = document.getElementById("debPassword").value.trim();
     const content = document.getElementById("debContent").value.trim();
@@ -308,7 +337,7 @@ if (debateForm) {
 async function loadDebates() {
   const list = document.getElementById("debateList");
   if (!supabase) {
-    list.innerHTML = "<p>토론장 연결 대기 중...</p>";
+    list.innerHTML = "<p style='color:#a89a8c; font-size:13px;'>토론장 서버 연결 대기 중입니다. (Supabase 키 설정 필요)</p>";
     return;
   }
 
@@ -318,12 +347,7 @@ async function loadDebates() {
     .eq('hero', currentHero)
     .order('created_at', { ascending: false });
 
-  if (error) {
-    list.innerHTML = "<p>토론을 불러오지 못했습니다.</p>";
-    return;
-  }
-
-  if (data.length === 0) {
+  if (error || !data || data.length === 0) {
     list.innerHTML = "<p style='color:#888;'>첫 번째 의견을 남겨보세요!</p>";
     return;
   }
