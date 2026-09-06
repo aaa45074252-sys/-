@@ -1,13 +1,61 @@
-// 1. Supabase 클라이언트 연결 설정
+
+// --- Supabase 설정 ---
 const SUPABASE_URL = "https://xivchaifnztwjyldlphh.supabase.co";
-// ▼ 아래 따옴표 안에 아까 복사한 'sb_publishable_...' 키를 붙여넣어 주세요!
-const SUPABASE_KEY = "sb_publishable_L2H2WzL-L0mOTOwseU_MmQ_POXfn85y"; 
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const SUPABASE_ANON_KEY = "sb_publishable_L2H2WzL-L0mOTOwseU_MmQ_POXfn85y";
+const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
-let mainMap = null;
+// --- 전역 상태: 첫 화면을 'map'으로 고정 ⭐ ---
 let currentHero = "theseus";
+let currentTab = "map"; 
+let mainMap = null;
 
-// 2. 지도 초기화
+// 천칭 퀘스트 전역 상태
+let questStats = { courage: 50, prudence: 50, justice: 50 };
+let currentQuestStep = 0;
+let questMapMarker = null;
+
+// --- 초기화 실행 ---
+document.addEventListener("DOMContentLoaded", () => {
+  setupNavigation();
+  renderCurrentView();
+});
+
+// 영웅 전환 드롭다운 및 탭 이벤트 바인딩
+function setupNavigation() {
+  document.getElementById("heroSelect").addEventListener("change", (e) => {
+    currentHero = e.target.value;
+    renderCurrentView();
+  });
+
+  const tabButtons = document.querySelectorAll(".tab-btn");
+  tabButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      tabButtons.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      const targetTab = btn.getAttribute("data-tab");
+      currentTab = targetTab;
+
+      document.querySelectorAll(".tab-pane").forEach(pane => pane.classList.remove("active"));
+      const targetPane = document.getElementById(`tab-${targetTab}`);
+      if (targetPane) targetPane.classList.add("active");
+
+      renderCurrentView();
+    });
+  });
+}
+
+// 현재 탭 렌더링
+function renderCurrentView() {
+  if (currentTab === "map") initMainMap();
+  else if (currentTab === "overview") renderOverview();
+  else if (currentTab === "network") renderNetwork();
+  else if (currentTab === "quest") initQuest();
+  else if (currentTab === "quotes") renderQuotes();
+  else if (currentTab === "debate") loadDebates();
+}
+
+// 1. 지도 탭 (첫 화면: 도트 영웅 핀 배치)
 function initMainMap() {
   if (!mainMap) {
     mainMap = L.map('mainMap').setView([39.9, 18.0], 5);
@@ -16,7 +64,6 @@ function initMainMap() {
     }).addTo(mainMap);
 
     allMapEvents.forEach(evt => {
-      // 32x32 도트 스프라이트를 품은 커스텀 핀
       const spriteHtml = HERO_SPRITES[evt.hero] || "";
       const icon = L.divIcon({
         className: 'pixel-pin-container',
@@ -26,16 +73,13 @@ function initMainMap() {
       });
 
       const marker = L.marker([evt.lat, evt.lng], { icon: icon }).addTo(mainMap);
-      const popupContent = `
+      marker.bindPopup(`
         <div class="popup-inner">
           <h4>[${evt.heroName}] ${evt.title}</h4>
           <p>${evt.desc}</p>
-          <button class="popup-btn" onclick="openHeroView('${evt.hero}')">
-            👤 ${evt.heroName} 상세 보기 &gt;
-          </button>
+          <button class="popup-btn" onclick="openHeroTab('${evt.hero}')">👤 ${evt.heroName} 상세 보기 &gt;</button>
         </div>
-      `;
-      marker.bindPopup(popupContent);
+      `);
     });
   }
 
@@ -44,79 +88,20 @@ function initMainMap() {
   }, 100);
 }
 
-// 3. 메인 네비게이션
-const mapSection = document.getElementById("mapSection");
-const heroDetailSection = document.getElementById("heroDetailSection");
-const homeMapBtn = document.getElementById("homeMapBtn");
-const heroSelect = document.getElementById("heroSelect");
-
-homeMapBtn.addEventListener("click", () => {
-  showMapView();
-});
-
-function showMapView() {
-  homeMapBtn.classList.add("active");
-  heroSelect.value = "";
-  mapSection.classList.add("active");
-  heroDetailSection.classList.remove("active");
-  document.getElementById("appTitle").innerText = "🏛️ 플루타르코스 세계 지도";
-  initMainMap();
-}
-
-heroSelect.addEventListener("change", (e) => {
-  openHeroView(e.target.value);
-});
-
-window.openHeroView = function(heroKey) {
+// 핀 팝업에서 영웅 상세 탭으로 넘어가기
+function openHeroTab(heroKey) {
   currentHero = heroKey;
-  homeMapBtn.classList.remove("active");
-  heroSelect.value = heroKey;
-
-  mapSection.classList.remove("active");
-  heroDetailSection.classList.add("active");
-
-  const heroData = heroDetails[heroKey];
-  document.getElementById("appTitle").innerText = `🏛️ ${heroData.name}`;
-
-  switchHeroTab("overview");
-};
-
-// 4. 서브 탭 전환
-document.querySelectorAll(".hero-sub-nav .tab-btn").forEach(btn => {
-  btn.addEventListener("click", (e) => {
-    switchHeroTab(e.target.dataset.tab);
-  });
-});
-
-function switchHeroTab(tabName) {
-  document.querySelectorAll(".hero-sub-nav .tab-btn").forEach(b => b.classList.remove("active"));
-  document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
-
-  const targetBtn = document.querySelector(`.hero-sub-nav .tab-btn[data-tab="${tabName}"]`);
-  if (targetBtn) targetBtn.classList.add("active");
-
-  if (tabName === "overview") {
-    document.getElementById("tabOverview").classList.add("active");
-    renderOverview();
-  } else if (tabName === "network") {
-    document.getElementById("tabNetwork").classList.add("active");
-    setTimeout(renderNetwork, 100);
-  } else if (tabName === "quotes") {
-    document.getElementById("tabQuotes").classList.add("active");
-    renderQuotes();
-  } else if (tabName === "debate") {
-    document.getElementById("tabDebate").classList.add("active");
-    renderDebates();
-  }
+  document.getElementById("heroSelect").value = heroKey;
+  const overviewBtn = document.querySelector(`.tab-btn[data-tab="overview"]`);
+  if (overviewBtn) overviewBtn.click();
 }
 
-// 5. 인물 정보 & 명언 & 관계망 렌더링
+// 2. 개요 탭 (도트 스테이터스 카드)
 function renderOverview() {
   const h = heroDetails[currentHero];
   const spriteHtml = HERO_SPRITES[currentHero] || "";
-  
   const heroRole = currentHero === "theseus" ? "아테네의 통합자이자 건국 영웅" : "영원한 제국 로마의 초대 국왕";
-  const heroTagline = currentHero === "theseus" 
+  const heroTagline = currentHero === "theseus"
     ? "“청동 몽둥이로 불의를 꺾고 크레타의 미궁을 돌파한 자”"
     : "“늑대의 젖을 먹고 자라 팔라티노 언덕에 성벽을 쌓은 자”";
 
@@ -136,28 +121,15 @@ function renderOverview() {
   `;
 }
 
-function renderQuotes() {
-  const h = heroDetails[currentHero];
-  let html = "";
-  h.quotes.forEach(q => {
-    html += `
-      <div class="card">
-        <h3>${q.text}</h3>
-        <p style="color:#aaa;margin-top:6px;">📌 ${q.desc}</p>
-      </div>
-    `;
-  });
-  document.getElementById("quotesBox").innerHTML = html;
-}
-
+// 3. 관계망 탭 (중심 노드 도트화)
 function renderNetwork() {
   const h = heroDetails[currentHero];
   const svg = d3.select("#networkSvg");
   svg.selectAll("*").remove();
 
-  const wrap = document.getElementById("tabNetwork");
-  const width = wrap.clientWidth || 360;
-  const height = wrap.clientHeight || 450;
+  const wrap = document.querySelector(".network-container");
+  const width = wrap.clientWidth || 400;
+  const height = wrap.clientHeight || 500;
 
   const g = svg.append("g");
   svg.call(d3.zoom().scaleExtent([0.5, 2.5]).on("zoom", (e) => g.attr("transform", e.transform)));
@@ -166,12 +138,12 @@ function renderNetwork() {
   const links = JSON.parse(JSON.stringify(h.graph.links));
 
   const simulation = d3.forceSimulation(nodes)
-    .force("link", d3.forceLink(links).id(d => d.id).distance(100))
-    .force("charge", d3.forceManyBody().strength(-280))
-    .force("center", d3.forceCenter(width / 2, (height / 2) - 30));
+    .force("link", d3.forceLink(links).id(d => d.id).distance(105))
+    .force("charge", d3.forceManyBody().strength(-300))
+    .force("center", d3.forceCenter(width / 2, (height / 2) - 20));
 
   const link = g.append("g").selectAll("line").data(links).enter().append("line")
-    .attr("stroke", "#665243").attr("stroke-width", 2);
+    .attr("stroke", "#5e4c3e").attr("stroke-width", 2);
 
   const linkText = g.append("g").selectAll("text").data(links).enter().append("text")
     .attr("text-anchor", "middle").attr("fill", "#c5b59f").attr("font-size", "10px").attr("dy", -4)
@@ -183,15 +155,12 @@ function renderNetwork() {
       .on("drag", (e, d) => { d.fx = e.x; d.fy = e.y; })
       .on("end", (e, d) => { if (!e.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; }));
 
-  // 중심 영웅은 도트 스프라이트(foreignObject), 주변 인물은 기존 원형으로 렌더링
   node.each(function(d) {
     const el = d3.select(this);
     if (d.id === currentHero) {
       el.append("foreignObject")
-        .attr("x", -24)
-        .attr("y", -24)
-        .attr("width", 48)
-        .attr("height", 48)
+        .attr("x", -24).attr("y", -24)
+        .attr("width", 48).attr("height", 48)
         .html(`<div style="width:100%;height:100%;filter:drop-shadow(0 0 6px #e5be75);">${HERO_SPRITES[currentHero]}</div>`);
     } else {
       el.append("circle").attr("r", d.r).attr("fill", d.color).attr("stroke", "#fff").attr("stroke-width", 2);
@@ -226,169 +195,146 @@ function renderNetwork() {
   });
 }
 
-// 6. 온라인 클라우드 토론장 (서버와 통신하는 부분)
-async function renderDebates() {
-  const h = heroDetails[currentHero];
-  document.getElementById("debateFormTitle").innerText = `💬 ${h.name}에게 묻고 답하기`;
-  const listContainer = document.getElementById("debateList");
-  listContainer.innerHTML = `<div class="no-posts">서버에서 글 목록을 불러오는 중...</div>`;
+// 4. 영웅 퀘스트 & 플루타르코스의 천칭 엔진
+function initQuest() {
+  questStats = { courage: 50, prudence: 50, justice: 50 };
+  currentQuestStep = 0;
+  updateScalesHUD();
 
-  try {
-    const { data: posts, error: postErr } = await supabaseClient
-      .from('debates')
-      .select('*')
-      .eq('hero', currentHero)
-      .order('created_at', { ascending: false });
-
-    if (postErr) throw postErr;
-
-    if (!posts || posts.length === 0) {
-      listContainer.innerHTML = `<div class="no-posts">아직 등록된 질문이 없습니다.<br>첫 번째 질문을 남겨보세요!</div>`;
-      return;
-    }
-
-    const postIds = posts.map(p => p.id);
-    const { data: replies, error: replyErr } = await supabaseClient
-      .from('replies')
-      .select('*')
-      .in('debate_id', postIds)
-      .order('created_at', { ascending: true });
-
-    if (replyErr) throw replyErr;
-
-    let html = "";
-    posts.forEach(post => {
-      const postReplies = (replies || []).filter(r => r.debate_id === post.id);
-      
-      let repliesHtml = "";
-      postReplies.forEach(r => {
-        repliesHtml += `
-          <div class="reply-item">
-            <div>
-              <span class="reply-author">${r.author}:</span>
-              <span>${r.text}</span>
-            </div>
-            <div>
-              <button class="action-btn del" onclick="deleteDebateReply(${r.id}, '${r.password}')">삭제</button>
-            </div>
-          </div>
-        `;
-      });
-
-      const dateObj = new Date(post.created_at);
-      const dateStr = `${dateObj.getMonth() + 1}/${dateObj.getDate()} ${dateObj.getHours()}:${String(dateObj.getMinutes()).padStart(2, '0')}`;
-
-      html += `
-        <div class="debate-post">
-          <div class="post-header">
-            <div>
-              <span class="post-author">👤 ${post.author}</span>
-              <span class="post-date" style="margin-left: 6px;">${dateStr}</span>
-            </div>
-            <div>
-              <button class="action-btn del" onclick="deleteDebatePost(${post.id}, '${post.password}')">삭제</button>
-            </div>
-          </div>
-          <div class="post-content">${post.content}</div>
-          <div class="reply-section">
-            <div class="reply-list">${repliesHtml}</div>
-            <div class="reply-input-row">
-              <input type="text" class="reply-nick" id="replyNick-${post.id}" placeholder="닉네임" maxlength="8">
-              <input type="password" class="reply-nick reply-pwd" id="replyPwd-${post.id}" placeholder="비번" maxlength="8">
-              <input type="text" class="reply-text" id="replyText-${post.id}" placeholder="답변 남기기...">
-              <button class="reply-btn" onclick="addDebateReply(${post.id})">답변</button>
-            </div>
-          </div>
-        </div>
-      `;
-    });
-
-    listContainer.innerHTML = html;
-  } catch (err) {
-    console.error(err);
-    listContainer.innerHTML = `<div class="no-posts">데이터를 불러오는 중 오류가 발생했습니다. (SQL 테이블 생성 여부를 확인해 주세요)</div>`;
-  }
+  document.getElementById("questHeroBadge").innerText = currentHero === "theseus" ? "테세우스" : "로물루스";
+  loadQuestStep();
 }
 
-// 질문 등록
-window.addDebatePost = async function() {
-  const authorInput = document.getElementById("debateAuthor");
-  const pwdInput = document.getElementById("debatePassword");
-  const contentInput = document.getElementById("debateQuestion");
+function updateScalesHUD() {
+  ['courage', 'prudence', 'justice'].forEach(stat => {
+    questStats[stat] = Math.max(0, Math.min(100, questStats[stat]));
+    const key = stat.charAt(0).toUpperCase() + stat.slice(1);
+    document.getElementById(`stat${key}`).style.width = `${questStats[stat]}%`;
+    document.getElementById(`val${key}`).innerText = questStats[stat];
+  });
+}
 
-  const author = authorInput.value.trim() || "익명";
-  const password = pwdInput.value.trim();
-  const content = contentInput.value.trim();
-
-  if (!content) return alert("질문 내용을 작성해 주세요.");
-  if (!password) return alert("수정/삭제용 비밀번호를 입력해 주세요.");
-
-  const { error } = await supabaseClient.from('debates').insert([{
-    hero: currentHero,
-    author: author,
-    password: password,
-    content: content
-  }]);
-
-  if (error) {
-    alert("등록 실패: " + error.message);
+function loadQuestStep() {
+  const steps = HERO_QUESTS[currentHero];
+  if (!steps || currentQuestStep >= steps.length) {
+    showQuestVerdict();
     return;
   }
 
-  contentInput.value = "";
-  pwdInput.value = "";
-  renderDebates();
-};
+  const q = steps[currentQuestStep];
+  document.getElementById("questStepNum").innerText = q.chapter;
+  document.getElementById("questTitle").innerText = q.title;
+  document.getElementById("questStory").innerText = q.story;
 
-// 질문 삭제
-window.deleteDebatePost = async function(postId, originPwd) {
-  const inputPwd = prompt("글 등록 시 설정한 비밀번호를 입력하세요:");
-  if (inputPwd === null) return;
-  if (inputPwd !== originPwd) return alert("비밀번호가 일치하지 않습니다!");
+  const choicesBox = document.getElementById("questChoices");
+  choicesBox.innerHTML = "";
+  q.choices.forEach(choice => {
+    const btn = document.createElement("button");
+    btn.className = "quest-choice-btn";
+    btn.innerText = choice.text;
+    btn.onclick = () => handleQuestChoice(choice);
+    choicesBox.appendChild(btn);
+  });
+}
 
-  if (confirm("정말 이 질문을 삭제하시겠습니까?")) {
-    const { error } = await supabaseClient.from('debates').delete().eq('id', postId);
-    if (error) alert("삭제 실패: " + error.message);
-    else renderDebates();
+function handleQuestChoice(choice) {
+  questStats.courage += choice.courage;
+  questStats.prudence += choice.prudence;
+  questStats.justice += choice.justice;
+  updateScalesHUD();
+
+  alert(`결과: ${choice.outcome}`);
+  currentQuestStep++;
+  loadQuestStep();
+}
+
+function showQuestVerdict() {
+  const choicesBox = document.getElementById("questChoices");
+  document.getElementById("questStepNum").innerText = "FINAL";
+  document.getElementById("questTitle").innerText = "플루타르코스의 최종 평결";
+
+  let verdict = "";
+  if (questStats.courage >= 65) {
+    verdict = "당신은 두려움을 모르는 담대한 영웅의 길을 걸었습니다. 플루타르코스는 당신의 기상을 칭송하지만 군주로서 절제의 가치를 되새길 것을 당부합니다.";
+  } else if (questStats.prudence >= 65) {
+    verdict = "당신은 지혜와 국가의 안정을 최우선으로 삼은 현명한 정치가였습니다. 불필요한 피를 흘리지 않고 목적을 달성하는 표본입니다.";
+  } else {
+    verdict = "당신은 정의와 엄정한 법도를 중심에 둔 공화정의 수호자였습니다. 사사로운 감정에 휘둘리지 않고 기강을 확립했습니다.";
   }
-};
 
-// 답변 등록
-window.addDebateReply = async function(postId) {
-  const nick = document.getElementById(`replyNick-${postId}`).value.trim() || "익명";
-  const pwd = document.getElementById(`replyPwd-${postId}`).value.trim();
-  const text = document.getElementById(`replyText-${postId}`).value.trim();
+  document.getElementById("questStory").innerText = verdict;
+  choicesBox.innerHTML = `<button class="quest-choice-btn" onclick="initQuest()">🔄 처음부터 다시 도전하기</button>`;
+}
 
-  if (!text) return alert("답변 내용을 입력하세요.");
-  if (!pwd) return alert("답변 삭제용 비밀번호를 입력하세요.");
+// 5. 명언 탭
+function renderQuotes() {
+  const h = heroDetails[currentHero];
+  const box = document.getElementById("quotesBox");
+  box.innerHTML = h.quotes.map(q => `
+    <div class="card">
+      <p style="font-size:14px; font-weight:bold; color:#f6ebd7; margin-bottom:6px;">"${q.text}"</p>
+      <span style="font-size:11px; color:#c5a059;">— ${q.source}</span>
+    </div>
+  `).join("");
+}
 
-  const { error } = await supabaseClient.from('replies').insert([{
-    debate_id: postId,
-    author: nick,
-    password: pwd,
-    text: text
-  }]);
+// 6. 토론장 (Supabase 연동)
+const debateForm = document.getElementById("debateForm");
+if (debateForm) {
+  debateForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!supabase) return alert("Supabase 설정을 확인해주세요.");
 
-  if (error) {
-    alert("답변 등록 실패: " + error.message);
+    const author = document.getElementById("debAuthor").value.trim();
+    const password = document.getElementById("debPassword").value.trim();
+    const content = document.getElementById("debContent").value.trim();
+
+    const { error } = await supabase.from('debates').insert([{
+      hero: currentHero,
+      author: author,
+      password: password,
+      content: content
+    }]);
+
+    if (error) {
+      alert("등록 실패: " + error.message);
+    } else {
+      document.getElementById("debContent").value = "";
+      loadDebates();
+    }
+  });
+}
+
+async function loadDebates() {
+  const list = document.getElementById("debateList");
+  if (!supabase) {
+    list.innerHTML = "<p>토론장 연결 대기 중...</p>";
     return;
   }
 
-  renderDebates();
-};
+  const { data, error } = await supabase
+    .from('debates')
+    .select('*')
+    .eq('hero', currentHero)
+    .order('created_at', { ascending: false });
 
-// 답변 삭제
-window.deleteDebateReply = async function(replyId, originPwd) {
-  const inputPwd = prompt("답변 비밀번호를 입력하세요:");
-  if (inputPwd === null) return;
-  if (inputPwd !== originPwd) return alert("비밀번호가 일치하지 않습니다!");
-
-  if (confirm("답변을 삭제하시겠습니까?")) {
-    const { error } = await supabaseClient.from('replies').delete().eq('id', replyId);
-    if (error) alert("삭제 실패: " + error.message);
-    else renderDebates();
+  if (error) {
+    list.innerHTML = "<p>토론을 불러오지 못했습니다.</p>";
+    return;
   }
-};
 
-// 첫 화면 실행
-showMapView();
+  if (data.length === 0) {
+    list.innerHTML = "<p style='color:#888;'>첫 번째 의견을 남겨보세요!</p>";
+    return;
+  }
+
+  list.innerHTML = data.map(item => `
+    <div class="debate-card">
+      <div class="debate-header">
+        <span class="debate-author">${item.author}</span>
+        <span>${new Date(item.created_at).toLocaleDateString()}</span>
+      </div>
+      <div class="debate-content">${item.content}</div>
+    </div>
+  `).join("");
+}
