@@ -1,14 +1,14 @@
-// --- Supabase 안전 설정 (키가 없거나 임시 주소여도 사이트 전체가 멈추지 않음) ---
-let supabase = null;
+// --- Supabase 설정: 이름 충돌 방지를 위해 sbClient로 변경 ---
+const SUPABASE_URL = "https://xivchaifnztwjyldlphh.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_L2H2WzL-L0mOTOwseU_MmQ_POXfn85y";
+
+let sbClient = null;
 try {
-  // 실제 키가 있으시다면 따옴표 안에 넣어주세요. 지금은 비워두셔도 지도/퀘스트/관계망 정상 작동합니다.
-  const SUPABASE_URL = ""; 
-  const SUPABASE_ANON_KEY = "";
-  if (SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase) {
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  if (window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY) {
+    sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   }
-} catch (e) {
-  console.warn("Supabase 연결 대기 중 (다른 기능은 정상 동작)");
+} catch (err) {
+  console.warn("Supabase 연결 실패 (다른 기능은 정상 작동):", err);
 }
 
 // --- 전역 상태 ---
@@ -16,14 +16,13 @@ let currentHero = "theseus";
 let currentTab = "map"; 
 let mainMap = null;
 
-// 천칭 퀘스트 상태
+// 천칭 퀘스트 전역 상태
 let questStats = { courage: 50, prudence: 50, justice: 50 };
 let currentQuestStep = 0;
 
-// --- 초기화 실행 ---
-document.addEventListener("DOMContentLoaded", () => {
+// --- 페이지 로드 후 실행 ---
+window.addEventListener("DOMContentLoaded", () => {
   setupNavigation();
-  // 첫 화면(지도) 강제 실행
   initMainMap();
 });
 
@@ -55,32 +54,38 @@ function setupNavigation() {
   });
 }
 
-// 탭 라우터
+// 현재 탭 렌더링 라우터
 function renderCurrentView() {
-  if (currentTab === "map") initMainMap();
-  else if (currentTab === "overview") renderOverview();
-  else if (currentTab === "network") renderNetwork();
-  else if (currentTab === "quest") initQuest();
-  else if (currentTab === "quotes") renderQuotes();
-  else if (currentTab === "debate") loadDebates();
+  if (currentTab === "map") {
+    initMainMap();
+  } else if (currentTab === "overview") {
+    renderOverview();
+  } else if (currentTab === "network") {
+    renderNetwork();
+  } else if (currentTab === "quest") {
+    initQuest();
+  } else if (currentTab === "quotes") {
+    renderQuotes();
+  } else if (currentTab === "debate") {
+    loadDebates();
+  }
 }
 
-// 1. 지도 탭 (안정적인 OpenStreetMap 타일 및 도트 핀)
+// 1. 지도 탭 (오픈스트리트맵 타일 + 도트 핀)
 function initMainMap() {
   const mapContainer = document.getElementById('mainMap');
   if (!mapContainer) return;
 
   if (!mainMap) {
     // 지중해 중심 좌표
-    mainMap = L.map('mainMap').setView([39.5, 18.5], 5);
+    mainMap = L.map('mainMap').setView([39.9, 18.0], 5);
     
-    // 전 세계 공용으로 100% 열리는 타일 레이어
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
-      attribution: '© OpenStreetMap'
+      attribution: '© OpenStreetMap contributors'
     }).addTo(mainMap);
 
-    // 테세우스 & 로물루스 도트 핀 꽂기
+    // 테세우스 & 로물루스 도트 핀 생성
     if (typeof allMapEvents !== 'undefined') {
       allMapEvents.forEach(evt => {
         const spriteHtml = (typeof HERO_SPRITES !== 'undefined' && HERO_SPRITES[evt.hero]) ? HERO_SPRITES[evt.hero] : "";
@@ -103,21 +108,21 @@ function initMainMap() {
     }
   }
 
-  // 지도가 잘리지 않고 꽉 차게 리사이즈 보정
+  // 지도가 잘리지 않도록 크기 강제 재계산
   setTimeout(() => {
     if (mainMap) mainMap.invalidateSize();
-  }, 200);
+  }, 150);
 }
 
 function openHeroTab(heroKey) {
   currentHero = heroKey;
-  const heroSelect = document.getElementById("heroSelect");
-  if (heroSelect) heroSelect.value = heroKey;
+  const sel = document.getElementById("heroSelect");
+  if (sel) sel.value = heroKey;
   const overviewBtn = document.querySelector(`.tab-btn[data-tab="overview"]`);
   if (overviewBtn) overviewBtn.click();
 }
 
-// 2. 개요 탭 (도트 상태창)
+// 2. 개요 탭 (도트 스테이터스 카드)
 function renderOverview() {
   if (typeof heroDetails === 'undefined') return;
   const h = heroDetails[currentHero];
@@ -143,7 +148,7 @@ function renderOverview() {
   `;
 }
 
-// 3. 관계망 탭 (D3 인터랙티브 + 중앙 도트 영웅)
+// 3. 관계망 탭 (D3 인터랙티브 노드)
 function renderNetwork() {
   if (typeof heroDetails === 'undefined' || typeof d3 === 'undefined') return;
   const h = heroDetails[currentHero];
@@ -305,20 +310,20 @@ function renderQuotes() {
   `).join("");
 }
 
-// 6. 토론장
+// 6. 토론장 (sbClient 사용)
 const debateForm = document.getElementById("debateForm");
 if (debateForm) {
   debateForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-    if (!supabase) {
-      alert("토론장 서버 설정이 비어있습니다. (추후 Supabase 연동 시 활성화됩니다)");
+    if (!sbClient) {
+      alert("토론장 서버(Supabase)에 연결할 수 없습니다.");
       return;
     }
     const author = document.getElementById("debAuthor").value.trim();
     const password = document.getElementById("debPassword").value.trim();
     const content = document.getElementById("debContent").value.trim();
 
-    const { error } = await supabase.from('debates').insert([{
+    const { error } = await sbClient.from('debates').insert([{
       hero: currentHero,
       author: author,
       password: password,
@@ -336,12 +341,12 @@ if (debateForm) {
 
 async function loadDebates() {
   const list = document.getElementById("debateList");
-  if (!supabase) {
-    list.innerHTML = "<p style='color:#a89a8c; font-size:13px;'>토론장 서버 연결 대기 중입니다. (Supabase 키 설정 필요)</p>";
+  if (!sbClient) {
+    list.innerHTML = "<p style='color:#a89a8c; font-size:13px;'>토론장 서버 연결 대기 중입니다.</p>";
     return;
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await sbClient
     .from('debates')
     .select('*')
     .eq('hero', currentHero)
