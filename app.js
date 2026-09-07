@@ -162,12 +162,11 @@ function renderNetwork() {
 
   const wrap = document.getElementById("tabNetwork");
   
-  // 모바일 화면의 실제 픽셀 너비와 높이를 확실하게 가져옴
+  // 모바일 화면의 실제 픽셀 너비와 높이 확보
   const rect = wrap.getBoundingClientRect();
   const width = rect.width > 50 ? rect.width : window.innerWidth;
   const height = rect.height > 50 ? rect.height : (window.innerHeight - 95);
 
-  // SVG 크기를 픽셀 단위로 정확히 박아 넣음
   svg
     .attr("width", width)
     .attr("height", height)
@@ -185,12 +184,11 @@ function renderNetwork() {
   const centerX = width / 2;
   const centerY = height / 2;
 
-  // 영웅 중심 노드 좌표를 강제로 정중앙에 배치
+  // 영웅 중심 노드 좌표를 강제로 정중앙에 배치 및 고정
   nodes.forEach(d => {
     if (d.id === currentHero) {
       d.x = centerX;
       d.y = centerY;
-      // 중앙에 머물도록 고정(fx, fy 설정)
       d.fx = centerX;
       d.fy = centerY;
     }
@@ -221,24 +219,36 @@ function renderNetwork() {
       })
       .on("end", (e, d) => { 
         if (!e.active) simulation.alphaTarget(0); 
-        // 중심 영웅은 드래그가 끝나도 중앙에 계속 고정
         if (d.id !== currentHero) {
           d.fx = null; 
           d.fy = null; 
         }
       }));
 
+  // 사파리(WebKit) 호환을 위한 Data URI 변환 헬퍼
+  function getHeroDataUri(heroKey) {
+    const rawSvg = HERO_SPRITES[heroKey] || "";
+    return "data:image/svg+xml;utf8," + encodeURIComponent(rawSvg);
+  }
+
+  // 노드 렌더링: foreignObject 대신 사파리에서 정상 작동하는 SVG 표준 <image> 사용
   node.each(function(d) {
     const el = d3.select(this);
     if (d.id === currentHero) {
-      el.append("foreignObject")
+      el.append("image")
+        .attr("href", getHeroDataUri(currentHero))
+        .attr("xlink:href", getHeroDataUri(currentHero))
         .attr("x", -24)
         .attr("y", -24)
         .attr("width", 48)
         .attr("height", 48)
-        .html(`<div style="width:100%;height:100%;filter:drop-shadow(0 0 6px #e5be75);">${HERO_SPRITES[currentHero]}</div>`);
+        .style("filter", "drop-shadow(0 0 6px #e5be75)");
     } else {
-      el.append("circle").attr("r", d.r).attr("fill", d.color).attr("stroke", "#fff").attr("stroke-width", 2);
+      el.append("circle")
+        .attr("r", d.r)
+        .attr("fill", d.color)
+        .attr("stroke", "#fff")
+        .attr("stroke-width", 2);
     }
   });
 
