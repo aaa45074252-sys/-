@@ -104,6 +104,9 @@ function switchHeroTab(tabName) {
   } else if (tabName === "quotes") {
     document.getElementById("tabQuotes").classList.add("active");
     renderQuotes();
+  } else if (tabName === "gallery") {                 // ★ 추가된 부분
+    document.getElementById("tabGallery").classList.add("active");
+    renderGallery();
   } else if (tabName === "debate") {
     document.getElementById("tabDebate").classList.add("active");
     renderDebates();
@@ -389,6 +392,41 @@ window.deleteDebateReply = async function(replyId, originPwd) {
     else renderDebates();
   }
 };
+
+// 7. 명화 갤러리 렌더링
+function renderGallery() {
+  const container = document.getElementById("gallery-container");
+  if (!container) return;
+
+  // data.js에 선언될 heroGalleries에서 현재 영웅 데이터 가져오기
+  const items = (typeof heroGalleries !== "undefined" && heroGalleries[currentHero]) ? heroGalleries[currentHero] : [];
+
+  if (items.length === 0) {
+    container.innerHTML = `<div style="color:#a89f91; text-align:center; grid-column:1/-1; padding:40px 0;">아직 등록된 명화 자료가 없습니다.</div>`;
+    return;
+  }
+
+  container.innerHTML = items.map(item => `
+    <div class="art-card">
+      <div class="art-img-wrap">
+        <img src="${item.imgUrl}" alt="${item.title}" loading="lazy">
+      </div>
+      <div class="art-info">
+        <h4 class="art-title">${item.title}</h4>
+        <p class="art-original-title">${item.originalTitle}</p>
+        <ul class="art-meta">
+          <li><strong>작가:</strong> ${item.artist}</li>
+          <li><strong>연대/소장:</strong> ${item.year} | ${item.museum}</li>
+          <li><strong>라이선스:</strong> <span class="license-badge">${item.license}</span></li>
+        </ul>
+        <p class="art-desc">${item.desc}</p>
+        <a href="${item.sourceUrl}" target="_blank" rel="noopener noreferrer" class="source-link">
+          위키미디어 출처 보기 ↗
+        </a>
+      </div>
+    </div>
+  `).join('');
+}
 
 // 첫 화면 실행
 showMapView();
