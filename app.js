@@ -100,11 +100,11 @@ function switchHeroTab(tabName) {
     renderOverview();
   } else if (tabName === "network") {
     document.getElementById("tabNetwork").classList.add("active");
-    setTimeout(renderNetwork, 100);
+    setTimeout(renderNetwork, 150);
   } else if (tabName === "quotes") {
     document.getElementById("tabQuotes").classList.add("active");
     renderQuotes();
-  } else if (tabName === "gallery") {                 // ★ 추가된 부분
+  } else if (tabName === "gallery") {
     document.getElementById("tabGallery").classList.add("active");
     renderGallery();
   } else if (tabName === "debate") {
@@ -159,8 +159,16 @@ function renderNetwork() {
   svg.selectAll("*").remove();
 
   const wrap = document.getElementById("tabNetwork");
-  const width = wrap.clientWidth || 360;
-  const height = wrap.clientHeight || 450;
+  // 모바일에서 clientWidth가 0으로 잡히는 현상 방지 (실제 렌더링 폭/높이 확보)
+  const rect = wrap.getBoundingClientRect();
+  const width = rect.width > 0 ? rect.width : window.innerWidth;
+  const height = rect.height > 0 ? rect.height : (window.innerHeight - 120);
+
+  // SVG에 반응형 viewBox 및 크기 명시
+  svg
+    .attr("width", width)
+    .attr("height", height)
+    .attr("viewBox", `0 0 ${width} ${height}`);
 
   const g = svg.append("g");
   svg.call(d3.zoom().scaleExtent([0.5, 2.5]).on("zoom", (e) => g.attr("transform", e.transform)));
@@ -168,10 +176,22 @@ function renderNetwork() {
   const nodes = JSON.parse(JSON.stringify(h.graph.nodes));
   const links = JSON.parse(JSON.stringify(h.graph.links));
 
+  // 화면 정중앙 좌표 계산
+  const centerX = width / 2;
+  const centerY = height / 2;
+
+  // 중심 영웅 노드는 초기 위치를 아예 화면 정중앙으로 강제 배치
+  nodes.forEach(d => {
+    if (d.id === currentHero) {
+      d.x = centerX;
+      d.y = centerY;
+    }
+  });
+
   const simulation = d3.forceSimulation(nodes)
-    .force("link", d3.forceLink(links).id(d => d.id).distance(100))
-    .force("charge", d3.forceManyBody().strength(-280))
-    .force("center", d3.forceCenter(width / 2, (height / 2) - 30));
+    .force("link", d3.forceLink(links).id(d => d.id).distance(width < 480 ? 80 : 110))
+    .force("charge", d3.forceManyBody().strength(width < 480 ? -220 : -300))
+    .force("center", d3.forceCenter(centerX, centerY));
 
   const link = g.append("g").selectAll("line").data(links).enter().append("line")
     .attr("stroke", "#665243").attr("stroke-width", 2);
@@ -186,7 +206,7 @@ function renderNetwork() {
       .on("drag", (e, d) => { d.fx = e.x; d.fy = e.y; })
       .on("end", (e, d) => { if (!e.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; }));
 
-  // 중심 영웅은 도트 스프라이트(foreignObject), 주변 인물은 기존 원형으로 렌더링
+  // 중심 영웅은 도트 스프라이트, 주변 인물은 원형 렌더링
   node.each(function(d) {
     const el = d3.select(this);
     if (d.id === currentHero) {
@@ -398,7 +418,6 @@ function renderGallery() {
   const container = document.getElementById("gallery-container");
   if (!container) return;
 
-  // data.js에 선언될 heroGalleries에서 현재 영웅 데이터 가져오기
   const items = (typeof heroGalleries !== "undefined" && heroGalleries[currentHero]) ? heroGalleries[currentHero] : [];
 
   if (items.length === 0) {
