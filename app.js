@@ -428,7 +428,7 @@ function renderGallery() {
   container.innerHTML = items.map(item => `
     <div class="art-card">
       <div class="art-img-wrap">
-        <img src="${item.imgUrl}" alt="${item.title}" loading="lazy">
+        <img src="${item.imgUrl}" alt="${item.title}" loading="lazy" referrerpolicy="no-referrer">
       </div>
       <div class="art-info">
         <h4 class="art-title">${item.title}</h4>
