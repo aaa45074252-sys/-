@@ -1,6 +1,5 @@
 // 1. Supabase 클라이언트 연결 설정
 const SUPABASE_URL = "https://xivchaifnztwjyldlphh.supabase.co";
-// ▼ 아래 따옴표 안에 아까 복사한 'sb_publishable_...' 키를 붙여넣어 주세요!
 const SUPABASE_KEY = "sb_publishable_L2H2WzL-L0mOTOwseU_MmQ_POXfn85y"; 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -16,7 +15,6 @@ function initMainMap() {
     }).addTo(mainMap);
 
     allMapEvents.forEach(evt => {
-      // 32x32 도트 스프라이트를 품은 커스텀 핀
       const spriteHtml = HERO_SPRITES[evt.hero] || "";
       const icon = L.divIcon({
         className: 'pixel-pin-container',
@@ -162,7 +160,6 @@ function renderNetwork() {
 
   const wrap = document.getElementById("tabNetwork");
   
-  // 모바일 화면의 실제 픽셀 너비와 높이 확보
   const rect = wrap.getBoundingClientRect();
   const width = rect.width > 50 ? rect.width : window.innerWidth;
   const height = rect.height > 50 ? rect.height : (window.innerHeight - 95);
@@ -180,11 +177,9 @@ function renderNetwork() {
   const nodes = JSON.parse(JSON.stringify(h.graph.nodes));
   const links = JSON.parse(JSON.stringify(h.graph.links));
 
-  // 정중앙 좌표
   const centerX = width / 2;
   const centerY = height / 2;
 
-  // 영웅 중심 노드 좌표를 강제로 정중앙에 배치 및 고정
   nodes.forEach(d => {
     if (d.id === currentHero) {
       d.x = centerX;
@@ -225,19 +220,22 @@ function renderNetwork() {
         }
       }));
 
-  // 사파리(WebKit) 호환을 위한 Data URI 변환 헬퍼
+  // 표준 SVG 네임스페이스를 보장하는 Data URI 인코딩
   function getHeroDataUri(heroKey) {
-    const rawSvg = HERO_SPRITES[heroKey] || "";
-    return "data:image/svg+xml;utf8," + encodeURIComponent(rawSvg);
+    let rawSvg = HERO_SPRITES[heroKey] || "";
+    if (!rawSvg.includes("xmlns=")) {
+      rawSvg = rawSvg.replace("<svg", '<svg xmlns="http://www.w3.org/2000/svg"');
+    }
+    return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(rawSvg);
   }
 
-  // 노드 렌더링: foreignObject 대신 사파리에서 정상 작동하는 SVG 표준 <image> 사용
   node.each(function(d) {
     const el = d3.select(this);
     if (d.id === currentHero) {
+      const uri = getHeroDataUri(currentHero);
       el.append("image")
-        .attr("href", getHeroDataUri(currentHero))
-        .attr("xlink:href", getHeroDataUri(currentHero))
+        .attr("href", uri)
+        .attr("xlink:href", uri)
         .attr("x", -24)
         .attr("y", -24)
         .attr("width", 48)
@@ -280,7 +278,7 @@ function renderNetwork() {
   });
 }
 
-// 6. 온라인 클라우드 토론장 (서버와 통신하는 부분)
+// 6. 온라인 클라우드 토론장
 async function renderDebates() {
   const h = heroDetails[currentHero];
   document.getElementById("debateFormTitle").innerText = `💬 ${h.name}에게 묻고 답하기`;
