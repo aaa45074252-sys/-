@@ -91,17 +91,18 @@ const heroDetails = {
 };
 
 // 영웅별 고전 명화 아카이브 데이터 (위키미디어 공용 퍼블릭 도메인)
+// 영웅별 고전 명화 아카이브 데이터 (위키미디어 공용 검증 URL)
 const heroGalleries = {
   theseus: [
     {
       title: "바위를 들어 올리는 테세우스",
-      originalTitle: "Thésée retrouve l'épée de son père",
+      originalTitle: "Theseus Rediscovering his Father's Sword",
       artist: "니콜라 푸생 (Nicolas Poussin)",
       year: "1638년경",
       museum: "프랑스 샹티이 콩데 미술관",
       license: "Public Domain",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Nicolas_Poussin_-_Th%C3%A9s%C3%A9e_retrouve_l%27%C3%A9p%C3%A9e_de_son_p%C3%A8re.jpg/800px-Nicolas_Poussin_-_Th%C3%A9s%C3%A9e_retrouve_l%27%C3%A9p%C3%A9e_de_son_p%C3%A8re.jpg",
-      sourceUrl: "https://commons.wikimedia.org/wiki/File:Nicolas_Poussin_-_Th%C3%A9s%C3%A9e_retrouve_l%27%C3%A9p%C3%A9e_de_son_p%C3%A8re.jpg",
+      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Nicolas_Poussin_-_Theseus_Rediscovering_his_Father%27s_Sword_-_WGA18320.jpg/800px-Nicolas_Poussin_-_Theseus_Rediscovering_his_Father%27s_Sword_-_WGA18320.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Nicolas_Poussin_-_Theseus_Rediscovering_his_Father%27s_Sword_-_WGA18320.jpg",
       desc: "어머니 아이트라의 안내를 받아 부친 아이게우스가 숨겨둔 검과 샌들을 꺼내는 테세우스의 결의를 묘사한 작품입니다."
     },
     {
@@ -118,25 +119,25 @@ const heroGalleries = {
   ],
   romulus: [
     {
-      title: "로물루스와 레무스를 발견한 파우스툴루스",
-      originalTitle: "Faustulus finds Romulus and Remus",
+      title: "로물루스와 레무스를 거두는 파우스툴루스",
+      originalTitle: "Romulus and Remus Sheltered by Faustulus",
       artist: "피에트로 다 코르토나 (Pietro da Cortona)",
       year: "1643년경",
       museum: "프랑스 파리 루브르 박물관",
       license: "Public Domain",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Pietro_da_Cortona_-_Romulus_and_Remus_Given_Shelter_by_Faustulus_-_WGA05335.jpg/800px-Pietro_da_Cortona_-_Romulus_and_Remus_Given_Shelter_by_Faustulus_-_WGA05335.jpg",
-      sourceUrl: "https://commons.wikimedia.org/wiki/File:Pietro_da_Cortona_-_Romulus_and_Remus_Given_Shelter_by_Faustulus_-_WGA05335.jpg",
-      desc: "테베레강에 버려져 늑대의 젖을 먹고 자라던 쌍둥이 형제를 목동 파우스툴루스가 발견하고 거두는 순간을 그린 명화입니다."
+      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Pietro_da_Cortona_-_Romulus_and_Remus_Sheltered_by_Faustulus_-_WGA05335.jpg/800px-Pietro_da_Cortona_-_Romulus_and_Remus_Sheltered_by_Faustulus_-_WGA05335.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Pietro_da_Cortona_-_Romulus_and_Remus_Sheltered_by_Faustulus_-_WGA05335.jpg",
+      desc: "테베레강가에서 늑대의 젖을 먹고 자란 쌍둥이 형제를 목동 파우스툴루스가 발견하고 거두는 순간을 그린 명화입니다."
     },
     {
       title: "사비니 여인들의 중재",
-      originalTitle: "Les Sabines",
+      originalTitle: "The Intervention of the Sabine Women",
       artist: "자크 루이 다비드 (Jacques-Louis David)",
       year: "1799년",
       museum: "프랑스 파리 루브르 박물관",
       license: "Public Domain",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Jacques-Louis_David_-_The_Intervention_of_the_Sabine_Women_-_WGA5998.jpg/800px-Jacques-Louis_David_-_The_Intervention_of_the_Sabine_Women_-_WGA5998.jpg",
-      sourceUrl: "https://commons.wikimedia.org/wiki/File:Jacques-Louis_David_-_The_Intervention_of_the_Sabine_Women_-_WGA5998.jpg",
+      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/The_Intervention_of_the_Sabine_Women.jpg/800px-The_Intervention_of_the_Sabine_Women.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:The_Intervention_of_the_Sabine_Women.jpg",
       desc: "로물루스가 이끄는 로마인들과 사비니인 사이의 전쟁 한가운데에서 평화를 호소하며 분쟁을 종식시키는 여인들의 모습을 담은 명작입니다."
     }
   ]
