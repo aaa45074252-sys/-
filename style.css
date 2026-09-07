@@ -201,10 +201,7 @@ header {
     opacity: 0;
   }
 }
-.node-inspector.hidden { display: none !important; }
-.ins-badge { font-size: 10px; background: #e5be75; color: #111; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-.close-btn { position: absolute; top: 8px; right: 8px; background: none; border: none; color: #aaa; font-size: 16px; cursor: pointer; }
-.ins-insight { font-size: 11px; color: #e5be75; margin-top: 6px; background: #261d17; padding: 6px; border-radius: 4px; }
+
 
 /* 토론장 */
 .debate-form-card { background: #1c1613; border: 1px solid #b89047; border-radius: 8px; padding: 16px; margin-bottom: 20px; }
@@ -298,4 +295,123 @@ header {
   color: #d1c7b7;
   margin: 0;
   line-height: 1.4;
+}
+
+/* 3. 명화 갤러리 스타일 */
+.gallery-header {
+  margin-bottom: 20px;
+  border-bottom: 1px solid #3d2f27;
+  padding-bottom: 12px;
+}
+
+.gallery-header h3 {
+  margin: 0 0 6px 0;
+  color: #e5be75;
+  font-size: 16px;
+}
+
+.gallery-subtext {
+  margin: 0;
+  color: #a89f91;
+  font-size: 11px;
+}
+
+/* 카드 그리드 배치 (모바일 1열, 태블릿 이상 다열) */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 18px;
+  padding: 8px 0;
+}
+
+/* 명화 액자 카드 */
+.art-card {
+  background: #1c1613;
+  border: 1px solid #3d3027;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.art-card:hover {
+  transform: translateY(-3px);
+  border-color: #b89047;
+}
+
+/* 이미지 액자 영역 (명화 원본 비율 유지) */
+.art-img-wrap {
+  background: #0d0a08;
+  width: 100%;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-bottom: 1px solid #2e241e;
+}
+
+.art-img-wrap img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* 명화 설명 정보 영역 */
+.art-info {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.art-title {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  color: #e5be75;
+}
+
+.art-original-title {
+  margin: 0 0 10px 0;
+  font-size: 11px;
+  color: #9c9285;
+  font-style: italic;
+}
+
+.art-meta {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 10px 0;
+  font-size: 11px;
+  color: #c4bbb0;
+  line-height: 1.5;
+}
+
+.license-badge {
+  color: #70b886;
+  font-weight: bold;
+}
+
+.art-desc {
+  font-size: 12px;
+  color: #ccc;
+  line-height: 1.45;
+  margin-bottom: 12px;
+  flex-grow: 1;
+}
+
+.source-link {
+  font-size: 11px;
+  color: #b89047;
+  text-decoration: none;
+  align-self: flex-start;
+  padding: 2px 0;
+}
+
+.source-link:hover {
+  text-decoration: underline;
+  color: #e5be75;
 }
