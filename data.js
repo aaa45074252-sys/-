@@ -89,3 +89,55 @@ const heroDetails = {
     }
   }
 };
+
+// 영웅별 고전 명화 아카이브 데이터 (위키미디어 공용 퍼블릭 도메인)
+const heroGalleries = {
+  theseus: [
+    {
+      title: "바위를 들어 올리는 테세우스",
+      originalTitle: "Thésée retrouve l'épée de son père",
+      artist: "니콜라 푸생 (Nicolas Poussin)",
+      year: "1638년경",
+      museum: "프랑스 샹티이 콩데 미술관",
+      license: "Public Domain",
+      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Nicolas_Poussin_-_Th%C3%A9s%C3%A9e_retrouve_l%27%C3%A9p%C3%A9e_de_son_p%C3%A8re.jpg/800px-Nicolas_Poussin_-_Th%C3%A9s%C3%A9e_retrouve_l%27%C3%A9p%C3%A9e_de_son_p%C3%A8re.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Nicolas_Poussin_-_Th%C3%A9s%C3%A9e_retrouve_l%27%C3%A9p%C3%A9e_de_son_p%C3%A8re.jpg",
+      desc: "어머니 아이트라의 안내를 받아 부친 아이게우스가 숨겨둔 검과 샌들을 꺼내는 테세우스의 결의를 묘사한 작품입니다."
+    },
+    {
+      title: "미노타우로스를 처단하는 테세우스",
+      originalTitle: "Theseus and the Minotaur",
+      artist: "앙투안 루이 바리 (Antoine-Louis Barye)",
+      year: "1843년",
+      museum: "프랑스 파리 루브르 박물관",
+      license: "Public Domain",
+      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Theseus_Minotaur_Barye_Louvre_LP2642.jpg/800px-Theseus_Minotaur_Barye_Louvre_LP2642.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Theseus_Minotaur_Barye_Louvre_LP2642.jpg",
+      desc: "크레타의 미궁에서 괴물 미노타우로스를 제압하며 아테네 청년들을 구출해내는 영웅적 격투를 역동적으로 표현한 청동상입니다."
+    }
+  ],
+  romulus: [
+    {
+      title: "로물루스와 레무스를 발견한 파우스툴루스",
+      originalTitle: "Faustulus finds Romulus and Remus",
+      artist: "피에트로 다 코르토나 (Pietro da Cortona)",
+      year: "1643년경",
+      museum: "프랑스 파리 루브르 박물관",
+      license: "Public Domain",
+      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e7/Pietro_da_Cortona_-_Romulus_and_Remus_Given_Shelter_by_Faustulus_-_WGA05335.jpg/800px-Pietro_da_Cortona_-_Romulus_and_Remus_Given_Shelter_by_Faustulus_-_WGA05335.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Pietro_da_Cortona_-_Romulus_and_Remus_Given_Shelter_by_Faustulus_-_WGA05335.jpg",
+      desc: "테베레강에 버려져 늑대의 젖을 먹고 자라던 쌍둥이 형제를 목동 파우스툴루스가 발견하고 거두는 순간을 그린 명화입니다."
+    },
+    {
+      title: "사비니 여인들의 중재",
+      originalTitle: "Les Sabines",
+      artist: "자크 루이 다비드 (Jacques-Louis David)",
+      year: "1799년",
+      museum: "프랑스 파리 루브르 박물관",
+      license: "Public Domain",
+      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Jacques-Louis_David_-_The_Intervention_of_the_Sabine_Women_-_WGA5998.jpg/800px-Jacques-Louis_David_-_The_Intervention_of_the_Sabine_Women_-_WGA5998.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Jacques-Louis_David_-_The_Intervention_of_the_Sabine_Women_-_WGA5998.jpg",
+      desc: "로물루스가 이끄는 로마인들과 사비니인 사이의 전쟁 한가운데에서 평화를 호소하며 분쟁을 종식시키는 여인들의 모습을 담은 명작입니다."
+    }
+  ]
+};
