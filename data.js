@@ -91,7 +91,7 @@ const heroDetails = {
 };
 
 
-// 영웅별 고전 명화 아카이브 데이터 (실제 위키미디어 공용 검증 완료 URL)
+// 영웅별 고전 명화 아카이브 데이터 (위키미디어 원본 파일 안정 경로)
 const heroGalleries = {
   theseus: [
     {
@@ -101,7 +101,7 @@ const heroGalleries = {
       year: "1638년경",
       museum: "프랑스 샹티이 콩데 미술관",
       license: "Public Domain",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Th%C3%A9s%C3%A9e_retrouve_l%27%C3%A9p%C3%A9e_de_son_p%C3%A8re_-_Poussin_-_c1638.jpg/800px-Th%C3%A9s%C3%A9e_retrouve_l%27%C3%A9p%C3%A9e_de_son_p%C3%A8re_-_Poussin_-_c1638.jpg",
+      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Th%C3%A9s%C3%A9e_retrouve_l%27%C3%A9p%C3%A9e_de_son_p%C3%A8re_-_Poussin_-_c1638.jpg&w=800",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Th%C3%A9s%C3%A9e_retrouve_l%27%C3%A9p%C3%A9e_de_son_p%C3%A8re_-_Poussin_-_c1638.jpg",
       desc: "어머니 아이트라의 안내를 받아 부친 아이게우스가 숨겨둔 검과 샌들을 꺼내는 테세우스의 결의를 묘사한 작품입니다."
     },
@@ -112,7 +112,7 @@ const heroGalleries = {
       year: "1857년경",
       museum: "미국 워싱턴 국립 미술관",
       license: "Public Domain (CC0)",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Antoine-Louis_Barye%2C_Theseus_Fighting_the_Minotaur%2C_model_n.d.%2C_cast_1857-1873%2C_NGA_195000.jpg/800px-Antoine-Louis_Barye%2C_Theseus_Fighting_the_Minotaur%2C_model_n.d.%2C_cast_1857-1873%2C_NGA_195000.jpg",
+      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Antoine-Louis_Barye,_Theseus_Fighting_the_Minotaur,_model_n.d.,_cast_1857-1873,_NGA_195000.jpg&w=800",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Antoine-Louis_Barye,_Theseus_Fighting_the_Minotaur,_model_n.d.,_cast_1857-1873,_NGA_195000.jpg",
       desc: "크레타 미궁에서 괴물 미노타우로스를 쓰러뜨리는 영웅 테세우스의 격투를 역동적으로 조형한 명작 청동상입니다."
     }
@@ -125,7 +125,7 @@ const heroGalleries = {
       year: "1643년경",
       museum: "프랑스 파리 루브르 박물관",
       license: "Public Domain",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Cortona_Romulus_and_Remus_Given_Shelter_by_Faustulus_01.jpg/800px-Cortona_Romulus_and_Remus_Given_Shelter_by_Faustulus_01.jpg",
+      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Cortona_Romulus_and_Remus_Given_Shelter_by_Faustulus_01.jpg&w=800",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Cortona_Romulus_and_Remus_Given_Shelter_by_Faustulus_01.jpg",
       desc: "테베레강에 버려져 암늑대의 젖을 먹고 자라던 쌍둥이 형제를 양치기 파우스툴루스가 발견하여 집으로 데려오는 순간입니다."
     },
@@ -136,7 +136,7 @@ const heroGalleries = {
       year: "1799년",
       museum: "프랑스 파리 루브르 박물관",
       license: "Public Domain",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/The_Intervention_of_the_Sabine_Women_-_David_%28Louvre_INV_3691%29.jpg/800px-The_Intervention_of_the_Sabine_Women_-_David_%28Louvre_INV_3691%29.jpg",
+      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/The_Intervention_of_the_Sabine_Women_-_David_(Louvre_INV_3691).jpg&w=800",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:The_Intervention_of_the_Sabine_Women_-_David_(Louvre_INV_3691).jpg",
       desc: "로마와 사비니족 간의 참혹한 전쟁 한가운데에서 어린아이들을 안고 평화를 외치며 결투를 멈추게 한 여인들을 그린 걸작입니다."
     }
