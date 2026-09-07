@@ -100,7 +100,9 @@ function switchHeroTab(tabName) {
     renderOverview();
   } else if (tabName === "network") {
     document.getElementById("tabNetwork").classList.add("active");
-    setTimeout(renderNetwork, 150);
+    requestAnimationFrame(() => {
+      setTimeout(renderNetwork, 50);
+    });
   } else if (tabName === "quotes") {
     document.getElementById("tabQuotes").classList.add("active");
     renderQuotes();
@@ -159,12 +161,12 @@ function renderNetwork() {
   svg.selectAll("*").remove();
 
   const wrap = document.getElementById("tabNetwork");
-  // 모바일에서 clientWidth가 0으로 잡히는 현상 방지 (실제 렌더링 폭/높이 확보)
-  const rect = wrap.getBoundingClientRect();
-  const width = rect.width > 0 ? rect.width : window.innerWidth;
-  const height = rect.height > 0 ? rect.height : (window.innerHeight - 120);
+  const svgEl = document.getElementById("networkSvg");
 
-  // SVG에 반응형 viewBox 및 크기 명시
+  // 모바일 환경에서 0이 나오는 현상을 방어하는 확실한 너비/높이 계산
+  const width = wrap.clientWidth || svgEl.clientWidth || window.innerWidth;
+  const height = wrap.clientHeight || svgEl.clientHeight || (window.innerHeight - 150);
+
   svg
     .attr("width", width)
     .attr("height", height)
@@ -176,21 +178,28 @@ function renderNetwork() {
   const nodes = JSON.parse(JSON.stringify(h.graph.nodes));
   const links = JSON.parse(JSON.stringify(h.graph.links));
 
-  // 화면 정중앙 좌표 계산
   const centerX = width / 2;
   const centerY = height / 2;
 
-  // 중심 영웅 노드는 초기 위치를 아예 화면 정중앙으로 강제 배치
-  nodes.forEach(d => {
+  // ★ 핵심: 0,0에서 시작하지 않도록 모든 노드의 초기 위치를 중앙 주변으로 강제 배치
+  nodes.forEach((d, i) => {
     if (d.id === currentHero) {
       d.x = centerX;
       d.y = centerY;
+      // 중심 영웅은 아예 중앙에 머무르도록 초기 속도도 0 설정
+      d.vx = 0;
+      d.vy = 0;
+    } else {
+      // 주변 노드들은 중앙 주위에 원형으로 초기 분산
+      const angle = (i / nodes.length) * 2 * Math.PI;
+      d.x = centerX + Math.cos(angle) * 50;
+      d.y = centerY + Math.sin(angle) * 50;
     }
   });
 
   const simulation = d3.forceSimulation(nodes)
     .force("link", d3.forceLink(links).id(d => d.id).distance(width < 480 ? 80 : 110))
-    .force("charge", d3.forceManyBody().strength(width < 480 ? -220 : -300))
+    .force("charge", d3.forceManyBody().strength(width < 480 ? -220 : -320))
     .force("center", d3.forceCenter(centerX, centerY));
 
   const link = g.append("g").selectAll("line").data(links).enter().append("line")
@@ -206,7 +215,6 @@ function renderNetwork() {
       .on("drag", (e, d) => { d.fx = e.x; d.fy = e.y; })
       .on("end", (e, d) => { if (!e.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; }));
 
-  // 중심 영웅은 도트 스프라이트, 주변 인물은 원형 렌더링
   node.each(function(d) {
     const el = d3.select(this);
     if (d.id === currentHero) {
