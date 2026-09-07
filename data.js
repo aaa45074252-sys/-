@@ -179,8 +179,8 @@ const heroGalleries = {
       year: "1799년",
       museum: "프랑스 파리 루브르 박물관",
       license: "Public Domain",
-      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/The_Intervention_of_the_Sabine_Women_-_David_(Louvre_INV_3691).jpg&w=800",
-      sourceUrl: "https://commons.wikimedia.org/wiki/File:The_Intervention_of_the_Sabine_Women_-_David_(Louvre_INV_3691).jpg",
+      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/The_Intervention_of_the_Sabine_Women.jpg&w=800",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:The_Intervention_of_the_Sabine_Women.jpg",
       desc: "로마와 사비니족 간의 전쟁 한가운데에서 평화를 호소하며 로물루스와 타티우스의 칼을 멈추게 한 여인들의 위대한 중재를 그렸습니다."
     }
   ]
