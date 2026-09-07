@@ -90,8 +90,7 @@ const heroDetails = {
   }
 };
 
-
-// 영웅별 고전 명화 아카이브 데이터 (위키미디어 원본 파일 안정 경로)
+// 영웅별 고전 명화 아카이브 데이터 (각 4점, 위키미디어 안정 경로 검증 완료)
 const heroGalleries = {
   theseus: [
     {
@@ -115,9 +114,42 @@ const heroGalleries = {
       imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Antoine-Louis_Barye,_Theseus_Fighting_the_Minotaur,_model_n.d.,_cast_1857-1873,_NGA_195000.jpg&w=800",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Antoine-Louis_Barye,_Theseus_Fighting_the_Minotaur,_model_n.d.,_cast_1857-1873,_NGA_195000.jpg",
       desc: "크레타 미궁에서 괴물 미노타우로스를 쓰러뜨리는 영웅 테세우스의 격투를 역동적으로 조형한 명작 청동상입니다."
+    },
+    {
+      title: "테세우스에게 실타래를 건네는 아리아드네",
+      originalTitle: "Ariadne Helping Theseus by Giving him a Ball of Thread",
+      artist: "요한 하인리히 티슈바인 (Johann Heinrich Tischbein)",
+      year: "1779년",
+      museum: "개인 소장",
+      license: "Public Domain",
+      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Johann_Heinrich_Tischbein_-_Ariadne_Helping_Theseus_by_Giving_him_a_Ball_of_Thread,_1779.jpg&w=800",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Johann_Heinrich_Tischbein_-_Ariadne_Helping_Theseus_by_Giving_him_a_Ball_of_Thread,_1779.jpg",
+      desc: "미궁 속으로 향하는 테세우스가 무사히 길을 찾아 돌아올 수 있도록 붉은 실타래를 쥐여주는 아리아드네 공주의 조력을 담았습니다."
+    },
+    {
+      title: "악당을 소탕하고 여인들을 구출하는 테세우스와 페이리토오스",
+      originalTitle: "Theseus and Pirithous Clearing the Earth of Brigands",
+      artist: "앙젤리크 몽제 (Angélique Mongez)",
+      year: "1806년",
+      museum: "아르한겔스코예 궁전 미술관",
+      license: "Public Domain",
+      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Theseus_and_Pirithous,_1806,_by_Angelique_Mongez.jpg&w=800",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Theseus_and_Pirithous,_1806,_by_Angelique_Mongez.jpg",
+      desc: "헤라클레스의 위업을 본받아 도적 떼와 약탈자들을 평정하고 질서를 바로잡는 테세우스와 친구 페이리토오스의 기백을 묘사한 대작입니다."
     }
   ],
   romulus: [
+    {
+      title: "카피톨리노의 암늑대 (로물루스와 레무스)",
+      originalTitle: "Capitoline Wolf (Lupa Capitolina)",
+      artist: "고대 에트루리아 / 안토니오 델 폴라이올로",
+      year: "기원전 5세기경 (쌍둥이는 15세기경 추가)",
+      museum: "이탈리아 로마 카피톨리니 박물관",
+      license: "Public Domain (CC0)",
+      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Capitoline_Wolf,_Musei_Capitolini.jpg&w=800",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Capitoline_Wolf,_Musei_Capitolini.jpg",
+      desc: "팔라티노 언덕 근처에 버려진 쌍둥이 형제를 암늑대 루파가 젖을 물려 길러낸, 로마 제국의 영원한 상징이 된 청동상입니다."
+    },
     {
       title: "로물루스와 레무스를 거두는 파우스툴루스",
       originalTitle: "Romulus and Remus Given Shelter by Faustulus",
@@ -127,7 +159,18 @@ const heroGalleries = {
       license: "Public Domain",
       imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Cortona_Romulus_and_Remus_Given_Shelter_by_Faustulus_01.jpg&w=800",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Cortona_Romulus_and_Remus_Given_Shelter_by_Faustulus_01.jpg",
-      desc: "테베레강에 버려져 암늑대의 젖을 먹고 자라던 쌍둥이 형제를 양치기 파우스툴루스가 발견하여 집으로 데려오는 순간입니다."
+      desc: "테베레강가에서 늑대의 젖을 먹고 자란 쌍둥이 형제를 양치기 파우스툴루스가 발견하여 집으로 데려오는 순간입니다."
+    },
+    {
+      title: "아크론 왕을 꺾은 로물루스의 개선",
+      originalTitle: "Romulus' Victory Over Acron",
+      artist: "장 오귀스트 도미니크 앵그르 (J.A.D. Ingres)",
+      year: "1812년",
+      museum: "프랑스 파리 국립고등미술학교 (에콜 데 보자르)",
+      license: "Public Domain",
+      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Jean-auguste-dominique_ingres,_romolo,_vincitore_di_acron,_porta_il_bottino_nel_tempio_di_giano,_1812,_00.jpg&w=800",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Jean-auguste-dominique_ingres,_romolo,_vincitore_di_acron,_porta_il_bottino_nel_tempio_di_giano,_1812,_00.jpg",
+      desc: "로마를 침공한 카이니나의 왕 아크론을 일대일 결투로 베고, 신전으로 최초의 영광스러운 최고 전리품(Spolia Opima)을 운반하는 장면입니다."
     },
     {
       title: "사비니 여인들의 중재",
@@ -138,7 +181,7 @@ const heroGalleries = {
       license: "Public Domain",
       imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/The_Intervention_of_the_Sabine_Women_-_David_(Louvre_INV_3691).jpg&w=800",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:The_Intervention_of_the_Sabine_Women_-_David_(Louvre_INV_3691).jpg",
-      desc: "로마와 사비니족 간의 참혹한 전쟁 한가운데에서 어린아이들을 안고 평화를 외치며 결투를 멈추게 한 여인들을 그린 걸작입니다."
+      desc: "로마와 사비니족 간의 전쟁 한가운데에서 평화를 호소하며 로물루스와 타티우스의 칼을 멈추게 한 여인들의 위대한 중재를 그렸습니다."
     }
   ]
 };
