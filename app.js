@@ -161,16 +161,19 @@ function renderNetwork() {
   svg.selectAll("*").remove();
 
   const wrap = document.getElementById("tabNetwork");
-  const svgEl = document.getElementById("networkSvg");
+  
+  // 모바일 화면의 실제 픽셀 너비와 높이를 확실하게 가져옴
+  const rect = wrap.getBoundingClientRect();
+  const width = rect.width > 50 ? rect.width : window.innerWidth;
+  const height = rect.height > 50 ? rect.height : (window.innerHeight - 95);
 
-  // 모바일 환경에서 0이 나오는 현상을 방어하는 확실한 너비/높이 계산
-  const width = wrap.clientWidth || svgEl.clientWidth || window.innerWidth;
-  const height = wrap.clientHeight || svgEl.clientHeight || (window.innerHeight - 150);
-
+  // SVG 크기를 픽셀 단위로 정확히 박아 넣음
   svg
     .attr("width", width)
     .attr("height", height)
-    .attr("viewBox", `0 0 ${width} ${height}`);
+    .attr("viewBox", `0 0 ${width} ${height}`)
+    .style("width", `${width}px`)
+    .style("height", `${height}px`);
 
   const g = svg.append("g");
   svg.call(d3.zoom().scaleExtent([0.5, 2.5]).on("zoom", (e) => g.attr("transform", e.transform)));
@@ -178,28 +181,24 @@ function renderNetwork() {
   const nodes = JSON.parse(JSON.stringify(h.graph.nodes));
   const links = JSON.parse(JSON.stringify(h.graph.links));
 
+  // 정중앙 좌표
   const centerX = width / 2;
   const centerY = height / 2;
 
-  // ★ 핵심: 0,0에서 시작하지 않도록 모든 노드의 초기 위치를 중앙 주변으로 강제 배치
-  nodes.forEach((d, i) => {
+  // 영웅 중심 노드 좌표를 강제로 정중앙에 배치
+  nodes.forEach(d => {
     if (d.id === currentHero) {
       d.x = centerX;
       d.y = centerY;
-      // 중심 영웅은 아예 중앙에 머무르도록 초기 속도도 0 설정
-      d.vx = 0;
-      d.vy = 0;
-    } else {
-      // 주변 노드들은 중앙 주위에 원형으로 초기 분산
-      const angle = (i / nodes.length) * 2 * Math.PI;
-      d.x = centerX + Math.cos(angle) * 50;
-      d.y = centerY + Math.sin(angle) * 50;
+      // 중앙에 머물도록 고정(fx, fy 설정)
+      d.fx = centerX;
+      d.fy = centerY;
     }
   });
 
   const simulation = d3.forceSimulation(nodes)
-    .force("link", d3.forceLink(links).id(d => d.id).distance(width < 480 ? 80 : 110))
-    .force("charge", d3.forceManyBody().strength(width < 480 ? -220 : -320))
+    .force("link", d3.forceLink(links).id(d => d.id).distance(width < 480 ? 85 : 120))
+    .force("charge", d3.forceManyBody().strength(width < 480 ? -250 : -350))
     .force("center", d3.forceCenter(centerX, centerY));
 
   const link = g.append("g").selectAll("line").data(links).enter().append("line")
@@ -211,9 +210,23 @@ function renderNetwork() {
 
   const node = g.append("g").selectAll("g").data(nodes).enter().append("g")
     .call(d3.drag()
-      .on("start", (e, d) => { if (!e.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
-      .on("drag", (e, d) => { d.fx = e.x; d.fy = e.y; })
-      .on("end", (e, d) => { if (!e.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; }));
+      .on("start", (e, d) => { 
+        if (!e.active) simulation.alphaTarget(0.3).restart(); 
+        d.fx = d.x; 
+        d.fy = d.y; 
+      })
+      .on("drag", (e, d) => { 
+        d.fx = e.x; 
+        d.fy = e.y; 
+      })
+      .on("end", (e, d) => { 
+        if (!e.active) simulation.alphaTarget(0); 
+        // 중심 영웅은 드래그가 끝나도 중앙에 계속 고정
+        if (d.id !== currentHero) {
+          d.fx = null; 
+          d.fy = null; 
+        }
+      }));
 
   node.each(function(d) {
     const el = d3.select(this);
