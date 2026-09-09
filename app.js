@@ -495,6 +495,7 @@ window.deleteDebateReply = async function(replyId, originPwd) {
 };
 
 // 7. 명화 갤러리 렌더링
+// 7. 명화 갤러리 렌더링 (리퍼러 헤더 차단 우회 적용)
 function renderGallery() {
   const container = document.getElementById("gallery-container");
   if (!container) return;
@@ -509,7 +510,14 @@ function renderGallery() {
   container.innerHTML = items.map(item => `
     <div class="art-card">
       <div class="art-img-wrap">
-        <img src="${item.imgUrl}" alt="${item.title}" loading="lazy" referrerpolicy="no-referrer">
+        <img 
+          src="${item.imgUrl}" 
+          alt="${item.title}" 
+          loading="lazy" 
+          referrerpolicy="no-referrer"
+          crossorigin="anonymous"
+          onerror="this.onerror=null; if(!this.src.startsWith('https://wsrv.nl/?url=')){ this.src='https://wsrv.nl/?url=' + encodeURIComponent(this.src) + '&w=700'; }"
+        >
       </div>
       <div class="art-info">
         <h4 class="art-title">${item.title}</h4>
