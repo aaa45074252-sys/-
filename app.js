@@ -136,6 +136,14 @@ function renderOverview() {
       role: "로마의 성스러운 2대 평화왕",
       tagline: "“무기 대신 신앙과 예법으로 야만의 도시를 길들인 현자”"
     }
+    solon: {
+      role: "아테네 민주정의 기틀을 닦은 대현자",
+      tagline: "“채무의 멍에를 부수고 법률의 균형으로 시민을 지킨 입법관”"
+    },
+    publicola: {
+      role: "로마 공화정을 수호한 시민의 벗",
+      tagline: "“도끼를 내리고 시민 앞에 머리 숙여 자유를 지켜낸 집정관”"
+    }
   };
 
   const meta = heroMeta[currentHero] || {
