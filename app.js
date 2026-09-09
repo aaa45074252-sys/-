@@ -213,8 +213,12 @@ function renderNetwork() {
   const nodes = JSON.parse(JSON.stringify(h.graph.nodes));
   const links = JSON.parse(JSON.stringify(h.graph.links));
 
+  // app.js의 renderNetwork() 내부
+
   const centerX = width / 2;
-  const centerY = height / 2;
+  // 모바일(폭 768px 미만)에서는 하단 카드 공간을 확보하기 위해 중심을 상단 38% 지점으로 이동
+  const isMobile = width < 768;
+  const centerY = isMobile ? (height * 0.38) : (height / 2);
 
   nodes.forEach(d => {
     if (d.id === currentHero) {
@@ -226,8 +230,9 @@ function renderNetwork() {
   });
 
   const simulation = d3.forceSimulation(nodes)
-    .force("link", d3.forceLink(links).id(d => d.id).distance(width < 480 ? 85 : 120))
-    .force("charge", d3.forceManyBody().strength(width < 480 ? -250 : -350))
+    // 모바일에서는 노드 간 거리를 조금 더 콤팩트하게 유지 (75px)
+    .force("link", d3.forceLink(links).id(d => d.id).distance(isMobile ? 75 : 120))
+    .force("charge", d3.forceManyBody().strength(isMobile ? -200 : -350))
     .force("center", d3.forceCenter(centerX, centerY));
 
   const link = g.append("g").selectAll("line").data(links).enter().append("line")
