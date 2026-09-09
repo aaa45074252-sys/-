@@ -243,7 +243,17 @@ const heroDetails = {
 
 // 고전 명화 아카이브 데이터 (준비 중)
 const heroGalleries = {
-  theseus: [],
+  theseus: [{
+      title: "아버지의 검을 찾는 테세우스",
+      originalTitle: "Thésée retrouve l'épée de son père (Theseus Finds His Father's Sword)",
+      artist: "니콜라 푸생 (Nicolas Poussin) & 장 르메르 (Jean Lemaire)",
+      year: "1638년경",
+      museum: "프랑스 샹티이 콩데 미술관 (Condé Museum)",
+      license: "Public Domain",
+      imgUrl: "images/theseus-1.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Th%C3%A9s%C3%A9e_retrouve_l%27%C3%A9p%C3%A9e_de_son_p%C3%A8re_-_Poussin_-_c1638.jpg",
+      desc: "어머니 아이트라의 인도를 받아 거대한 바위를 들어 올리고, 친부 아이게우스가 숨겨둔 청동 검과 가죽 샌들을 꺼내며 영웅의 여정을 시작하는 결의에 찬 순간입니다."
+    }],
   romulus: [],
   lycurgus: [],
   numa: [],
