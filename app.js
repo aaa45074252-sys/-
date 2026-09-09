@@ -208,17 +208,21 @@ function renderNetwork() {
     .style("height", `${height}px`);
 
   const g = svg.append("g");
-  svg.call(d3.zoom().scaleExtent([0.5, 2.5]).on("zoom", (e) => g.attr("transform", e.transform)));
+  
+  // 줌 및 드래그 동작 정의
+  const zoomBehavior = d3.zoom()
+    .scaleExtent([0.5, 2.5])
+    .on("zoom", (e) => g.attr("transform", e.transform));
+  
+  svg.call(zoomBehavior);
 
   const nodes = JSON.parse(JSON.stringify(h.graph.nodes));
   const links = JSON.parse(JSON.stringify(h.graph.links));
 
-  // app.js의 renderNetwork() 내부
-
-  const centerX = width / 2;
-  // 모바일(폭 768px 미만)에서는 하단 카드 공간을 확보하기 위해 중심을 상단 38% 지점으로 이동
   const isMobile = width < 768;
-  const centerY = isMobile ? (height * 0.38) : (height / 2);
+  const centerX = width / 2;
+  // 모바일에서는 바텀시트 공간을 고려해 상단 28% 지점에 중심 배치
+  const centerY = isMobile ? (height * 0.28) : (height / 2);
 
   nodes.forEach(d => {
     if (d.id === currentHero) {
@@ -230,9 +234,8 @@ function renderNetwork() {
   });
 
   const simulation = d3.forceSimulation(nodes)
-    // 모바일에서는 노드 간 거리를 조금 더 콤팩트하게 유지 (75px)
-    .force("link", d3.forceLink(links).id(d => d.id).distance(isMobile ? 75 : 120))
-    .force("charge", d3.forceManyBody().strength(isMobile ? -200 : -350))
+    .force("link", d3.forceLink(links).id(d => d.id).distance(isMobile ? 65 : 120))
+    .force("charge", d3.forceManyBody().strength(isMobile ? -180 : -350))
     .force("center", d3.forceCenter(centerX, centerY));
 
   const link = g.append("g").selectAll("line").data(links).enter().append("line")
@@ -298,6 +301,7 @@ function renderNetwork() {
     .attr("font-weight", d => d.id === currentHero ? "bold" : "normal")
     .text(d => d.name);
 
+  // 노드 클릭 이벤트
   node.on("click", (e, d) => {
     e.stopPropagation();
     const ins = document.getElementById("nodeInspector");
@@ -306,6 +310,14 @@ function renderNetwork() {
     document.getElementById("insDesc").innerText = d.desc;
     document.getElementById("insInsight").innerText = `💡 ${d.insight}`;
     ins.classList.remove("hidden");
+
+    // 모바일에서 노드 터치 시, 해당 노드가 상단 안전구역에 오도록 자동 화면 이동(Pan)
+    if (isMobile) {
+      const targetY = height * 0.25;
+      const transform = d3.zoomIdentity
+        .translate(centerX - d.x, targetY - d.y);
+      svg.transition().duration(400).call(zoomBehavior.transform, transform);
+    }
   });
 
   svg.on("click", () => document.getElementById("nodeInspector").classList.add("hidden"));
