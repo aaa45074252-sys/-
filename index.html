@@ -8,12 +8,14 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#1e1714">
 
+  <!-- 지도 및 라이브러리 CDN -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <link rel="stylesheet" href="style.css?v=4">
+  <!-- CSS 캐시 갱신 -->
+  <link rel="stylesheet" href="style.css?v=60">
 </head>
 <body>
 
@@ -28,22 +30,28 @@
         <option value="" disabled selected>👤 영웅 상세 보기</option>
         <option value="theseus">테세우스 (아테네)</option>
         <option value="romulus">로물루스 (로마)</option>
-        <option value="lycurgus">뤼쿠르고스 (스파르타)</option>
-        <option value="numa">누마 (로마)</option>
+        <option value="lycurgus">리쿠르고스 (스파르타)</option>
+        <option value="numa">누마 폼필리우스 (로마)</option>
         <option value="solon">솔론 (아테네)</option>
         <option value="publicola">푸블리콜라 (로마)</option>
       </select>
     </div>
   </header>
 
+  <!-- 전체 지도 뷰 -->
   <section class="main-view active" id="mapSection">
     <div id="mainMap"></div>
     <div class="map-legend">
-      <span class="legend-item"><span class="dot gold"></span> 테세우스 사건</span>
-      <span class="legend-item"><span class="dot crimson"></span> 로물루스 사건</span>
+      <span class="legend-item"><span class="dot" style="background:#eab308;"></span> 테세우스</span>
+      <span class="legend-item"><span class="dot" style="background:#dc2626;"></span> 로물루스</span>
+      <span class="legend-item"><span class="dot" style="background:#b91c1c;"></span> 리쿠르고스</span>
+      <span class="legend-item"><span class="dot" style="background:#16a34a;"></span> 누마</span>
+      <span class="legend-item"><span class="dot" style="background:#2563eb;"></span> 솔론</span>
+      <span class="legend-item"><span class="dot" style="background:#7c3aed;"></span> 푸블리콜라</span>
     </div>
   </section>
 
+  <!-- 영웅 상세 뷰 -->
   <section class="main-view" id="heroDetailSection">
     
     <nav class="hero-sub-nav">
@@ -54,10 +62,12 @@
       <button class="tab-btn" data-tab="debate">⚖️ 토론장</button>
     </nav>
 
+    <!-- 🏛️ 개요 탭 -->
     <div class="tab-content active" id="tabOverview">
       <div class="content-box" id="overviewBox"></div>
     </div>
 
+    <!-- 🌐 관계망 탭 -->
     <div class="tab-content" id="tabNetwork">
       <div class="network-wrap">
         <svg id="networkSvg"></svg>
@@ -71,25 +81,24 @@
       </div>
     </div>
 
-   <!-- 🖼️ 갤러리 탭 본문 -->
+    <!-- 🖼️ 갤러리 탭 -->
     <div class="tab-content" id="tabGallery">
       <div class="gallery-header">
         <h3>🏛️ 고전 명화 아카이브</h3>
         <p class="gallery-subtext">위키미디어 공용(Wikimedia Commons)의 퍼블릭 도메인(저작권 만료) 명화 자료입니다.</p>
       </div>
-      
-      <!-- 명화 카드가 렌더링될 영역 -->
       <div id="gallery-container" class="gallery-grid"></div>
     </div>
     
+    <!-- 📜 중요 문장 탭 -->
     <div class="tab-content" id="tabQuotes">
       <div class="content-box" id="quotesBox"></div>
     </div>
 
+    <!-- ⚖️ 토론장 탭 -->
     <div class="tab-content" id="tabDebate">
       <div class="content-box">
-        
-       <div class="debate-form-card">
+        <div class="debate-form-card">
           <h3 id="debateFormTitle">💬 질문과 답변</h3>
           <p class="form-subtext">자유롭게 생각을 남겨주세요. (수정/삭제용 비밀번호 입력)</p>
           <div class="input-row">
@@ -100,12 +109,12 @@
           <button class="submit-debate-btn" onclick="addDebatePost()">질문 등록하기</button>
         </div>
         <div id="debateList"></div>
-
       </div>
     </div>
   </section>
 
-  <script src="data.js?v=25"></script>
-  <script src="app.js?v=8"></script>
+  <!-- 캐시 무효화를 적용한 최신 스크립트 연결 -->
+  <script src="data.js?v=60"></script>
+  <script src="app.js?v=60"></script>
 </body>
 </html>
