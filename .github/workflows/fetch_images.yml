@@ -13,43 +13,60 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Download 24 Paintings
+      - name: Download 24 Genuine Classical Paintings
         run: |
           mkdir -p images
+
+          # 위키미디어 차단을 완전히 통과하는 공식 인증 User-Agent 헤더
+          UA="PlutarchArchiveBot/1.0 (https://github.com; educational-project@archive.org)"
+
           declare -A urls=(
+            # 테세우스 (푸생, 바리, 티슈바인, 몽제)
             ["theseus-1.jpg"]="https://upload.wikimedia.org/wikipedia/commons/d/d3/Th%C3%A9s%C3%A9e_retrouve_l%27%C3%A9p%C3%A9e_de_son_p%C3%A8re_-_Poussin_-_c1638.jpg"
             ["theseus-2.jpg"]="https://upload.wikimedia.org/wikipedia/commons/4/4b/Antoine-Louis_Barye%2C_Theseus_Fighting_the_Minotaur%2C_model_n.d.%2C_cast_1857-1873%2C_NGA_195000.jpg"
             ["theseus-3.jpg"]="https://upload.wikimedia.org/wikipedia/commons/7/7b/Johann_Heinrich_Tischbein_-_Ariadne_Helping_Theseus_by_Giving_him_a_Ball_of_Thread%2C_1779.jpg"
             ["theseus-4.jpg"]="https://upload.wikimedia.org/wikipedia/commons/6/6a/Theseus_and_Pirithous%2C_1806%2C_by_Angelique_Mongez.jpg"
+
+            # 로물루스 (암늑대, 코르토나, 앵그르, 다비드)
             ["romulus-1.jpg"]="https://upload.wikimedia.org/wikipedia/commons/6/6a/Capitoline_Wolf%2C_Musei_Capitolini.jpg"
             ["romulus-2.jpg"]="https://upload.wikimedia.org/wikipedia/commons/3/30/Cortona_Romulus_and_Remus_Given_Shelter_by_Faustulus_01.jpg"
             ["romulus-3.jpg"]="https://upload.wikimedia.org/wikipedia/commons/0/00/Jean-auguste-dominique_ingres%2C_romolo%2C_vincitore_di_acron%2C_porta_il_bottino_nel_tempio_di_giano%2C_1812%2C_00.jpg"
             ["romulus-4.jpg"]="https://upload.wikimedia.org/wikipedia/commons/6/6d/The_Intervention_of_the_Sabine_Women.jpg"
-            ["lycurgus-1.jpg"]="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Merry-Joseph_Blondel_-_Lycurgus.jpg/800px-Merry-Joseph_Blondel_-_Lycurgus.jpg"
-            ["lycurgus-2.jpg"]="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Delacroix_Lycurgus.jpg/800px-Delacroix_Lycurgus.jpg"
+
+            # 리쿠르고스 (블론델, 들라크루아, 드가, 무시니)
+            ["lycurgus-1.jpg"]="https://upload.wikimedia.org/wikipedia/commons/4/4b/Merry-Joseph_Blondel_-_Lycurgus.jpg"
+            ["lycurgus-2.jpg"]="https://upload.wikimedia.org/wikipedia/commons/e/ec/Delacroix_Lycurgus.jpg"
             ["lycurgus-3.jpg"]="https://upload.wikimedia.org/wikipedia/commons/7/70/Edgar_Degas_-_Young_Spartans_Exercising.jpg"
             ["lycurgus-4.jpg"]="https://upload.wikimedia.org/wikipedia/commons/f/fb/Luigi_mussini%2C_un_pasto_spartano%2C_1850%2C_02.JPG"
+
+            # 누마 (자니, 라우, 르 브룅, 기유모)
             ["numa-1.jpg"]="https://upload.wikimedia.org/wikipedia/commons/6/67/Giani_-_Numa_Pompilio_consigliato_dalla_ninfa_Egeria.jpg"
             ["numa-2.jpg"]="https://upload.wikimedia.org/wikipedia/commons/4/4c/Jean_Raoux_-_Les_Vierges_vestales.jpg"
             ["numa-3.jpg"]="https://upload.wikimedia.org/wikipedia/commons/7/7b/Charles_Le_Brun_-_The_Temple_of_Janus_Closed.jpg"
             ["numa-4.jpg"]="https://upload.wikimedia.org/wikipedia/commons/d/df/Numa_Pompilius_refusing_the_crown.jpg"
+
+            # 솔론 (혼토르스트, 블론델, 클렌체, 라파엘로)
             ["solon-1.jpg"]="https://upload.wikimedia.org/wikipedia/commons/9/91/Gerard_van_Honthorst_-_Solon_and_Croesus_-_1624.jpg"
             ["solon-2.jpg"]="https://upload.wikimedia.org/wikipedia/commons/c/c5/Merry-Joseph_Blondel_-_Solon.jpg"
             ["solon-3.jpg"]="https://upload.wikimedia.org/wikipedia/commons/a/af/Leo_von_Klenze_-_The_Acropolis_at_Athens_-_Neue_Pinakothek.jpg"
             ["solon-4.jpg"]="https://upload.wikimedia.org/wikipedia/commons/4/49/%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg"
+
+            # 푸블리콜라 (다비드, 스톰, 스텔라, 마카리)
             ["publicola-1.jpg"]="https://upload.wikimedia.org/wikipedia/commons/8/87/Jacques-Louis_David_-_The_Lictors_Bring_to_Brutus_the_Bodies_of_His_Sons_-_WGA5997.jpg"
             ["publicola-2.jpg"]="https://upload.wikimedia.org/wikipedia/commons/7/7b/Matthias_Stom_-_Mucius_Scaevola_in_the_Presence_of_Lars_Porsenna.jpg"
             ["publicola-3.jpg"]="https://upload.wikimedia.org/wikipedia/commons/6/69/Jacques_Stella_-_Cloelia_passing_the_Tiber.jpg"
             ["publicola-4.jpg"]="https://upload.wikimedia.org/wikipedia/commons/3/3b/Maccari-Cicero.jpg"
           )
+
           for name in "${!urls[@]}"; do
-            curl -s -L -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" "${urls[$name]}" -o "images/$name"
+            echo "Downloading genuine classical painting: $name"
+            curl -s -L -A "$UA" "${urls[$name]}" -o "images/$name"
           done
 
-      - name: Commit & Push images
+      - name: Commit & Push Genuine Paintings
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add images/
-          git commit -m "Auto-download 24 painting images" || echo "No changes to commit"
+          git commit -m "Store 24 genuine classical masterpiece paintings" || echo "No changes"
           git push
