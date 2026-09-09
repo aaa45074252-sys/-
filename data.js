@@ -46,7 +46,7 @@ const allMapEvents = [
     heroName: "누마 폼필리우스",
     title: "로마 (야누스 신전과 평화의 치세)",
     desc: "전쟁으로 들끓던 로마에 제례와 달력을 제정하고, 43년의 재위 동안 단 한 번도 전쟁을 벌이지 않고 야누스의 문을 닫았습니다.",
-    lat: 39.8925,
+    lat: 41.4925,
     lng: 12.4875
   }
 ];
@@ -257,28 +257,28 @@ const heroGalleries = {
       desc: "로마와 사비니족 간의 전쟁터에서 어린아이들을 안고 평화를 호소하며 분쟁을 종식시킨 여인들의 모습입니다."
     }
   ],
-  lycurgus: [
+ lycurgus: [
     {
       title: "스파르타인들에게 법을 주는 리쿠르고스",
-      originalTitle: "Lycurgus of Sparta Giving Laws to the Spartans",
+      originalTitle: "Lycurgus of Sparta Giving Laws",
       artist: "메리 조셉 블론델 (Merry-Joseph Blondel)",
       year: "1828년",
-      museum: "프랑스 아미앵 피카르디 박물관",
+      museum: "프랑스 피카르디 박물관",
       license: "Public Domain",
-      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Merry-Joseph_Blondel_-_Lycurgus.jpg&w=800",
-      sourceUrl: "https://commons.wikimedia.org/wiki/File:Merry-Joseph_Blondel_-_Lycurgus.jpg",
+      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Blondel_-_Lycurgus.jpg&w=800",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Blondel_-_Lycurgus.jpg",
       desc: "델포이에서 가져온 신탁에 기초해 엄격하고 평등한 군사 국가 스파르타의 헌법을 반포하는 리쿠르고스의 위엄을 그렸습니다."
     },
     {
       title: "시민들에게 법 준수를 맹세시키는 리쿠르고스",
-      originalTitle: "Lycurgus Swears the Spartans to Obey his Laws",
+      originalTitle: "Lycurgus Consults the Pythia",
       artist: "외젠 들라크루아 (Eugène Delacroix)",
       year: "1840년대",
-      museum: "프랑스 파리 부르봉 궁전 (국민의회)",
+      museum: "프랑스 파리 부르봉 궁전",
       license: "Public Domain",
-      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Delacroix_Lycurgus.jpg&w=800",
-      sourceUrl: "https://commons.wikimedia.org/wiki/File:Delacroix_Lycurgus.jpg",
-      desc: "자신이 델포이에서 돌아올 때까지 법을 결코 바꾸지 않겠다는 맹세를 시민들에게 받고 스스로 굶어 죽어 법을 영구화한 일화를 담았습니다."
+      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Eug%C3%A8ne_Delacroix_-_Lycurgue_consulte_la_Pythie.jpg&w=800",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Eug%C3%A8ne_Delacroix_-_Lycurgue_consulte_la_Pythie.jpg",
+      desc: "법을 결코 바꾸지 않겠다는 맹세를 시민들에게 받고 스스로 굶어 죽음으로써 법을 영구화한 일화를 담았습니다."
     },
     {
       title: "스파르타 청년들의 체력 단련",
@@ -289,7 +289,7 @@ const heroGalleries = {
       license: "Public Domain",
       imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Edgar_Degas_-_Young_Spartans_Exercising.jpg&w=800",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Edgar_Degas_-_Young_Spartans_Exercising.jpg",
-      desc: "리쿠르고스의 국가 교육 체계(아고게)에 따라 강인한 신체와 전사 정신을 기르는 스파르타 소년·소녀들의 야외 훈련 모습입니다."
+      desc: "리쿠르고스의 국가 교육 체계(아고게)에 따라 강인한 신체와 전사 정신을 기르는 스파르타 청년들의 훈련 모습입니다."
     },
     {
       title: "스파르타의 공동 식사 (시시티아)",
@@ -298,9 +298,9 @@ const heroGalleries = {
       year: "1850년",
       museum: "이탈리아 피렌체 피티 궁전 현대미술관",
       license: "Public Domain",
-      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Luigi_mussini,_un_pasto_spartano,_1850,_02.JPG&w=800",
-      sourceUrl: "https://commons.wikimedia.org/wiki/File:Luigi_mussini,_un_pasto_spartano,_1850,_02.JPG",
-      desc: "빈부격차와 사치를 없애기 위해 왕부터 일반 시민까지 한자리에 모여 검소한 검은 국물(블랙 브로스)을 나누어 먹던 규율입니다."
+      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Luigi_Mussini_-_Un_pasto_spartano.jpg&w=800",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Luigi_Mussini_-_Un_pasto_spartano.jpg",
+      desc: "빈부격차와 사치를 없애기 위해 왕부터 일반 시민까지 한자리에 모여 검소한 음식을 나누어 먹던 규율입니다."
     }
   ],
   numa: [
@@ -309,11 +309,11 @@ const heroGalleries = {
       originalTitle: "Numa Pompilius and the Nymph Egeria",
       artist: "펠리체 자니 (Felice Giani)",
       year: "1806년경",
-      museum: "개인 소장 / 이탈리아 국립 미술관",
+      museum: "이탈리아 국립 미술관",
       license: "Public Domain",
-      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Giani_-_Numa_Pompilio_consigliato_dalla_ninfa_Egeria.jpg&w=800",
-      sourceUrl: "https://commons.wikimedia.org/wiki/File:Giani_-_Numa_Pompilio_consigliato_dalla_ninfa_Egeria.jpg",
-      desc: "밤마다 성스러운 숲속 샘가에서 지혜의 님프 에게리아를 만나 로마의 제례와 종교 규율에 관한 가르침을 받는 누마의 모습입니다."
+      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Felice_Giani_-_Numa_Pompilio_consigliato_dalla_ninfa_Egeria.jpg&w=800",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Felice_Giani_-_Numa_Pompilio_consigliato_dalla_ninfa_Egeria.jpg",
+      desc: "성스러운 숲속 샘가에서 지혜의 님프 에게리아를 만나 로마의 제례와 종교 규율에 관한 영감을 받는 누마의 모습입니다."
     },
     {
       title: "베스타의 영원한 불꽃을 지키는 여사제들",
@@ -324,7 +324,7 @@ const heroGalleries = {
       license: "Public Domain",
       imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Jean_Raoux_-_Les_Vierges_vestales.jpg&w=800",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Jean_Raoux_-_Les_Vierges_vestales.jpg",
-      desc: "누마 폼필리우스 왕이 창설하여 로마의 수호 불꽃이 영원히 꺼지지 않도록 순결한 여사제들이 불을 받드는 성스러운 의식입니다."
+      desc: "누마 폼필리우스 왕이 창설하여 로마의 성스러운 불꽃이 꺼지지 않도록 지키는 순결한 여사제들의 의식입니다."
     },
     {
       title: "야누스 신전의 문을 닫는 로마인들",
@@ -333,12 +333,12 @@ const heroGalleries = {
       year: "1681년",
       museum: "프랑스 베르사유 궁전",
       license: "Public Domain",
-      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Charles_Le_Brun_-_The_Temple_of_Janus_Closed.jpg&w=800",
-      sourceUrl: "https://commons.wikimedia.org/wiki/File:Charles_Le_Brun_-_The_Temple_of_Janus_Closed.jpg",
-      desc: "전쟁 중에는 열려 있고 평화 시에는 닫히는 야누스의 문을 43년 치세 내내 닫아두며 이룩한 태평성대를 기리는 그림입니다."
+      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Le_Brun_-_The_Temple_of_Janus_Closed.jpg&w=800",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Le_Brun_-_The_Temple_of_Janus_Closed.jpg",
+      desc: "전쟁 중에는 열려 있고 평화 시에는 닫히는 야누스의 문을 43년 치세 내내 닫아두며 이룩한 태평성대를 기린 그림입니다."
     },
     {
-      title: "로마 왕관을 거절하는 현자 누마",
+      title: "로마 왕관을 사양하는 현자 누마",
       originalTitle: "Numa Pompilius Refusing the Crown of Rome",
       artist: "알렉상드르 기유모 (Alexandre-François Caminade)",
       year: "1820년대",
@@ -346,7 +346,7 @@ const heroGalleries = {
       license: "Public Domain",
       imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Numa_Pompilius_refusing_the_crown.jpg&w=800",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Numa_Pompilius_refusing_the_crown.jpg",
-      desc: "로물루스 사후 원로원 사절들이 찾아와 왕위에 오를 것을 청했으나, 권력보다 철학적 은둔 생활을 더 귀하게 여겨 사양하던 고결한 순간입니다."
+      desc: "원로원 사절들이 찾아와 왕위에 오를 것을 청했으나 권력보다 평화로운 은둔을 더 귀하게 여겨 사양하던 순간입니다."
     }
   ]
 };
