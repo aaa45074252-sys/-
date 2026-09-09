@@ -530,3 +530,49 @@ function renderGallery() {
 
 // 첫 화면 실행
 showMapView();
+
+// 인물 상세 설명 카드 터치 및 마우스 드래그 이동 기능
+(function enableInspectorDrag() {
+  const inspector = document.getElementById("nodeInspector");
+  if (!inspector) return;
+
+  let isDragging = false;
+  let startX, startY, initialLeft, initialTop;
+
+  function onStart(e) {
+    if (e.target.id === "closeInsBtn") return;
+    isDragging = true;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    startX = clientX;
+    startY = clientY;
+    const rect = inspector.getBoundingClientRect();
+    const parentRect = inspector.parentElement.getBoundingClientRect();
+    initialLeft = rect.left - parentRect.left;
+    initialTop = rect.top - parentRect.top;
+  }
+
+  function onMove(e) {
+    if (!isDragging) return;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const dx = clientX - startX;
+    const dy = clientY - startY;
+    inspector.style.left = `${initialLeft + dx}px`;
+    inspector.style.top = `${initialTop + dy}px`;
+    inspector.style.right = "auto";
+    inspector.style.margin = "0";
+  }
+
+  function onEnd() {
+    isDragging = false;
+  }
+
+  inspector.addEventListener("mousedown", onStart);
+  window.addEventListener("mousemove", onMove);
+  window.addEventListener("mouseup", onEnd);
+
+  inspector.addEventListener("touchstart", onStart, { passive: true });
+  window.addEventListener("touchmove", onMove, { passive: true });
+  window.addEventListener("touchend", onEnd);
+})();
