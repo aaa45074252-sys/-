@@ -257,27 +257,27 @@ const heroGalleries = {
       desc: "로마와 사비니족 간의 전쟁터에서 어린아이들을 안고 평화를 호소하며 분쟁을 종식시킨 여인들의 모습입니다."
     }
   ],
- lycurgus: [
+lycurgus: [
     {
       title: "스파르타인들에게 법을 주는 리쿠르고스",
-      originalTitle: "Lycurgus of Sparta Giving Laws",
+      originalTitle: "Lycurgus of Sparta Giving Laws to the Spartans",
       artist: "메리 조셉 블론델 (Merry-Joseph Blondel)",
       year: "1828년",
       museum: "프랑스 피카르디 박물관",
       license: "Public Domain",
-      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Blondel_-_Lycurgus.jpg&w=800",
-      sourceUrl: "https://commons.wikimedia.org/wiki/File:Blondel_-_Lycurgus.jpg",
+      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Merry-Joseph_Blondel_-_Lycurgus.jpg&w=800",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Merry-Joseph_Blondel_-_Lycurgus.jpg",
       desc: "델포이에서 가져온 신탁에 기초해 엄격하고 평등한 군사 국가 스파르타의 헌법을 반포하는 리쿠르고스의 위엄을 그렸습니다."
     },
     {
       title: "시민들에게 법 준수를 맹세시키는 리쿠르고스",
-      originalTitle: "Lycurgus Consults the Pythia",
+      originalTitle: "Lycurgus Swears the Spartans to Obey his Laws",
       artist: "외젠 들라크루아 (Eugène Delacroix)",
       year: "1840년대",
       museum: "프랑스 파리 부르봉 궁전",
       license: "Public Domain",
-      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Eug%C3%A8ne_Delacroix_-_Lycurgue_consulte_la_Pythie.jpg&w=800",
-      sourceUrl: "https://commons.wikimedia.org/wiki/File:Eug%C3%A8ne_Delacroix_-_Lycurgue_consulte_la_Pythie.jpg",
+      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Delacroix_Lycurgus.jpg&w=800",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Delacroix_Lycurgus.jpg",
       desc: "법을 결코 바꾸지 않겠다는 맹세를 시민들에게 받고 스스로 굶어 죽음으로써 법을 영구화한 일화를 담았습니다."
     },
     {
@@ -298,8 +298,8 @@ const heroGalleries = {
       year: "1850년",
       museum: "이탈리아 피렌체 피티 궁전 현대미술관",
       license: "Public Domain",
-      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Luigi_Mussini_-_Un_pasto_spartano.jpg&w=800",
-      sourceUrl: "https://commons.wikimedia.org/wiki/File:Luigi_Mussini_-_Un_pasto_spartano.jpg",
+      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Luigi_mussini,_un_pasto_spartano,_1850,_02.JPG&w=800",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Luigi_mussini,_un_pasto_spartano,_1850,_02.JPG",
       desc: "빈부격차와 사치를 없애기 위해 왕부터 일반 시민까지 한자리에 모여 검소한 음식을 나누어 먹던 규율입니다."
     }
   ],
@@ -311,8 +311,8 @@ const heroGalleries = {
       year: "1806년경",
       museum: "이탈리아 국립 미술관",
       license: "Public Domain",
-      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Felice_Giani_-_Numa_Pompilio_consigliato_dalla_ninfa_Egeria.jpg&w=800",
-      sourceUrl: "https://commons.wikimedia.org/wiki/File:Felice_Giani_-_Numa_Pompilio_consigliato_dalla_ninfa_Egeria.jpg",
+      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Giani_-_Numa_Pompilio_consigliato_dalla_ninfa_Egeria.jpg&w=800",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Giani_-_Numa_Pompilio_consigliato_dalla_ninfa_Egeria.jpg",
       desc: "성스러운 숲속 샘가에서 지혜의 님프 에게리아를 만나 로마의 제례와 종교 규율에 관한 영감을 받는 누마의 모습입니다."
     },
     {
@@ -333,8 +333,8 @@ const heroGalleries = {
       year: "1681년",
       museum: "프랑스 베르사유 궁전",
       license: "Public Domain",
-      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Le_Brun_-_The_Temple_of_Janus_Closed.jpg&w=800",
-      sourceUrl: "https://commons.wikimedia.org/wiki/File:Le_Brun_-_The_Temple_of_Janus_Closed.jpg",
+      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Charles_Le_Brun_-_The_Temple_of_Janus_Closed.jpg&w=800",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Charles_Le_Brun_-_The_Temple_of_Janus_Closed.jpg",
       desc: "전쟁 중에는 열려 있고 평화 시에는 닫히는 야누스의 문을 43년 치세 내내 닫아두며 이룩한 태평성대를 기린 그림입니다."
     },
     {
