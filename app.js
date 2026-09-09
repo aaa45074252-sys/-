@@ -6,12 +6,21 @@ const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let mainMap = null;
 let currentHero = "theseus";
 
-// 2. 지도 초기화
+// 2. 지도 초기화 (차단 없는 안정적인 타일 레이어 적용)
 function initMainMap() {
+  const mapEl = document.getElementById('mainMap');
+  if (!mapEl) return;
+
   if (!mainMap) {
-    mainMap = L.map('mainMap').setView([39.9, 18.0], 5);
-    L.tileLayer('https://mt0.google.com/vt/lyrs=m&hl=ko&x={x}&y={y}&z={z}', {
-      maxZoom: 18, attribution: '© Google Maps'
+    mainMap = L.map('mainMap', {
+      zoomControl: true,
+      fadeAnimation: true
+    }).setView([39.0, 18.0], 5);
+
+    // 차단당하는 구글 지도 대신 CARTO 고해상도 타일로 교체
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      maxZoom: 18,
+      attribution: '© OpenStreetMap © CARTO'
     }).addTo(mainMap);
 
     allMapEvents.forEach(evt => {
@@ -26,9 +35,9 @@ function initMainMap() {
       const marker = L.marker([evt.lat, evt.lng], { icon: icon }).addTo(mainMap);
       const popupContent = `
         <div class="popup-inner">
-          <h4>[${evt.heroName}] ${evt.title}</h4>
-          <p>${evt.desc}</p>
-          <button class="popup-btn" onclick="openHeroView('${evt.hero}')">
+          <h4 style="margin:0 0 6px 0; color:#e5be75; font-size:14px;">[${evt.heroName}] ${evt.title}</h4>
+          <p style="margin:0 0 10px 0; font-size:12px; line-height:1.4; color:#ddd;">${evt.desc}</p>
+          <button class="popup-btn" style="width:100%; padding:6px 0; background:#b45309; color:#fff; border:none; border-radius:4px; font-size:12px; cursor:pointer;" onclick="openHeroView('${evt.hero}')">
             👤 ${evt.heroName} 상세 보기 &gt;
           </button>
         </div>
@@ -39,7 +48,7 @@ function initMainMap() {
 
   setTimeout(() => {
     if (mainMap) mainMap.invalidateSize();
-  }, 100);
+  }, 200);
 }
 
 // 3. 메인 네비게이션
@@ -118,7 +127,7 @@ function renderOverview() {
   const h = heroDetails[currentHero];
   const spriteHtml = HERO_SPRITES[currentHero] || "";
 
-  // 4명의 영웅별 역할 칭호와 대표 문구 매핑
+  // ★ 쉼표 누락 오류를 수정한 6인 칭호 매핑
   const heroMeta = {
     theseus: {
       role: "아테네의 통합자이자 건국 영웅",
@@ -135,7 +144,7 @@ function renderOverview() {
     numa: {
       role: "로마의 성스러운 2대 평화왕",
       tagline: "“무기 대신 신앙과 예법으로 야만의 도시를 길들인 현자”"
-    }
+    },
     solon: {
       role: "아테네 민주정의 기틀을 닦은 대현자",
       tagline: "“채무의 멍에를 부수고 법률의 균형으로 시민을 지킨 입법관”"
@@ -166,6 +175,7 @@ function renderOverview() {
     <div class="card"><h3>📖 플루타르코스의 총평</h3><p>${h.overview.verdict}</p></div>
   `;
 }
+
 function renderQuotes() {
   const h = heroDetails[currentHero];
   let html = "";
@@ -186,7 +196,6 @@ function renderNetwork() {
   svg.selectAll("*").remove();
 
   const wrap = document.getElementById("tabNetwork");
-  
   const rect = wrap.getBoundingClientRect();
   const width = rect.width > 50 ? rect.width : window.innerWidth;
   const height = rect.height > 50 ? rect.height : (window.innerHeight - 95);
@@ -247,7 +256,6 @@ function renderNetwork() {
         }
       }));
 
-  // 표준 SVG 네임스페이스를 보장하는 Data URI 인코딩
   function getHeroDataUri(heroKey) {
     let rawSvg = HERO_SPRITES[heroKey] || "";
     if (!rawSvg.includes("xmlns=")) {
