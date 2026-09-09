@@ -264,6 +264,17 @@ const heroGalleries = {
       imgUrl: "images/theseus-2.jpg",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Antoine-Louis_Barye,_Theseus_Fighting_the_Minotaur,_model_n.d.,_cast_1857-1873,_NGA_195000.jpg",
       desc: "크레타섬의 미궁(라비린토스) 깊은 곳에서 아테네 청년들을 제물로 삼던 반인반우 괴물 미노타우로스를 붙잡아 칼로 내리치는 영웅 테세우스의 격투를 역동적으로 빚어낸 청동 조각상입니다."
+    },
+            {
+      title: "실타래를 건네는 아리아드네와 테세우스",
+      originalTitle: "Ariadne Helping Theseus by Giving him a Ball of Thread",
+      artist: "요한 하인리히 티슈바인 (Johann Heinrich Tischbein)",
+      year: "1779년",
+      museum: "개인 소장 (Private collection)",
+      license: "Public Domain",
+      imgUrl: "images/theseus-3.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Johann_Heinrich_Tischbein_-_Ariadne_Helping_Theseus_by_Giving_him_a_Ball_of_Thread,_1779.jpg",
+      desc: "미노타우로스가 갇힌 크레타 미궁으로 들어가는 테세우스를 위해, 미궁을 빠져나올 수 있는 붉은 실타래와 검을 건네며 탈출을 돕는 크레타 공주 아리아드네의 애절한 순간을 묘사했습니다."
     }
            ],
   romulus: [],
