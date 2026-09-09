@@ -17,10 +17,10 @@ function initMainMap() {
       fadeAnimation: true
     }).setView([39.0, 18.0], 5);
 
-    // 차단당하는 구글 지도 대신 CARTO 고해상도 타일로 교체
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    // API 키나 워터마크가 전혀 없는 오픈스트리트맵 표준 타일
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
-      attribution: '© OpenStreetMap © CARTO'
+      attribution: '© OpenStreetMap contributors'
     }).addTo(mainMap);
 
     allMapEvents.forEach(evt => {
