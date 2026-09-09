@@ -117,19 +117,39 @@ function switchHeroTab(tabName) {
 function renderOverview() {
   const h = heroDetails[currentHero];
   const spriteHtml = HERO_SPRITES[currentHero] || "";
-  
-  const heroRole = currentHero === "theseus" ? "아테네의 통합자이자 건국 영웅" : "영원한 제국 로마의 초대 국왕";
-  const heroTagline = currentHero === "theseus" 
-    ? "“청동 몽둥이로 불의를 꺾고 크레타의 미궁을 돌파한 자”"
-    : "“늑대의 젖을 먹고 자라 팔라티노 언덕에 성벽을 쌓은 자”";
+
+  // 4명의 영웅별 역할 칭호와 대표 문구 매핑
+  const heroMeta = {
+    theseus: {
+      role: "아테네의 통합자이자 건국 영웅",
+      tagline: "“청동 몽둥이로 불의를 꺾고 크레타의 미궁을 돌파한 자”"
+    },
+    romulus: {
+      role: "영원한 제국 로마의 초대 국왕",
+      tagline: "“늑대의 젖을 먹고 자라 팔라티노 언덕에 성벽을 쌓은 자”"
+    },
+    lycurgus: {
+      role: "스파르타 철혈 규율의 입법자",
+      tagline: "“성벽 대신 시민의 용기를 방패로 삼은 무적의 입법관”"
+    },
+    numa: {
+      role: "로마의 성스러운 2대 평화왕",
+      tagline: "“무기 대신 신앙과 예법으로 야만의 도시를 길들인 현자”"
+    }
+  };
+
+  const meta = heroMeta[currentHero] || {
+    role: "플루타르코스가 주목한 위대한 영웅",
+    tagline: "“역사의 흐름을 바꾼 고대의 거인”"
+  };
 
   document.getElementById("overviewBox").innerHTML = `
     <div class="hero-pixel-status">
       <div class="pixel-avatar-box">${spriteHtml}</div>
       <div class="pixel-status-info">
-        <span class="pixel-title-badge">${heroRole}</span>
+        <span class="pixel-title-badge">${meta.role}</span>
         <h2>${h.name}</h2>
-        <p>${heroTagline}</p>
+        <p>${meta.tagline}</p>
       </div>
     </div>
     <div class="card"><h3>🏛️ 출생과 기원</h3><p>${h.overview.birth}</p></div>
@@ -138,7 +158,6 @@ function renderOverview() {
     <div class="card"><h3>📖 플루타르코스의 총평</h3><p>${h.overview.verdict}</p></div>
   `;
 }
-
 function renderQuotes() {
   const h = heroDetails[currentHero];
   let html = "";
