@@ -3,12 +3,15 @@ name: Fetch Classic Images
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   download-images:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Download 24 Paintings
         run: |
@@ -40,7 +43,7 @@ jobs:
             ["publicola-4.jpg"]="https://upload.wikimedia.org/wikipedia/commons/3/3b/Maccari-Cicero.jpg"
           )
           for name in "${!urls[@]}"; do
-            curl -s -L -A "Mozilla/5.0" "${urls[$name]}" -o "images/$name"
+            curl -s -L -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" "${urls[$name]}" -o "images/$name"
           done
 
       - name: Commit & Push images
