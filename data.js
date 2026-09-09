@@ -253,7 +253,19 @@ const heroGalleries = {
       imgUrl: "images/theseus-1.jpg",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Th%C3%A9s%C3%A9e_retrouve_l%27%C3%A9p%C3%A9e_de_son_p%C3%A8re_-_Poussin_-_c1638.jpg",
       desc: "어머니 아이트라의 인도를 받아 거대한 바위를 들어 올리고, 친부 아이게우스가 숨겨둔 청동 검과 가죽 샌들을 꺼내며 영웅의 여정을 시작하는 결의에 찬 순간입니다."
-    }],
+    },
+           {
+      title: "미노타우로스와 싸우는 테세우스",
+      originalTitle: "Theseus Fighting the Minotaur",
+      artist: "앙투안 루이 바리 (Antoine-Louis Barye)",
+      year: "1857년경 주조 (모델 n.d.)",
+      museum: "미국 워싱턴 국립 미술관 (National Gallery of Art)",
+      license: "Public Domain (CC0)",
+      imgUrl: "images/theseus-2.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Antoine-Louis_Barye,_Theseus_Fighting_the_Minotaur,_model_n.d.,_cast_1857-1873,_NGA_195000.jpg",
+      desc: "크레타섬의 미궁(라비린토스) 깊은 곳에서 아테네 청년들을 제물로 삼던 반인반우 괴물 미노타우로스를 붙잡아 칼로 내리치는 영웅 테세우스의 격투를 역동적으로 빚어낸 청동 조각상입니다."
+    }
+           ],
   romulus: [],
   lycurgus: [],
   numa: [],
