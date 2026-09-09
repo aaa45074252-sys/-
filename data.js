@@ -243,10 +243,7 @@ const heroDetails = {
 
 
 // ==========================================
-// 4. 고전 명화 아카이브 데이터 (각 영웅당 4점)
-// ==========================================
-// ==========================================
-// 4. 고전 명화 아카이브 데이터 (직결 검증 주소)
+// 4. 고전 명화 아카이브 데이터 (wsrv 글로벌 프록시 직결 규격)
 // ==========================================
 const heroGalleries = {
   theseus: [
@@ -257,7 +254,7 @@ const heroGalleries = {
       year: "1638년경",
       museum: "프랑스 샹티이 콩데 미술관",
       license: "Public Domain",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Th%C3%A9s%C3%A9e_retrouve_l%27%C3%A9p%C3%A9e_de_son_p%C3%A8re_-_Poussin_-_c1638.jpg/800px-Th%C3%A9s%C3%A9e_retrouve_l%27%C3%A9p%C3%A9e_de_son_p%C3%A8re_-_Poussin_-_c1638.jpg",
+      imgUrl: "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/d/d3/Th%C3%A9s%C3%A9e_retrouve_l%27%C3%A9p%C3%A9e_de_son_p%C3%A8re_-_Poussin_-_c1638.jpg&w=600",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Th%C3%A9s%C3%A9e_retrouve_l%27%C3%A9p%C3%A9e_de_son_p%C3%A8re_-_Poussin_-_c1638.jpg",
       desc: "어머니 아이트라의 안내를 받아 부친 아이게우스가 숨겨둔 검과 샌들을 꺼내는 결의를 묘사한 작품입니다."
     },
@@ -268,7 +265,7 @@ const heroGalleries = {
       year: "1857년경",
       museum: "미국 워싱턴 국립 미술관",
       license: "Public Domain (CC0)",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Antoine-Louis_Barye%2C_Theseus_Fighting_the_Minotaur%2C_model_n.d.%2C_cast_1857-1873%2C_NGA_195000.jpg/800px-Antoine-Louis_Barye%2C_Theseus_Fighting_the_Minotaur%2C_model_n.d.%2C_cast_1857-1873%2C_NGA_195000.jpg",
+      imgUrl: "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/4/4b/Antoine-Louis_Barye%2C_Theseus_Fighting_the_Minotaur%2C_model_n.d.%2C_cast_1857-1873%2C_NGA_195000.jpg&w=600",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Antoine-Louis_Barye,_Theseus_Fighting_the_Minotaur,_model_n.d.,_cast_1857-1873,_NGA_195000.jpg",
       desc: "크레타 미궁에서 괴물 미노타우로스를 쓰러뜨리는 영웅 테세우스의 격투를 역동적으로 조형한 청동상입니다."
     },
@@ -279,7 +276,7 @@ const heroGalleries = {
       year: "1779년",
       museum: "개인 소장",
       license: "Public Domain",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Johann_Heinrich_Tischbein_-_Ariadne_Helping_Theseus_by_Giving_him_a_Ball_of_Thread%2C_1779.jpg/800px-Johann_Heinrich_Tischbein_-_Ariadne_Helping_Theseus_by_Giving_him_a_Ball_of_Thread%2C_1779.jpg",
+      imgUrl: "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/7/7b/Johann_Heinrich_Tischbein_-_Ariadne_Helping_Theseus_by_Giving_him_a_Ball_of_Thread%2C_1779.jpg&w=600",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Johann_Heinrich_Tischbein_-_Ariadne_Helping_Theseus_by_Giving_him_a_Ball_of_Thread,_1779.jpg",
       desc: "미궁 속으로 향하는 테세우스가 무사히 길을 찾아 돌아올 수 있도록 붉은 실타래를 쥐여주는 장면입니다."
     },
@@ -290,7 +287,7 @@ const heroGalleries = {
       year: "1806년",
       museum: "아르한겔스코예 궁전 미술관",
       license: "Public Domain",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Theseus_and_Pirithous%2C_1806%2C_by_Angelique_Mongez.jpg/800px-Theseus_and_Pirithous%2C_1806%2C_by_Angelique_Mongez.jpg",
+      imgUrl: "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/6/6a/Theseus_and_Pirithous%2C_1806%2C_by_Angelique_Mongez.jpg&w=600",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Theseus_and_Pirithous,_1806,_by_Angelique_Mongez.jpg",
       desc: "도적 떼와 약탈자들을 평정하고 질서를 바로잡는 테세우스와 친구 페이리토오스의 기백을 묘사한 대작입니다."
     }
@@ -303,7 +300,7 @@ const heroGalleries = {
       year: "기원전 5세기경 (쌍둥이는 15세기경 추가)",
       museum: "이탈리아 로마 카피톨리니 박물관",
       license: "Public Domain (CC0)",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Capitoline_Wolf%2C_Musei_Capitolini.jpg/800px-Capitoline_Wolf%2C_Musei_Capitolini.jpg",
+      imgUrl: "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/6/6a/Capitoline_Wolf%2C_Musei_Capitolini.jpg&w=600",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Capitoline_Wolf,_Musei_Capitolini.jpg",
       desc: "팔라티노 언덕 근처에 버려진 쌍둥이 형제를 암늑대 루파가 젖을 물려 길러낸, 로마 제국의 영원한 상징입니다."
     },
@@ -314,7 +311,7 @@ const heroGalleries = {
       year: "1643년경",
       museum: "프랑스 파리 루브르 박물관",
       license: "Public Domain",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Cortona_Romulus_and_Remus_Given_Shelter_by_Faustulus_01.jpg/800px-Cortona_Romulus_and_Remus_Given_Shelter_by_Faustulus_01.jpg",
+      imgUrl: "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/3/30/Cortona_Romulus_and_Remus_Given_Shelter_by_Faustulus_01.jpg&w=600",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Cortona_Romulus_and_Remus_Given_Shelter_by_Faustulus_01.jpg",
       desc: "테베레강가에서 늑대의 젖을 먹고 자란 쌍둥이 형제를 양치기 파우스툴루스가 발견하여 집으로 데려오는 순간입니다."
     },
@@ -325,7 +322,7 @@ const heroGalleries = {
       year: "1812년",
       museum: "프랑스 파리 국립고등미술학교",
       license: "Public Domain",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Jean-auguste-dominique_ingres%2C_romolo%2C_vincitore_di_acron%2C_porta_il_bottino_nel_tempio_di_giano%2C_1812%2C_00.jpg/800px-Jean-auguste-dominique_ingres%2C_romolo%2C_vincitore_di_acron%2C_porta_il_bottino_nel_tempio_di_giano%2C_1812%2C_00.jpg",
+      imgUrl: "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/0/00/Jean-auguste-dominique_ingres%2C_romolo%2C_vincitore_di_acron%2C_porta_il_bottino_nel_tempio_di_giano%2C_1812%2C_00.jpg&w=600",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Jean-auguste-dominique_ingres,_romolo,_vincitore_di_acron,_porta_il_bottino_nel_tempio_di_giano,_1812,_00.jpg",
       desc: "로마를 침공한 카이니나의 왕 아크론을 결투로 베고 최초의 최고 전리품(Spolia Opima)을 운반하는 장면입니다."
     },
@@ -336,7 +333,7 @@ const heroGalleries = {
       year: "1799년",
       museum: "프랑스 파리 루브르 박물관",
       license: "Public Domain",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/The_Intervention_of_the_Sabine_Women.jpg/800px-The_Intervention_of_the_Sabine_Women.jpg",
+      imgUrl: "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/6/6d/The_Intervention_of_the_Sabine_Women.jpg&w=600",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:The_Intervention_of_the_Sabine_Women.jpg",
       desc: "로마와 사비니족 간의 전쟁터에서 어린아이들을 안고 평화를 호소하며 분쟁을 종식시킨 여인들의 모습입니다."
     }
@@ -349,7 +346,7 @@ const heroGalleries = {
       year: "1828년",
       museum: "프랑스 피카르디 박물관",
       license: "Public Domain",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Merry-Joseph_Blondel_-_Lycurgus.jpg/800px-Merry-Joseph_Blondel_-_Lycurgus.jpg",
+      imgUrl: "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/4/4b/Merry-Joseph_Blondel_-_Lycurgus.jpg&w=600",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Merry-Joseph_Blondel_-_Lycurgus.jpg",
       desc: "델포이에서 가져온 신탁에 기초해 엄격하고 평등한 군사 국가 스파르타의 헌법을 반포하는 리쿠르고스의 위엄을 그렸습니다."
     },
@@ -360,7 +357,7 @@ const heroGalleries = {
       year: "1840년대",
       museum: "프랑스 파리 부르봉 궁전",
       license: "Public Domain",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Delacroix_Lycurgus.jpg/800px-Delacroix_Lycurgus.jpg",
+      imgUrl: "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/e/ec/Delacroix_Lycurgus.jpg&w=600",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Delacroix_Lycurgus.jpg",
       desc: "법을 결코 바꾸지 않겠다는 맹세를 시민들에게 받고 스스로 굶어 죽음으로써 법을 영구화한 일화를 담았습니다."
     },
@@ -371,7 +368,7 @@ const heroGalleries = {
       year: "1860년경",
       museum: "영국 런던 내셔널 갤러리",
       license: "Public Domain",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Edgar_Degas_-_Young_Spartans_Exercising.jpg/800px-Edgar_Degas_-_Young_Spartans_Exercising.jpg",
+      imgUrl: "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/7/70/Edgar_Degas_-_Young_Spartans_Exercising.jpg&w=600",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Edgar_Degas_-_Young_Spartans_Exercising.jpg",
       desc: "리쿠르고스의 국가 교육 체계(아고게)에 따라 강인한 신체와 전사 정신을 기르는 스파르타 청년들의 훈련 모습입니다."
     },
@@ -382,7 +379,7 @@ const heroGalleries = {
       year: "1850년",
       museum: "이탈리아 피렌체 피티 궁전 현대미술관",
       license: "Public Domain",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Luigi_mussini%2C_un_pasto_spartano%2C_1850%2C_02.JPG/800px-Luigi_mussini%2C_un_pasto_spartano%2C_1850%2C_02.JPG",
+      imgUrl: "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/f/fb/Luigi_mussini%2C_un_pasto_spartano%2C_1850%2C_02.JPG&w=600",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Luigi_mussini,_un_pasto_spartano,_1850,_02.JPG",
       desc: "빈부격차와 사치를 없애기 위해 왕부터 일반 시민까지 한자리에 모여 검소한 음식을 나누어 먹던 규율입니다."
     }
@@ -395,7 +392,7 @@ const heroGalleries = {
       year: "1806년경",
       museum: "이탈리아 국립 미술관",
       license: "Public Domain",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Giani_-_Numa_Pompilio_consigliato_dalla_ninfa_Egeria.jpg/800px-Giani_-_Numa_Pompilio_consigliato_dalla_ninfa_Egeria.jpg",
+      imgUrl: "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/6/67/Giani_-_Numa_Pompilio_consigliato_dalla_ninfa_Egeria.jpg&w=600",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Giani_-_Numa_Pompilio_consigliato_dalla_ninfa_Egeria.jpg",
       desc: "성스러운 숲속 샘가에서 지혜의 님프 에게리아를 만나 로마의 제례와 종교 규율에 관한 영감을 받는 누마의 모습입니다."
     },
@@ -406,7 +403,7 @@ const heroGalleries = {
       year: "1727년",
       museum: "프랑스 릴 미술관",
       license: "Public Domain",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Jean_Raoux_-_Les_Vierges_vestales.jpg/800px-Jean_Raoux_-_Les_Vierges_vestales.jpg",
+      imgUrl: "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/4/4c/Jean_Raoux_-_Les_Vierges_vestales.jpg&w=600",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Jean_Raoux_-_Les_Vierges_vestales.jpg",
       desc: "누마 폼필리우스 왕이 창설하여 로마의 성스러운 불꽃이 꺼지지 않도록 지키는 순결한 여사제들의 의식입니다."
     },
@@ -417,7 +414,7 @@ const heroGalleries = {
       year: "1681년",
       museum: "프랑스 베르사유 궁전",
       license: "Public Domain",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Charles_Le_Brun_-_The_Temple_of_Janus_Closed.jpg/800px-Charles_Le_Brun_-_The_Temple_of_Janus_Closed.jpg",
+      imgUrl: "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/7/7b/Charles_Le_Brun_-_The_Temple_of_Janus_Closed.jpg&w=600",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Charles_Le_Brun_-_The_Temple_of_Janus_Closed.jpg",
       desc: "전쟁 중에는 열려 있고 평화 시에는 닫히는 야누스의 문을 43년 치세 내내 닫아두며 이룩한 태평성대를 기린 그림입니다."
     },
@@ -428,7 +425,7 @@ const heroGalleries = {
       year: "1820년대",
       museum: "프랑스 국립 박물관",
       license: "Public Domain",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Numa_Pompilius_refusing_the_crown.jpg/800px-Numa_Pompilius_refusing_the_crown.jpg",
+      imgUrl: "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/d/df/Numa_Pompilius_refusing_the_crown.jpg&w=600",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Numa_Pompilius_refusing_the_crown.jpg",
       desc: "원로원 사절들이 찾아와 왕위에 오를 것을 청했으나 권력보다 평화로운 은둔을 더 귀하게 여겨 사양하던 순간입니다."
     }
@@ -441,7 +438,7 @@ const heroGalleries = {
       year: "1624년",
       museum: "독일 함부르크 미술관",
       license: "Public Domain",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Gerard_van_Honthorst_-_Solon_and_Croesus_-_1624.jpg/800px-Gerard_van_Honthorst_-_Solon_and_Croesus_-_1624.jpg",
+      imgUrl: "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/9/91/Gerard_van_Honthorst_-_Solon_and_Croesus_-_1624.jpg&w=600",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Gerard_van_Honthorst_-_Solon_and_Croesus_-_1624.jpg",
       desc: "세상에서 가장 부유함을 뽐내는 리디아의 왕 크로이소스에게 '인간의 진정한 행복은 죽음을 맞이하기 전까지는 결코 속단할 수 없다'고 가르치는 솔론의 일화입니다."
     },
@@ -452,7 +449,7 @@ const heroGalleries = {
       year: "1828년",
       museum: "프랑스 루브르 박물관",
       license: "Public Domain",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Merry-Joseph_Blondel_-_Solon.jpg/800px-Merry-Joseph_Blondel_-_Solon.jpg",
+      imgUrl: "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/c/c5/Merry-Joseph_Blondel_-_Solon.jpg&w=600",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Merry-Joseph_Blondel_-_Solon.jpg",
       desc: "부유한 귀족과 가난한 평민 사이에서 균형을 맞추며, 채무 노예제를 철폐하고 아테네의 새로운 법전을 반포하는 대현자 솔론의 엄숙한 모습입니다."
     },
@@ -463,7 +460,7 @@ const heroGalleries = {
       year: "1846년",
       museum: "독일 뮌헨 노이에 피나코테크",
       license: "Public Domain",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Leo_von_Klenze_-_The_Acropolis_at_Athens_-_Neue_Pinakothek.jpg/800px-Leo_von_Klenze_-_The_Acropolis_at_Athens_-_Neue_Pinakothek.jpg",
+      imgUrl: "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/a/af/Leo_von_Klenze_-_The_Acropolis_at_Athens_-_Neue_Pinakothek.jpg&w=600",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Leo_von_Klenze_-_The_Acropolis_at_Athens_-_Neue_Pinakothek.jpg",
       desc: "솔론의 법치 개혁과 민주주의적 제도 확립을 바탕으로 번영을 꽃피운 고대 아테네의 중심 성역을 재현한 풍경화입니다."
     },
@@ -474,7 +471,7 @@ const heroGalleries = {
       year: "1511년",
       museum: "바티칸 사도 궁전",
       license: "Public Domain",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg/800px-%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg",
+      imgUrl: "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/4/49/%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg&w=600",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:%22The_School_of_Athens%22_by_Raffaello_Sanzio_da_Urbino.jpg",
       desc: "솔론을 비롯한 7대 현인들이 뿌린 지혜와 합리주의 법치 철학의 전통 위에 서서 학문을 논하는 고대 그리스 사상가들의 모습입니다."
     }
@@ -487,7 +484,7 @@ const heroGalleries = {
       year: "1789년",
       museum: "프랑스 파리 루브르 박물관",
       license: "Public Domain",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Jacques-Louis_David_-_The_Lictors_Bring_to_Brutus_the_Bodies_of_His_Sons_-_WGA5997.jpg/800px-Jacques-Louis_David_-_The_Lictors_Bring_to_Brutus_the_Bodies_of_His_Sons_-_WGA5997.jpg",
+      imgUrl: "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/8/87/Jacques-Louis_David_-_The_Lictors_Bring_to_Brutus_the_Bodies_of_His_Sons_-_WGA5997.jpg&w=600",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Jacques-Louis_David_-_The_Lictors_Bring_to_Brutus_the_Bodies_of_His_Sons_-_WGA5997.jpg",
       desc: "공화정 전복 음모를 꾸민 친아들들을 처형한 동지 브루투스의 비극과, 그 뒤를 이어 홀로 로마 공화정의 헌정 질서를 지켜낸 푸블리콜라의 결단을 상징하는 대작입니다."
     },
@@ -498,7 +495,7 @@ const heroGalleries = {
       year: "1640년대",
       museum: "호주 뉴사우스웨일스 주립 미술관",
       license: "Public Domain",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Matthias_Stom_-_Mucius_Scaevola_in_the_Presence_of_Lars_Porsenna.jpg/800px-Matthias_Stom_-_Mucius_Scaevola_in_the_Presence_of_Lars_Porsenna.jpg",
+      imgUrl: "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/7/7b/Matthias_Stom_-_Mucius_Scaevola_in_the_Presence_of_Lars_Porsenna.jpg&w=600",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Matthias_Stom_-_Mucius_Scaevola_in_the_Presence_of_Lars_Porsenna.jpg",
       desc: "푸블리콜라가 이끌던 로마를 포위한 에트루리아 왕 포르세나 앞에서 자신의 오른손을 화로에 태우며 굴복하지 않는 로마 시민의 기개를 보인 순간입니다."
     },
@@ -509,7 +506,7 @@ const heroGalleries = {
       year: "1640년경",
       museum: "프랑스 루브르 박물관",
       license: "Public Domain",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Jacques_Stella_-_Cloelia_passing_the_Tiber.jpg/800px-Jacques_Stella_-_Cloelia_passing_the_Tiber.jpg",
+      imgUrl: "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/6/69/Jacques_Stella_-_Cloelia_passing_the_Tiber.jpg&w=600",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Jacques_Stella_-_Cloelia_passing_the_Tiber.jpg",
       desc: "푸블리콜라가 포르세나 왕과 평화 협정을 맺기 위해 보낸 인질 중, 테베레강을 헤엄쳐 탈출하며 로마의 자유를 지켜낸 영웅적 소녀 클로엘리아의 일화입니다."
     },
@@ -520,7 +517,7 @@ const heroGalleries = {
       year: "1889년",
       museum: "이탈리아 로마 마다마 궁전",
       license: "Public Domain",
-      imgUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Maccari-Cicero.jpg/800px-Maccari-Cicero.jpg",
+      imgUrl: "https://wsrv.nl/?url=upload.wikimedia.org/wikipedia/commons/3/3b/Maccari-Cicero.jpg&w=600",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Maccari-Cicero.jpg",
       desc: "집정관의 상징 도끼를 낮추고 민회에 머리 숙여 주권이 시민에게 있음을 천명한 푸블리콜라의 입법 원칙이 살아 숨 쉬는 로마 공화정 의회의 모습입니다."
     }
