@@ -275,6 +275,17 @@ const heroGalleries = {
       imgUrl: "images/theseus-3.jpg",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Johann_Heinrich_Tischbein_-_Ariadne_Helping_Theseus_by_Giving_him_a_Ball_of_Thread,_1779.jpg",
       desc: "미노타우로스가 갇힌 크레타 미궁으로 들어가는 테세우스를 위해, 미궁을 빠져나올 수 있는 붉은 실타래와 검을 건네며 탈출을 돕는 크레타 공주 아리아드네의 애절한 순간을 묘사했습니다."
+    },
+            {
+      title: "악당 스키론을 절벽 아래로 던지는 테세우스",
+      originalTitle: "Attic Red-Figure Kylix: Theseus Killing Skiron",
+      artist: "두리스 (Douris, 화가) & 퓌톤 (Python, 도공)",
+      year: "기원전 470년경 (고전기 초기)",
+      museum: "독일 베를린 구 박물관 (Altes Museum)",
+      license: "Public Domain",
+      imgUrl: "images/theseus-4.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Douris_ARV_438_130_Theseus_killing_Skiron_-_battle_scene_-_men_and_youths_(01).jpg",
+      desc: "아테네로 향하는 육로에서 나그네들에게 발을 씻게 한 뒤 절벽 아래로 차 바다거북의 먹이로 주던 악당 스키론을 똑같은 방식으로 거대한 절벽 아래로 내던져 응징하는 테세우스의 무용담을 담은 고대 아티카 적화식 도자기입니다."
     }
            ],
   romulus: [],
