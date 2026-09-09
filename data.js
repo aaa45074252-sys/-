@@ -6,30 +6,34 @@ const HERO_SPRITES = {
 
   romulus: `<svg viewBox="0 0 32 32" width="100%" height="100%" style="image-rendering:pixelated;shape-rendering:crispEdges;"><rect x="13" y="1" width="6" height="2" fill="#dc2626"/><rect x="11" y="2" width="10" height="2" fill="#b91c1c"/><rect x="10" y="3" width="12" height="1" fill="#991b1b"/><rect x="11" y="4" width="10" height="5" fill="#d97706"/><rect x="13" y="4" width="6" height="2" fill="#fcd34d"/><rect x="10" y="7" width="2" height="4" fill="#b45309"/><rect x="20" y="7" width="2" height="4" fill="#b45309"/><rect x="12" y="7" width="8" height="5" fill="#fed7aa"/><rect x="13" y="8" width="2" height="2" fill="#0f172a"/><rect x="17" y="8" width="2" height="2" fill="#0f172a"/><rect x="14" y="8" width="1" height="1" fill="#ffffff"/><rect x="18" y="8" width="1" height="1" fill="#ffffff"/><rect x="15" y="10" width="2" height="1" fill="#fb923c"/><rect x="14" y="11" width="4" height="1" fill="#ea580c"/><rect x="7" y="11" width="4" height="12" fill="#991b1b"/><rect x="6" y="13" width="2" height="10" fill="#7f1d1d"/><rect x="11" y="12" width="10" height="9" fill="#b45309"/><rect x="12" y="13" width="8" height="6" fill="#d97706"/><rect x="14" y="14" width="4" height="4" fill="#f59e0b"/><rect x="10" y="12" width="2" height="3" fill="#fcd34d"/><rect x="20" y="12" width="2" height="3" fill="#fcd34d"/><rect x="6" y="15" width="5" height="10" fill="#b91c1c"/><rect x="7" y="16" width="3" height="8" fill="#dc2626"/><rect x="8" y="19" width="2" height="2" fill="#fbbf24"/><rect x="24" y="2" width="1" height="4" fill="#f1f5f9"/><rect x="23" y="4" width="3" height="2" fill="#94a3b8"/><rect x="24" y="6" width="1" height="23" fill="#5c3a1e"/><rect x="22" y="16" width="3" height="3" fill="#fed7aa"/><rect x="11" y="21" width="10" height="2" fill="#78350f"/><rect x="15" y="21" width="2" height="2" fill="#fbbf24"/><rect x="12" y="23" width="2" height="3" fill="#9a3412"/><rect x="15" y="23" width="2" height="3" fill="#78350f"/><rect x="18" y="23" width="2" height="3" fill="#9a3412"/><rect x="12" y="26" width="3" height="3" fill="#fed7aa"/><rect x="17" y="26" width="3" height="3" fill="#fed7aa"/><rect x="11" y="29" width="4" height="2" fill="#451a03"/><rect x="17" y="29" width="4" height="2" fill="#451a03"/></svg>`,
 
-  // 리쿠르고스: 붉은 망토와 스파르타의 청동 방패를 든 철혈 입법자
   lycurgus: `<svg viewBox="0 0 32 32" width="100%" height="100%" style="image-rendering:pixelated;shape-rendering:crispEdges;"><rect x="12" y="3" width="8" height="4" fill="#78350f"/><rect x="10" y="5" width="12" height="4" fill="#451a03"/><rect x="11" y="8" width="10" height="6" fill="#fcd34d"/><rect x="12" y="9" width="2" height="2" fill="#0f172a"/><rect x="18" y="9" width="2" height="2" fill="#0f172a"/><rect x="10" y="13" width="12" height="4" fill="#cbd5e1"/><rect x="11" y="14" width="10" height="3" fill="#94a3b8"/><rect x="9" y="16" width="14" height="9" fill="#991b1b"/><rect x="11" y="17" width="10" height="7" fill="#b91c1c"/><rect x="6" y="15" width="5" height="10" fill="#d97706"/><rect x="7" y="16" width="3" height="8" fill="#f59e0b"/><rect x="21" y="16" width="4" height="7" fill="#991b1b"/><rect x="23" y="11" width="2" height="14" fill="#475569"/><rect x="11" y="25" width="3" height="4" fill="#78350f"/><rect x="18" y="25" width="3" height="4" fill="#78350f"/><rect x="10" y="29" width="4" height="2" fill="#292524"/><rect x="18" y="29" width="4" height="2" fill="#292524"/></svg>`,
 
-  // 누마 폼필리우스: 흰색 제사장의 옷과 월계관, 법전을 든 평화의 군주
-  numa: `<svg viewBox="0 0 32 32" width="100%" height="100%" style="image-rendering:pixelated;shape-rendering:crispEdges;"><rect x="12" y="2" width="8" height="3" fill="#15803d"/><rect x="10" y="4" width="12" height="2" fill="#16a34a"/><rect x="11" y="6" width="10" height="4" fill="#fed7aa"/><rect x="10" y="9" width="12" height="6" fill="#fcd34d"/><rect x="12" y="9" width="2" height="2" fill="#1e293b"/><rect x="18" y="9" width="2" height="2" fill="#1e293b"/><rect x="11" y="13" width="10" height="4" fill="#f1f5f9"/><rect x="10" y="15" width="12" height="11" fill="#ffffff"/><rect x="8" y="17" width="4" height="8" fill="#e2e8f0"/><rect x="20" y="17" width="4" height="8" fill="#e2e8f0"/><rect x="13" y="18" width="6" height="4" fill="#7c3aed"/><rect x="22" y="15" width="4" height="6" fill="#b45309"/><rect x="23" y="16" width="2" height="4" fill="#fef08a"/><rect x="11" y="26" width="3" height="3" fill="#fed7aa"/><rect x="18" y="26" width="3" height="3" fill="#fed7aa"/><rect x="10" y="29" width="4" height="2" fill="#78350f"/><rect x="18" y="29" width="4" height="2" fill="#78350f"/></svg>`
+  numa: `<svg viewBox="0 0 32 32" width="100%" height="100%" style="image-rendering:pixelated;shape-rendering:crispEdges;"><rect x="12" y="2" width="8" height="3" fill="#15803d"/><rect x="10" y="4" width="12" height="2" fill="#16a34a"/><rect x="11" y="6" width="10" height="4" fill="#fed7aa"/><rect x="10" y="9" width="12" height="6" fill="#fcd34d"/><rect x="12" y="9" width="2" height="2" fill="#1e293b"/><rect x="18" y="9" width="2" height="2" fill="#1e293b"/><rect x="11" y="13" width="10" height="4" fill="#f1f5f9"/><rect x="10" y="15" width="12" height="11" fill="#ffffff"/><rect x="8" y="17" width="4" height="8" fill="#e2e8f0"/><rect x="20" y="17" width="4" height="8" fill="#e2e8f0"/><rect x="13" y="18" width="6" height="4" fill="#7c3aed"/><rect x="22" y="15" width="4" height="6" fill="#b45309"/><rect x="23" y="16" width="2" height="4" fill="#fef08a"/><rect x="11" y="26" width="3" height="3" fill="#fed7aa"/><rect x="18" y="26" width="3" height="3" fill="#fed7aa"/><rect x="10" y="29" width="4" height="2" fill="#78350f"/><rect x="18" y="29" width="4" height="2" fill="#78350f"/></svg>`,
+
+  // 솔론: 지혜의 현인, 양피지 두루마리를 든 아테네의 입법관
+  solon: `<svg viewBox="0 0 32 32" width="100%" height="100%" style="image-rendering:pixelated;shape-rendering:crispEdges;"><rect x="11" y="3" width="10" height="3" fill="#64748b"/><rect x="10" y="5" width="12" height="3" fill="#94a3b8"/><rect x="11" y="8" width="10" height="5" fill="#fed7aa"/><rect x="12" y="9" width="2" height="2" fill="#0f172a"/><rect x="18" y="9" width="2" height="2" fill="#0f172a"/><rect x="10" y="13" width="12" height="4" fill="#e2e8f0"/><rect x="11" y="14" width="10" height="3" fill="#cbd5e1"/><rect x="9" y="17" width="14" height="10" fill="#2563eb"/><rect x="11" y="18" width="10" height="8" fill="#3b82f6"/><rect x="6" y="18" width="4" height="7" fill="#1d4ed8"/><rect x="22" y="18" width="4" height="7" fill="#1d4ed8"/><rect x="7" y="20" width="3" height="6" fill="#fed7aa"/><rect x="22" y="20" width="3" height="6" fill="#fef08a"/><rect x="23" y="19" width="2" height="7" fill="#fde047"/><rect x="11" y="27" width="3" height="3" fill="#78350f"/><rect x="18" y="27" width="3" height="3" fill="#78350f"/><rect x="10" y="29" width="4" height="2" fill="#1e293b"/><rect x="18" y="29" width="4" height="2" fill="#1e293b"/></svg>`,
+
+  // 푸블리콜라: 공화정 토가를 입고 로마 민중을 대변하는 집정관
+  publicola: `<svg viewBox="0 0 32 32" width="100%" height="100%" style="image-rendering:pixelated;shape-rendering:crispEdges;"><rect x="12" y="3" width="8" height="4" fill="#451a03"/><rect x="11" y="6" width="10" height="5" fill="#fed7aa"/><rect x="12" y="7" width="2" height="2" fill="#0f172a"/><rect x="18" y="7" width="2" height="2" fill="#0f172a"/><rect x="13" y="9" width="6" height="2" fill="#d97706"/><rect x="9" y="12" width="14" height="14" fill="#f8fafc"/><rect x="11" y="13" width="10" height="12" fill="#e2e8f0"/><rect x="8" y="14" width="4" height="9" fill="#991b1b"/><rect x="14" y="13" width="4" height="12" fill="#991b1b"/><rect x="22" y="15" width="3" height="6" fill="#fed7aa"/><rect x="23" y="12" width="2" height="13" fill="#b45309"/><rect x="22" y="10" width="4" height="3" fill="#94a3b8"/><rect x="11" y="26" width="3" height="4" fill="#78350f"/><rect x="18" y="26" width="3" height="4" fill="#78350f"/><rect x="10" y="29" width="4" height="2" fill="#1e1b4b"/><rect x="18" y="29" width="4" height="2" fill="#1e1b4b"/></svg>`
 };
 
 // ==========================================
-// 2. 지도 이벤트 핀 데이터
+// 2. 지도 이벤트 핀 데이터 (위치 중복 방지 세분화)
 // ==========================================
 const allMapEvents = [
   {
     hero: "theseus",
     heroName: "테세우스",
-    title: "아테네 (통합과 민주정의 기틀)",
-    desc: "아티카 지방의 흩어진 마을들을 하나로 통합(시노이키스모스)하여 위대한 도시국가 아테네의 번영을 열었습니다.",
-    lat: 37.9838,
-    lng: 23.7275
+    title: "아테네 - 아크로폴리스 (연방 통합)",
+    desc: "아티카 지방의 흩어진 마을들을 하나로 묶고(시노이키스모스) 아테네의 번영을 열었습니다.",
+    lat: 37.9715,
+    lng: 23.7267
   },
   {
     hero: "romulus",
     heroName: "로물루스",
-    title: "로마 (팔라티노 언덕의 건국)",
-    desc: "기원전 753년, 팔라티노 언덕에 성벽의 경계를 긋고 망명자들을 받아들여 영원한 제국 로마를 세웠습니다.",
+    title: "로마 - 팔라티노 언덕 (건국)",
+    desc: "기원전 753년, 팔라티노 언덕에 성벽의 경계를 긋고 영원한 제국 로마를 세웠습니다.",
     lat: 41.8885,
     lng: 12.4855
   },
@@ -37,17 +41,33 @@ const allMapEvents = [
     hero: "lycurgus",
     heroName: "리쿠르고스",
     title: "스파르타 (철혈의 군사 규율)",
-    desc: "스파르타 전역의 토지를 평등하게 재분배하고, 성벽 대신 시민의 용기를 방패로 삼는 불멸의 군사 공동체를 구축했습니다.",
+    desc: "엄격한 군사 훈련 체계와 평등한 토지 분배로 흔들리지 않는 최강의 전사 국가를 구축했습니다.",
     lat: 37.0742,
     lng: 22.4303
   },
   {
     hero: "numa",
     heroName: "누마 폼필리우스",
-    title: "로마 (야누스 신전과 평화의 치세)",
-    desc: "전쟁으로 들끓던 로마에 제례와 달력을 제정하고, 43년의 재위 동안 단 한 번도 전쟁을 벌이지 않고 야누스의 문을 닫았습니다.",
-    lat: 41.4925,
+    title: "로마 - 포룸 & 야누스 신전 (평화와 제례)",
+    desc: "야누스 신전의 문을 닫고 43년의 재위 동안 단 한 번의 전쟁도 없이 신앙과 법치로 다스렸습니다.",
+    lat: 41.8925,
     lng: 12.4875
+  },
+  {
+    hero: "solon",
+    heroName: "솔론",
+    title: "아테네 - 아고라 광장 (채무 탕감과 법 제정)",
+    desc: "시민들의 빚을 없애고(세이사크테이아) 노예화를 금지하여 아테네 민주주의의 기틀을 확립했습니다.",
+    lat: 37.9753,
+    lng: 23.7225
+  },
+  {
+    hero: "publicola",
+    heroName: "푸블리콜라",
+    title: "로마 - 벨리아 언덕 (시민의 권리와 공화정)",
+    desc: "독재자의 혐의를 벗기 위해 언덕 위 호화 저택을 스스로 헐고, 집정관의 상징 도끼를 낮추어 시민에게 주권을 돌려주었습니다.",
+    lat: 41.8912,
+    lng: 12.4908
   }
 ];
 
@@ -110,10 +130,10 @@ const heroDetails = {
   lycurgus: {
     name: "리쿠르고스 (Lycurgus)",
     overview: {
-      birth: "스파르타 에우리폰티드 왕가의 왕족 (프로클레스의 후손)",
-      feat: "토지 균등 분배, 무쇠 화폐 도입, 공동 식사제(시시티아), 아고게(국가 군사훈련) 창설",
-      character: "극기의 절제력, 사리사욕이 전무하며 조국을 하나의 유기체로 묶어낸 냉철한 입법자",
-      verdict: "시민들에게 법을 맹세시킨 뒤 굶어 죽음으로써 법을 영원히 고치지 못하게 만든 절대적 입법자."
+      birth: "스파르타 에우리폰티드 왕가의 왕족",
+      feat: "토지 균등 분배, 무쇠 화폐 도입, 공동 식사제(시시티아), 아고게 창설",
+      character: "극기의 절제력, 사리사욕이 전무한 냉철한 입법자",
+      verdict: "시민들에게 법을 맹세시킨 뒤 스스로 굶어 죽어 법의 영속성을 얻음."
     },
     quotes: [
       { text: "“도시는 벽돌이 아니라 용감한 시민들의 어깨로 둘러싸여야 한다.”", desc: "스파르타에 왜 성벽을 쌓지 않느냐는 물음에 답하며" },
@@ -136,19 +156,19 @@ const heroDetails = {
   numa: {
     name: "누마 폼필리우스 (Numa Pompilius)",
     overview: {
-      birth: "사비니 출신의 현자, 로마를 건국한 타티우스의 사위",
-      feat: "야누스 신전 건립, 베스타 여사제단 및 폰티펙스(최고 제사장) 창설, 12개월 태양력 개정",
-      character: "명상과 철학을 사랑하며, 폭력을 혐오하고 신에 대한 경외로 백성을 다스림",
-      verdict: "피비린내 나는 군사도시 로마를 43년간 단 한 번의 전쟁도 없는 신앙과 법치 국가로 탈바꿈시킴."
+      birth: "사비니 출신의 현자, 타티우스 왕의 사위",
+      feat: "야누스 신전 건립, 베스타 여사제단 및 폰티펙스 창설, 12개월 태양력 개정",
+      character: "명상과 철학을 사랑하며 신에 대한 경외로 다스림",
+      verdict: "피비린내 나는 군사도시 로마를 43년간 평화와 법치 국가로 탈바꿈시킴."
     },
     quotes: [
       { text: "“신은 눈에 보이는 형상으로 만들 수 없으며 오직 마음으로만 섬겨야 한다.”", desc: "로마 초기 170년간 우상 조각을 세우지 못하게 금지하며" },
-      { text: "“정의와 법을 통해 무기를 내려놓게 만드는 것이야말로 진정한 통치다.”", desc: "왕위를 사양하다가 사비니와 로마 시민의 간청을 받아들이며" }
+      { text: "“정의와 법을 통해 무기를 내려놓게 만드는 것이야말로 진정한 통치다.”", desc: "왕위를 사양하다가 시민의 간청을 받아들이며" }
     ],
     graph: {
       nodes: [
         { id: "numa", name: "누마 폼필리우스", r: 24, color: "#e5be75", type: "영웅", desc: "로마의 2대 국왕이자 현자", insight: "신앙과 지혜로 야만의 도시를 길들인 군주" },
-        { id: "egeria", name: "님프 에게리아", r: 19, color: "#a855f7", type: "뮤즈/신성", desc: "숲속의 샘 요정", insight: "누마에게 입법과 종교적 영감을 전수한 신성한 반려자" },
+        { id: "egeria", name: "님프 에게리아", r: 19, color: "#a855f7", type: "뮤즈/신성", desc: "숲속의 샘 요정", insight: "누마에게 입법과 종교적 영감을 전수한 반려자" },
         { id: "tatius", name: "타티우스", r: 18, color: "#3b82f6", type: "장인", desc: "사비니의 왕", insight: "로마와 사비니를 하나로 묶는 혈연적 고리" },
         { id: "janus", name: "야누스 신전", r: 18, color: "#10b981", type: "평화", desc: "전쟁과 평화의 문", insight: "재위 43년 동안 한 번도 문이 열리지 않은 평화의 증표" }
       ],
@@ -156,6 +176,58 @@ const heroDetails = {
         { source: "numa", target: "egeria", label: "영적 교감" },
         { source: "numa", target: "tatius", label: "사위 관계" },
         { source: "numa", target: "janus", label: "평화 유지" }
+      ]
+    }
+  },
+  solon: {
+    name: "솔론 (Solon)",
+    overview: {
+      birth: "아테네 명문 코드로스 왕가의 후예이자 시인",
+      feat: "부채 탕감(세이사크테이아), 신체 담보 노예제 철폐, 재산에 따른 4계급제 편성, 민중법원 창설",
+      character: "극단적 혁명과 부패한 특권을 모두 경계하고 중용(中庸)을 지킨 지혜로운 현자",
+      verdict: "독재자가 될 기회를 버리고 법 앞에 만인이 평등하도록 아테네 민주정의 주춧돌을 세움."
+    },
+    quotes: [
+      { text: "“나는 양편 사이에 튼튼한 방패를 대주어, 어느 한쪽도 부당하게 이기지 못하게 하였다.”", desc: "빈민의 토지 분배 요구와 귀족의 특권 유지 사이에서 중용을 선언하며" },
+      { text: "“아무리 부유한 사람이라도 죽음을 맞이하기 전까지는 결코 행복하다고 말할 수 없다.”", desc: "부귀를 뽐내는 리디아의 왕 크로이소스에게 건넨 경고" }
+    ],
+    graph: {
+      nodes: [
+        { id: "solon", name: "솔론", r: 24, color: "#e5be75", type: "영웅", desc: "아테네 7대 현인이자 대입법관", insight: "양극단의 갈등을 법과 중용으로 중재한 지혜" },
+        { id: "croesus", name: "크로이소스", r: 18, color: "#f59e0b", type: "대담자", desc: "리디아의 부유한 왕", insight: "행복은 끝을 보기 전까지 알 수 없음을 깨달은 군주" },
+        { id: "peisistratos", name: "페이시스트라토스", r: 18, color: "#ef4444", type: "정적/친족", desc: "아테네의 참주(독재자)", insight: "솔론의 경고에도 불구하고 무력으로 권력을 잡음" },
+        { id: "anacharsis", name: "아나카르시스", r: 18, color: "#3b82f6", type: "학문적 벗", desc: "스키타이의 철학자", insight: "법은 거미줄 같아서 약자만 얽힌다고 솔론을 비판함" }
+      ],
+      links: [
+        { source: "solon", target: "croesus", label: "행복 문답" },
+        { source: "solon", target: "peisistratos", label: "독재 경고" },
+        { source: "solon", target: "anacharsis", label: "철학적 토론" }
+      ]
+    }
+  },
+  publicola: {
+    name: "푸블리콜라 (Publicola)",
+    overview: {
+      birth: "로마 귀족 발레리우스 가문 출신 (본명: 푸블리우스 발레리우스)",
+      feat: "오만한 타르퀴니우스 왕정 추방, 집정관 파스케스(의전 도끼) 인하, 시민 항소권 보장",
+      character: "시민의 눈높이에서 권력을 절제하고 민중의 자유를 최우선으로 여긴 공화정의 수호자",
+      verdict: "권력의 남용을 스스로 경계하여 민중으로부터 '푸블리콜라(시민을 돌보는 자)'라는 명예로운 칭호를 얻음."
+    },
+    quotes: [
+      { text: "“자유로운 로마의 시민 위에 군림하는 자는 누구든 공공의 적으로 처벌받을 것이다.”", desc: "참주정을 도모하는 자를 재판 없이 처형할 수 있도록 한 법률을 공포하며" },
+      { text: "“집정관의 권위는 군림이 아니라 시민의 주권을 겸손히 받드는 데서 나온다.”", desc: "민회에 들어서며 집정관의 상징인 파스케스를 낮추어 절하며" }
+    ],
+    graph: {
+      nodes: [
+        { id: "publicola", name: "푸블리콜라", r: 24, color: "#e5be75", type: "영웅", desc: "로마 공화정의 초대 집정관", insight: "스스로 권력을 낮추어 자유를 반석 위에 올림" },
+        { id: "brutus", name: "브루투스", r: 20, color: "#3b82f6", type: "공동 건국자", desc: "왕을 몰아낸 혁명의 동지", insight: "공화정을 위해 반역한 아들들까지 처형한 냉혹한 애국자" },
+        { id: "tarquin", name: "타르퀴니우스", r: 18, color: "#ef4444", type: "적대/폭군", desc: "로마의 마지막 오만한 왕", insight: "시민들에게 축출되어 왕좌를 잃음" },
+        { id: "porsena", name: "라르스 포르세나", r: 18, color: "#10b981", type: "외적/외교", desc: "에트루리아의 왕", insight: "로마인의 결연한 용기에 감복하여 평화 협정을 맺음" }
+      ],
+      links: [
+        { source: "publicola", target: "brutus", label: "공화정 수립" },
+        { source: "publicola", target: "tarquin", label: "폭군 추방" },
+        { source: "publicola", target: "porsena", label: "강화 조약" }
       ]
     }
   }
@@ -257,7 +329,7 @@ const heroGalleries = {
       desc: "로마와 사비니족 간의 전쟁터에서 어린아이들을 안고 평화를 호소하며 분쟁을 종식시킨 여인들의 모습입니다."
     }
   ],
-lycurgus: [
+  lycurgus: [
     {
       title: "스파르타인들에게 법을 주는 리쿠르고스",
       originalTitle: "Lycurgus of Sparta Giving Laws to the Spartans",
@@ -347,6 +419,98 @@ lycurgus: [
       imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Numa_Pompilius_refusing_the_crown.jpg&w=800",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Numa_Pompilius_refusing_the_crown.jpg",
       desc: "원로원 사절들이 찾아와 왕위에 오를 것을 청했으나 권력보다 평화로운 은둔을 더 귀하게 여겨 사양하던 순간입니다."
+    }
+  ],
+  solon: [
+    {
+      title: "크로이소스 왕 앞의 솔론",
+      originalTitle: "Solon and Croesus",
+      artist: "헤라르트 판 혼토르스트 (Gerard van Honthorst)",
+      year: "1624년",
+      museum: "독일 함부르크 미술관",
+      license: "Public Domain",
+      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Gerard_van_Honthorst_-_Solon_and_Croesus_-_1624.jpg&w=800",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Gerard_van_Honthorst_-_Solon_and_Croesus_-_1624.jpg",
+      desc: "세상에서 가장 부유함을 뽐내는 리디아의 왕 크로이소스에게 '인간의 진정한 행복은 죽음을 맞이하기 전까지는 결코 속단할 수 없다'고 가르치는 솔론의 일화입니다."
+    },
+    {
+      title: "솔론의 법전 제정과 연설",
+      originalTitle: "Solon",
+      artist: "메리 조셉 블론델 (Merry-Joseph Blondel)",
+      year: "1828년",
+      museum: "프랑스 루브르 박물관",
+      license: "Public Domain",
+      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Merry-Joseph_Blondel_-_Solon.jpg&w=800",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Merry-Joseph_Blondel_-_Solon.jpg",
+      desc: "부유한 귀족과 가난한 평민 사이에서 균형을 맞추며, 채무 노예제를 철폐하고 아테네의 새로운 성문 법전을 반포하는 대현자 솔론의 엄숙한 모습입니다."
+    },
+    {
+      title: "아테네 아크로폴리스의 전경",
+      originalTitle: "The Acropolis at Athens",
+      artist: "레오 폰 클렌체 (Leo von Klenze)",
+      year: "1846년",
+      museum: "독일 뮌헨 노이에 피나코테크",
+      license: "Public Domain",
+      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Leo_von_Klenze_-_The_Acropolis_at_Athens_-_Neue_Pinakothek.jpg&w=800",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Leo_von_Klenze_-_The_Acropolis_at_Athens_-_Neue_Pinakothek.jpg",
+      desc: "솔론의 법치 개혁과 민주주의적 제도 확립을 바탕으로 번영을 꽃피운 고대 아테네의 중심 성역을 재현한 풍경화입니다."
+    },
+    {
+      title: "아테네 학당의 현자들",
+      originalTitle: "The School of Athens (Detail)",
+      artist: "라파엘로 산치오 (Raphael)",
+      year: "1511년",
+      museum: "바티칸 사도 궁전",
+      license: "Public Domain",
+      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Sanzio_01.jpg&w=800",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Sanzio_01.jpg",
+      desc: "솔론을 비롯한 7대 현인들이 뿌린 지혜와 합리주의 법치 철학의 전통 위에 서서 학문을 논하는 고대 그리스 사상가들의 모습입니다."
+    }
+  ],
+  publicola: [
+    {
+      title: "브루투스와 푸블리콜라의 맹세 (브루투스의 유해 앞)",
+      originalTitle: "The Lictors Bring to Brutus the Bodies of His Sons",
+      artist: "자크 루이 다비드 (Jacques-Louis David)",
+      year: "1789년",
+      museum: "프랑스 파리 루브르 박물관",
+      license: "Public Domain",
+      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Jacques-Louis_David_-_The_Lictors_Bring_to_Brutus_the_Bodies_of_His_Sons_-_WGA5997.jpg&w=800",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Jacques-Louis_David_-_The_Lictors_Bring_to_Brutus_the_Bodies_of_His_Sons_-_WGA5997.jpg",
+      desc: "공화정 전복 음모를 꾸민 친아들들을 처형한 동지 브루투스의 비극과, 그 뒤를 이어 홀로 로마 공화정의 헌정 질서를 지켜낸 푸블리콜라의 결단을 상징하는 대작입니다."
+    },
+    {
+      title: "무키우스 스카이볼라의 용기 (포르세나 왕 앞)",
+      originalTitle: "Mucius Scaevola in the Presence of Lars Porsenna",
+      artist: "마티아스 스톰 (Matthias Stom)",
+      year: "1640년대",
+      museum: "호주 뉴사우스웨일스 주립 미술관",
+      license: "Public Domain",
+      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Matthias_Stom_-_Mucius_Scaevola_in_the_Presence_of_Lars_Porsenna.jpg&w=800",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Matthias_Stom_-_Mucius_Scaevola_in_the_Presence_of_Lars_Porsenna.jpg",
+      desc: "푸블리콜라가 이끌던 로마를 포위한 에트루리아 왕 포르세나 앞에서 자신의 오른손을 화로에 태우며 굴복하지 않는 로마 시민의 기개를 보인 순간입니다."
+    },
+    {
+      title: "포르세나 진영을 탈출하는 클로엘리아",
+      originalTitle: "Cloelia Passing the Tiber",
+      artist: "자크 스텔라 (Jacques Stella)",
+      year: "1640년경",
+      museum: "프랑스 루브르 박물관",
+      license: "Public Domain",
+      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Jacques_Stella_-_Cloelia_passing_the_Tiber.jpg&w=800",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Jacques_Stella_-_Cloelia_passing_the_Tiber.jpg",
+      desc: "푸블리콜라가 포르세나 왕과 평화 협정을 맺기 위해 보낸 인질 중, 테베레강을 헤엄쳐 탈출하며 로마의 자유를 지켜낸 영웅적 소녀 클로엘리아의 일화입니다."
+    },
+    {
+      title: "원로원과 시민 앞의 집정관 (시민에 대한 경의)",
+      originalTitle: "Cicero Denounces Catiline (Roman Senate Assembly)",
+      artist: "체사레 마카리 (Cesare Maccari)",
+      year: "1889년",
+      museum: "이탈리아 로마 마다마 궁전",
+      license: "Public Domain",
+      imgUrl: "https://images.weserv.nl/?url=commons.wikimedia.org/wiki/Special:FilePath/Maccari-Cicero.jpg&w=800",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Maccari-Cicero.jpg",
+      desc: "집정관의 상징 도끼를 낮추고 민회에 머리 숙여 주권이 시민에게 있음을 천명한 푸블리콜라의 입법 원칙이 살아 숨 쉬는 로마 공화정 의회의 모습입니다."
     }
   ]
 };
