@@ -288,8 +288,75 @@ const heroGalleries = {
       desc: "아테네로 향하는 육로에서 나그네들에게 발을 씻게 한 뒤 절벽 아래로 차 바다거북의 먹이로 주던 악당 스키론을 똑같은 방식으로 거대한 절벽 아래로 내던져 응징하는 테세우스의 무용담을 담은 고대 아티카 적화식 도자기입니다."
     }
            ],
-  romulus: [],
-  lycurgus: [],
+  romulus: [{
+      title: "로물루스와 레무스",
+      originalTitle: "Romulus and Remus",
+      artist: "페테르 파울 루벤스 (Peter Paul Rubens)",
+      year: "1615-1616년경",
+      museum: "이탈리아 로마 카피톨리니 박물관 (Capitoline Museums)",
+      license: "Public Domain",
+      imgUrl: "images/romulus-1.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Rubens,_Peter_Paul_-_Romulus_and_Remus_-_1614-1616.jpg",
+      desc: "테베레강가에 버려진 쌍둥이 형제 로물루스와 레무스가 암늑대 루파의 젖을 먹으며 생명을 보전하고, 그 뒤편으로 목자 파우스툴루스가 다가와 이들을 발견하는 로마 건국 신화의 결정적 순간을 역동적으로 담아낸 바로크 명화입니다."
+    },
+    {
+      title: "카피톨리노의 암늑대 (루파 카피톨리나)",
+      originalTitle: "Lupa Capitolina (Capitoline Wolf)",
+      artist: "작자 미상 (에트루리아 청동 공예 전통 / 안토니오 델 폴라이올로 추정 추가)",
+      year: "기원전 5세기경 (쌍둥이는 15세기 말 추가)",
+      museum: "이탈리아 로마 카피톨리니 박물관 보존관 (Palazzo dei Conservatori)",
+      license: "Public Domain",
+      imgUrl: "images/romulus-2.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Lupa_Capitolina,_Rome.jpg",
+      desc: "버려진 핏덩이 형제 로물루스와 레무스를 품어 젖을 먹인 전설적인 암늑대 루파를 형상화한 조각으로, 제국 로마의 야생적 끈기와 불굴의 건국 정신을 증언하는 대표 유물입니다."
+    },
+    {
+      title: "사비니 여인들의 중재",
+      originalTitle: "The Intervention of the Sabine Women (Les Sabines)",
+      artist: "자크 루이 다비드 (Jacques-Louis David)",
+      year: "1799년",
+      museum: "프랑스 파리 루브르 박물관 (Louvre Museum)",
+      license: "Public Domain",
+      imgUrl: "images/romulus-3.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:The_Intervention_of_the_Sabine_Women_-_David_(Louvre_INV_3691).jpg",
+      desc: "로마군을 이끄는 로물루스와 사비니군을 이끄는 타티우스 왕 사이의 격전 한가운데에서, 에르실리아를 비롯한 사비니 여인들이 어린아이들을 안고 뛰어들어 피비린내 나는 전쟁을 멈추고 두 민족의 화해와 통합을 이끌어낸 극적인 순간입니다."
+    },
+    {
+      title: "아크론 왕을 꺾은 로물루스의 개선",
+      originalTitle: "Romulus, vincitore di Acron, porta il bottino nel tempio di Giano",
+      artist: "장 오귀스트 도미니크 앵그르 (Jean-Auguste-Dominique Ingres)",
+      year: "1812년",
+      museum: "프랑스 파리 국립고등미술학교 (Beaux-Arts de Paris)",
+      license: "Public Domain",
+      imgUrl: "images/romulus-4.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Jean-auguste-dominique_ingres,_romolo,_vincitore_di_acron,_porta_il_bottino_nel_tempio_di_giano,_1812,_00.jpg",
+      desc: "로마를 침공한 카이니나의 왕 아크론을 일대일 결투로 베고 쓰러뜨린 뒤, 적장의 화려한 갑옷을 참나무에 걸어 유피테르 신전에 바치는 최초의 '스폴리아 오피마(최고 전리품)' 봉헌 행렬을 웅장하게 묘사한 신고전주의 걸작입니다."
+    }
+           ],
+  lycurgus: [
+    {
+      title: "스파르타의 입법자 리쿠르고스",
+      originalTitle: "Lycurgus (Lycurgus of Sparta)",
+      artist: "메리 조셉 블론델 (Merry-Joseph Blondel)",
+      year: "1828년",
+      museum: "프랑스 아미앵 피카르디 박물관 (Musée de Picardie)",
+      license: "Public Domain",
+      imgUrl: "images/lycurgus-1.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Lycurgus_of_Sparta,_Merry_Joseph_Blondel.jpg",
+      desc: "스파르타의 전설적인 대입법관 리쿠르고스가 방패와 창을 배경으로 붉은 망토를 두른 채 깊은 사색에 잠겨 있는 역사화로, 사리사욕을 버리고 오직 조국의 기틀과 절제의 법률을 세우고자 고뇌하는 위엄을 담아냈습니다."
+    },
+    {
+      title: "훈련하는 젊은 스파르타인들",
+      originalTitle: "Young Spartans Exercising",
+      artist: "에드가 드가 (Edgar Degas)",
+      year: "1860년경",
+      museum: "영국 런던 내셔널 갤러리 (National Gallery, London)",
+      license: "Public Domain",
+      imgUrl: "images/lycurgus-2.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Young_Spartans_National_Gallery_NG3860.jpg",
+      desc: "플루타르코스가 전하는 리쿠르고스의 입법에 따라, 신체를 단련하여 건강한 아이를 낳고 강인한 공동체를 이루기 위해 소년들과 씨름하며 겨루기를 청하는 스파르타 소녀들과 청년들의 모습을 독창적으로 포착한 근대 역사화입니다."
+    }
+  ],
   numa: [],
   solon: [],
   publicola: []
