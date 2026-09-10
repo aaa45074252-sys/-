@@ -539,7 +539,7 @@ header {
 .no-posts { text-align: center; color: #666; font-size: 12px; padding: 20px 0; }
 
 /* ==========================================
-   성좌형 관계망 전용 스타일 & 미세 유영 키프레임
+   성좌형 관계망 전용 스타일 & 초미세 유영 키프레임
    ========================================== */
 .constellation-line {
   stroke-opacity: 0.35;
@@ -565,12 +565,21 @@ header {
   pointer-events: none;
 }
 
+.star-node {
+  cursor: pointer;
+}
+
+.touch-hitbox {
+  cursor: pointer;
+}
+
 .node-text {
   font-size: 11px;
   font-weight: 500;
   fill: #e2e8f0;
   user-select: none;
-  pointer-events: none;
+  pointer-events: auto; /* 텍스트 탭 허용 */
+  cursor: pointer;
   filter: drop-shadow(0 1px 3px rgba(0,0,0,0.95));
   letter-spacing: -0.3px;
 }
@@ -580,25 +589,25 @@ header {
   image-rendering: crisp-edges;
 }
 
-/* 4방향 랜덤 미세 유영 키프레임 (절반 진폭) */
+/* 위치 이동을 0.5px 내외로 제한하고 은은한 깜빡임 위주로 동작 */
 @keyframes driftA {
-  0%, 100% { transform: translate(0px, 0px) scale(1); opacity: 0.85; }
-  50% { transform: translate(1.4px, -1.6px) scale(1.04); opacity: 1; }
+  0%, 100% { transform: translate(0px, 0px) scale(1); opacity: 0.88; }
+  50% { transform: translate(0.5px, -0.6px) scale(1.02); opacity: 1; }
 }
 @keyframes driftB {
-  0%, 100% { transform: translate(0px, 0px) scale(1.03); opacity: 0.95; }
-  50% { transform: translate(-1.6px, 1.2px) scale(0.97); opacity: 0.8; }
+  0%, 100% { transform: translate(0px, 0px) scale(1.01); opacity: 0.95; }
+  50% { transform: translate(-0.6px, 0.4px) scale(0.98); opacity: 0.82; }
 }
 @keyframes driftC {
-  0%, 100% { transform: translate(0px, 0px) scale(0.98); opacity: 0.82; }
-  50% { transform: translate(1.2px, 1.4px) scale(1.03); opacity: 1; }
+  0%, 100% { transform: translate(0px, 0px) scale(0.99); opacity: 0.85; }
+  50% { transform: translate(0.4px, 0.5px) scale(1.02); opacity: 1; }
 }
 @keyframes driftD {
-  0%, 100% { transform: translate(0px, 0px) scale(1.02); opacity: 1; }
-  50% { transform: translate(-1.3px, -1.1px) scale(0.96); opacity: 0.85; }
+  0%, 100% { transform: translate(0px, 0px) scale(1.01); opacity: 1; }
+  50% { transform: translate(-0.5px, -0.4px) scale(0.98); opacity: 0.86; }
 }
 
-.star-drift-0 { animation: driftA 4.2s infinite ease-in-out; transform-origin: center; }
-.star-drift-1 { animation: driftB 5.1s infinite ease-in-out; transform-origin: center; }
-.star-drift-2 { animation: driftC 3.8s infinite ease-in-out; transform-origin: center; }
-.star-drift-3 { animation: driftD 4.7s infinite ease-in-out; transform-origin: center; }
+.star-drift-0 { animation: driftA 4s infinite ease-in-out; transform-origin: center; }
+.star-drift-1 { animation: driftB 4.8s infinite ease-in-out; transform-origin: center; }
+.star-drift-2 { animation: driftC 3.6s infinite ease-in-out; transform-origin: center; }
+.star-drift-3 { animation: driftD 4.4s infinite ease-in-out; transform-origin: center; }
