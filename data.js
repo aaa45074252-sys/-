@@ -425,6 +425,51 @@ const heroGalleries = {
       desc: "누마 폼필리우스가 국가의 안녕과 영속성을 기원하며 세운 성스러운 베스타 신전의 원형 잔존 유적입니다. 제국의 꺼지지 않는 불꽃을 수호하던 베스타 무녀들의 헌신과 초기 로마 종교 제도의 원형을 간직하고 있습니다."
     }
   ],
-  solon: [],
+  solon: [
+    {
+      title: "솔론과 크로이소스",
+      originalTitle: "Solon and Croesus",
+      artist: "헤라르트 판 혼트호르스트 (Gerard van Honthorst)",
+      year: "1624년",
+      museum: "독일 함부르크 미술관 (Hamburger Kunsthalle)",
+      license: "Public Domain",
+      imgUrl: "images/solon-1.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Honthorst_solon_and_croesus.jpg",
+      desc: "자신의 엄청난 금은보화를 과시하며 세상에서 가장 행복한 사람이 누구냐고 묻는 리디아의 부유한 왕 크로이소스에게, 인간의 삶은 끝까지 지켜보기 전에는 행복을 단정할 수 없다는 지혜의 경고를 전하는 현인 솔론의 일화를 담은 바로크 역사화입니다."
+    },
+    {
+      title: "아테네의 현인 솔론 초상",
+      originalTitle: "Solon (from the series of Famous characters)",
+      artist: "유스투스 판 헨트 (Justus van Gent) & 페드로 베루게테 (Pedro Berruguete)",
+      year: "1474년경",
+      museum: "프랑스 파리 루브르 박물관 (Louvre Museum)",
+      license: "Public Domain",
+      imgUrl: "images/solon-2.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Giusto_di_gand_e_pedro_berruguete,_solone.jpg",
+      desc: "우르비노 공작의 서재를 위해 제작된 '역사적 위인 연작' 중 하나로, 법전과 지혜의 서책을 손에 든 채 깊은 통찰을 담은 눈빛으로 응시하는 고대 그리스 7대 현인이자 입법가 솔론의 르네상스 걸작 초상화입니다."
+    },
+    {
+      title: "헤르마 기둥 위의 솔론 대리석 흉상",
+      originalTitle: "Portrait bust on Herm (known as Solon)",
+      artist: "Yair Haklai (사진 작가) / 고대 로마 조각가",
+      year: "서기 1-2세기경 (2019년 촬영)",
+      museum: "이탈리아 피렌체 우피치 미술관 (Uffizi Gallery)",
+      license: "CC BY-SA 4.0",
+      imgUrl: "images/solon-3.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Portrait_bust_of_Sophocles_on_Herm_(known_as_Solon)-Uffizi.jpg",
+      desc: "펜텔리콘 대리석으로 조각된 고대 그리스의 대표적 사상가 두상 양식으로, 우피치 미술관에 전해지며 시민 부채를 탕감하고 공평한 법치를 세우려 고뇌했던 입법가 솔론의 엄정한 기품을 상징하는 대표적 조각 유물입니다."
+    },
+    {
+      title: "아테네 민회의 중심지 프닉스 언덕 유적",
+      originalTitle: "The Pnyx plateau in Athens",
+      artist: "George E. Koronaios (사진 작가)",
+      year: "2021년 촬영 (기원전 6-4세기 유적)",
+      museum: "그리스 아테네 프닉스 유적지 현장",
+      license: "CC BY-SA 2.0",
+      imgUrl: "images/solon-4.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:The_Pnyx_plateau_in_Athens_on_February_19,_2021.jpg",
+      desc: "솔론의 개혁으로 평민들의 정치 참여가 확대되면서 모든 시민이 모여 법을 논하고 투표하던 고대 아테네 민회(에클레시아)의 중심 무대이자 민주주의가 태동한 프닉스 언덕 광장 터입니다."
+    }
+  ],
   publicola: []
 };
