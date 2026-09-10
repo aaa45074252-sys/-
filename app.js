@@ -190,7 +190,6 @@ function renderQuotes() {
   document.getElementById("quotesBox").innerHTML = html;
 }
 
-// 5. 관계망 성좌형 렌더링 (4대 축 방사형 및 스파클 별빛 적용)
 function renderNetwork() {
   const h = heroDetails[currentHero];
   const svg = d3.select("#networkSvg");
@@ -213,7 +212,6 @@ function renderNetwork() {
   const cy = isMobile ? (height * 0.32) : (height / 2);
   const radius = Math.min(width, height) * (isMobile ? 0.32 : 0.35);
 
-  // 4대 축의 닻(Anchor) 좌표 및 테마 색상 설정
   const axes = {
     origins:  { x: cx, y: cy - radius, color: "#67e8f9", glow: "#22d3ee", name: "I. 혈통과 기원의 성좌", labelY: cy - radius - (isMobile ? 40 : 50) },
     labors:   { x: cx + radius, y: cy, color: "#fdba74", glow: "#fb923c", name: "II. 모험과 업적의 성좌", labelY: cy + 5 },
@@ -221,7 +219,6 @@ function renderNetwork() {
     tragedy:  { x: cx - radius, y: cy, color: "#fda4af", glow: "#f43f5e", name: "IV. 갈등과 비극의 성좌", labelY: cy + 5 }
   };
 
-  // SVG Defs: 네온 글로우 필터 등록
   const defs = svg.append("defs");
   const starGlow = defs.append("filter").attr("id", "star-glow").attr("x", "-100%").attr("y", "-100%").attr("width", "300%").attr("height", "300%");
   starGlow.append("feGaussianBlur").attr("stdDeviation", "2.5").attr("result", "blur1");
@@ -231,14 +228,13 @@ function renderNetwork() {
   m.append("feMergeNode").attr("in", "blur1");
   m.append("feMergeNode").attr("in", "SourceGraphic");
 
-  // 줌/팬 그룹
   const g = svg.append("g");
   const zoomBehavior = d3.zoom()
     .scaleExtent([0.55, 2.8])
     .on("zoom", (e) => g.attr("transform", e.transform));
   svg.call(zoomBehavior);
 
-  // 1. 심우주 배경 은하수 별무리 (80개 생성)
+  // 배경 별무리
   const spaceDust = g.append("g");
   for (let i = 0; i < 80; i++) {
     const rx = Math.random() * width * 1.6 - width * 0.3;
@@ -250,7 +246,7 @@ function renderNetwork() {
       .attr("opacity", Math.random() * 0.5 + 0.15);
   }
 
-  // 2. 4대 축 명칭 렌더링
+  // 4대 축 텍스트
   const celestialGrid = g.append("g");
   Object.values(axes).forEach(axis => {
     celestialGrid.append("text")
@@ -264,7 +260,6 @@ function renderNetwork() {
   const nodes = JSON.parse(JSON.stringify(h.graph.nodes));
   const links = JSON.parse(JSON.stringify(h.graph.links));
 
-  // 영웅 본체 중앙 고정
   nodes.forEach(d => {
     if (d.axis === "center") {
       d.x = cx;
@@ -274,16 +269,15 @@ function renderNetwork() {
     }
   });
 
-  // 3. D3 물리 시뮬레이션: 사방 4대 축으로 노드를 묶고 과도한 이탈 방지
+  // 물리 시뮬레이션: 반발력을 줄이고 감쇄율을 높여 신속히 제자리에 고정
   const simulation = d3.forceSimulation(nodes)
-    .velocityDecay(0.65)
-    .force("link", d3.forceLink(links).id(d => d.id).distance(isMobile ? 55 : 75).strength(0.6))
-    .force("charge", d3.forceManyBody().strength(isMobile ? -35 : -55))
-    .force("collide", d3.forceCollide().radius(isMobile ? 22 : 26))
-    .force("x", d3.forceX(d => d.axis === "center" ? cx : axes[d.axis].x).strength(0.8))
-    .force("y", d3.forceY(d => d.axis === "center" ? cy : axes[d.axis].y).strength(0.8));
+    .velocityDecay(0.8) // 감쇄율 상향으로 조기 정지
+    .force("link", d3.forceLink(links).id(d => d.id).distance(isMobile ? 55 : 75).strength(0.7))
+    .force("charge", d3.forceManyBody().strength(-20)) // 반발력 최소화
+    .force("collide", d3.forceCollide().radius(isMobile ? 24 : 28))
+    .force("x", d3.forceX(d => d.axis === "center" ? cx : axes[d.axis].x).strength(0.85))
+    .force("y", d3.forceY(d => d.axis === "center" ? cy : axes[d.axis].y).strength(0.85));
 
-  // 4. 성좌 연결선
   const link = g.append("g")
     .selectAll("line")
     .data(links)
@@ -295,7 +289,6 @@ function renderNetwork() {
       return (targetNode && targetNode.axis !== "center" && axes[targetNode.axis]) ? axes[targetNode.axis].color : "#665243";
     });
 
-  // 5. 연결선 텍스트
   const linkText = g.append("g")
     .selectAll("text")
     .data(links)
@@ -307,7 +300,6 @@ function renderNetwork() {
     .attr("dy", -3)
     .text(d => d.label);
 
-  // 6. 노드 그룹 및 드래그 바인딩
   const node = g.append("g")
     .selectAll(".star-node")
     .data(nodes)
@@ -316,7 +308,7 @@ function renderNetwork() {
     .attr("class", "star-node")
     .call(d3.drag()
       .on("start", (e, d) => {
-        if (!e.active) simulation.alphaTarget(0.15).restart();
+        if (!e.active) simulation.alphaTarget(0.1).restart();
         d.fx = d.x;
         d.fy = d.y;
       })
@@ -340,15 +332,19 @@ function renderNetwork() {
     return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(rawSvg);
   }
 
-  // 7. 노드 그래픽 렌더링 (도트 영웅 vs 스파클 별빛 vs 사물 행성)
   node.each(function(d, index) {
     const el = d3.select(this);
     const isCenter = d.axis === "center";
     const axisColor = isCenter ? "#ffd15c" : (axes[d.axis] ? axes[d.axis].color : "#fff");
     const glowColor = isCenter ? "#f59e0b" : (axes[d.axis] ? axes[d.axis].glow : "#fff");
 
+    // 투명 터치 히트박스 (반경 22px / 지름 44px): 모바일 터치 용이성 확보
+    el.append("circle")
+      .attr("r", isCenter ? 26 : 22)
+      .attr("fill", "transparent")
+      .attr("class", "touch-hitbox");
+
     if (isCenter) {
-      // 영웅 본체: 레트로 도트 프레임
       el.append("rect")
         .attr("width", 38).attr("height", 38)
         .attr("x", -19).attr("y", -19)
@@ -367,7 +363,6 @@ function renderNetwork() {
         .attr("width", 28).attr("height", 28);
 
     } else {
-      // 주변 노드: 4방향 미세 유영 클래스 및 랜덤 딜레이 적용
       const driftClass = `star-drift-${index % 4}`;
       const randomDelay = -(Math.random() * 4).toFixed(2) + "s";
       const randomDuration = (3.5 + Math.random() * 2).toFixed(2) + "s";
@@ -378,7 +373,6 @@ function renderNetwork() {
         .style("animation-duration", randomDuration);
 
       if (d.shapeType === "item") {
-        // 사물 노드: 성운의 미니 행성 고리
         gStar.append("ellipse")
           .attr("rx", 9).attr("ry", 3.5)
           .attr("fill", "none")
@@ -394,7 +388,6 @@ function renderNetwork() {
           .attr("stroke-width", 1.5)
           .attr("filter", "url(#star-glow)");
       } else {
-        // 인물/신/괴수 노드: 4각 미니 스파클 별
         gStar.append("circle")
           .attr("r", 6)
           .attr("fill", glowColor)
@@ -415,18 +408,17 @@ function renderNetwork() {
     }
   });
 
-  // 8. 노드 텍스트 라벨
+  // 노드 텍스트 라벨
   node.append("text")
     .attr("class", "node-text")
     .attr("dy", d => d.axis === "center" ? 32 : 19)
     .attr("text-anchor", "middle")
     .text(d => d.name);
 
-  // 9. 노드 클릭 이벤트 (기존 인스펙터 바텀시트 연동 및 라인 발광)
+  // 노드 클릭 이벤트 (히트박스 덕분에 탭이 즉각 반응)
   node.on("click", (e, d) => {
     e.stopPropagation();
 
-    // 클릭된 노드와 연결된 선 강조
     link.classed("active", l => (l.source.id || l.source) === d.id || (l.target.id || l.target) === d.id);
 
     const ins = document.getElementById("nodeInspector");
