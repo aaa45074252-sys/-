@@ -190,6 +190,7 @@ function renderQuotes() {
   document.getElementById("quotesBox").innerHTML = html;
 }
 
+// 5. 관계망 성좌형 렌더링 (4대 축 방사형 및 스파클 별빛 적용)
 function renderNetwork() {
   const h = heroDetails[currentHero];
   const svg = d3.select("#networkSvg");
@@ -207,60 +208,127 @@ function renderNetwork() {
     .style("width", `${width}px`)
     .style("height", `${height}px`);
 
+  const isMobile = width < 768;
+  const cx = width / 2;
+  const cy = isMobile ? (height * 0.32) : (height / 2);
+  const radius = Math.min(width, height) * (isMobile ? 0.32 : 0.35);
+
+  // 4대 축의 닻(Anchor) 좌표 및 테마 색상 설정
+  const axes = {
+    origins:  { x: cx, y: cy - radius, color: "#67e8f9", glow: "#22d3ee", name: "I. 혈통과 기원의 성좌", labelY: cy - radius - (isMobile ? 40 : 50) },
+    labors:   { x: cx + radius, y: cy, color: "#fdba74", glow: "#fb923c", name: "II. 모험과 업적의 성좌", labelY: cy + 5 },
+    politics: { x: cx, y: cy + radius, color: "#6ee7b7", glow: "#34d399", name: "III. 제도와 통치의 성좌", labelY: cy + radius + (isMobile ? 45 : 55) },
+    tragedy:  { x: cx - radius, y: cy, color: "#fda4af", glow: "#f43f5e", name: "IV. 갈등과 비극의 성좌", labelY: cy + 5 }
+  };
+
+  // SVG Defs: 네온 글로우 필터 등록
+  const defs = svg.append("defs");
+  const starGlow = defs.append("filter").attr("id", "star-glow").attr("x", "-100%").attr("y", "-100%").attr("width", "300%").attr("height", "300%");
+  starGlow.append("feGaussianBlur").attr("stdDeviation", "2.5").attr("result", "blur1");
+  starGlow.append("feGaussianBlur").attr("stdDeviation", "5").attr("result", "blur2");
+  const m = starGlow.append("feMerge");
+  m.append("feMergeNode").attr("in", "blur2");
+  m.append("feMergeNode").attr("in", "blur1");
+  m.append("feMergeNode").attr("in", "SourceGraphic");
+
+  // 줌/팬 그룹
   const g = svg.append("g");
-  
-  // 줌 및 드래그 동작 정의
   const zoomBehavior = d3.zoom()
-    .scaleExtent([0.5, 2.5])
+    .scaleExtent([0.55, 2.8])
     .on("zoom", (e) => g.attr("transform", e.transform));
-  
   svg.call(zoomBehavior);
+
+  // 1. 심우주 배경 은하수 별무리 (80개 생성)
+  const spaceDust = g.append("g");
+  for (let i = 0; i < 80; i++) {
+    const rx = Math.random() * width * 1.6 - width * 0.3;
+    const ry = Math.random() * height * 1.6 - height * 0.3;
+    spaceDust.append("circle")
+      .attr("cx", rx).attr("cy", ry)
+      .attr("r", Math.random() * 1.2 + 0.4)
+      .attr("fill", "#ffffff")
+      .attr("opacity", Math.random() * 0.5 + 0.15);
+  }
+
+  // 2. 4대 축 명칭 렌더링
+  const celestialGrid = g.append("g");
+  Object.values(axes).forEach(axis => {
+    celestialGrid.append("text")
+      .attr("class", "axis-constellation-title")
+      .attr("x", axis.x)
+      .attr("y", axis.labelY)
+      .attr("fill", axis.color)
+      .text(axis.name);
+  });
 
   const nodes = JSON.parse(JSON.stringify(h.graph.nodes));
   const links = JSON.parse(JSON.stringify(h.graph.links));
 
-  const isMobile = width < 768;
-  const centerX = width / 2;
-  // 모바일에서는 바텀시트 공간을 고려해 상단 28% 지점에 중심 배치
-  const centerY = isMobile ? (height * 0.28) : (height / 2);
-
+  // 영웅 본체 중앙 고정
   nodes.forEach(d => {
-    if (d.id === currentHero) {
-      d.x = centerX;
-      d.y = centerY;
-      d.fx = centerX;
-      d.fy = centerY;
+    if (d.axis === "center") {
+      d.x = cx;
+      d.y = cy;
+      d.fx = cx;
+      d.fy = cy;
     }
   });
 
+  // 3. D3 물리 시뮬레이션: 사방 4대 축으로 노드를 묶고 과도한 이탈 방지
   const simulation = d3.forceSimulation(nodes)
-    .force("link", d3.forceLink(links).id(d => d.id).distance(isMobile ? 65 : 120))
-    .force("charge", d3.forceManyBody().strength(isMobile ? -180 : -350))
-    .force("center", d3.forceCenter(centerX, centerY));
+    .velocityDecay(0.65)
+    .force("link", d3.forceLink(links).id(d => d.id).distance(isMobile ? 55 : 75).strength(0.6))
+    .force("charge", d3.forceManyBody().strength(isMobile ? -35 : -55))
+    .force("collide", d3.forceCollide().radius(isMobile ? 22 : 26))
+    .force("x", d3.forceX(d => d.axis === "center" ? cx : axes[d.axis].x).strength(0.8))
+    .force("y", d3.forceY(d => d.axis === "center" ? cy : axes[d.axis].y).strength(0.8));
 
-  const link = g.append("g").selectAll("line").data(links).enter().append("line")
-    .attr("stroke", "#665243").attr("stroke-width", 2);
+  // 4. 성좌 연결선
+  const link = g.append("g")
+    .selectAll("line")
+    .data(links)
+    .enter()
+    .append("line")
+    .attr("class", "constellation-line")
+    .attr("stroke", d => {
+      const targetNode = nodes.find(n => n.id === (d.target.id || d.target));
+      return (targetNode && targetNode.axis !== "center" && axes[targetNode.axis]) ? axes[targetNode.axis].color : "#665243";
+    });
 
-  const linkText = g.append("g").selectAll("text").data(links).enter().append("text")
-    .attr("text-anchor", "middle").attr("fill", "#c5b59f").attr("font-size", "10px").attr("dy", -4)
+  // 5. 연결선 텍스트
+  const linkText = g.append("g")
+    .selectAll("text")
+    .data(links)
+    .enter()
+    .append("text")
+    .attr("text-anchor", "middle")
+    .attr("fill", "#c5b59f")
+    .attr("font-size", "9px")
+    .attr("dy", -3)
     .text(d => d.label);
 
-  const node = g.append("g").selectAll("g").data(nodes).enter().append("g")
+  // 6. 노드 그룹 및 드래그 바인딩
+  const node = g.append("g")
+    .selectAll(".star-node")
+    .data(nodes)
+    .enter()
+    .append("g")
+    .attr("class", "star-node")
     .call(d3.drag()
-      .on("start", (e, d) => { 
-        if (!e.active) simulation.alphaTarget(0.3).restart(); 
-        d.fx = d.x; 
-        d.fy = d.y; 
+      .on("start", (e, d) => {
+        if (!e.active) simulation.alphaTarget(0.15).restart();
+        d.fx = d.x;
+        d.fy = d.y;
       })
-      .on("drag", (e, d) => { 
-        d.fx = e.x; 
-        d.fy = e.y; 
+      .on("drag", (e, d) => {
+        d.fx = e.x;
+        d.fy = e.y;
       })
-      .on("end", (e, d) => { 
-        if (!e.active) simulation.alphaTarget(0); 
-        if (d.id !== currentHero) {
-          d.fx = null; 
-          d.fy = null; 
+      .on("end", (e, d) => {
+        if (!e.active) simulation.alphaTarget(0);
+        if (d.axis !== "center") {
+          d.fx = null;
+          d.fy = null;
         }
       }));
 
@@ -272,38 +340,95 @@ function renderNetwork() {
     return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(rawSvg);
   }
 
-  node.each(function(d) {
+  // 7. 노드 그래픽 렌더링 (도트 영웅 vs 스파클 별빛 vs 사물 행성)
+  node.each(function(d, index) {
     const el = d3.select(this);
-    if (d.id === currentHero) {
+    const isCenter = d.axis === "center";
+    const axisColor = isCenter ? "#ffd15c" : (axes[d.axis] ? axes[d.axis].color : "#fff");
+    const glowColor = isCenter ? "#f59e0b" : (axes[d.axis] ? axes[d.axis].glow : "#fff");
+
+    if (isCenter) {
+      // 영웅 본체: 레트로 도트 프레임
+      el.append("rect")
+        .attr("width", 38).attr("height", 38)
+        .attr("x", -19).attr("y", -19)
+        .attr("rx", 6)
+        .attr("fill", "#090d1a")
+        .attr("stroke", axisColor)
+        .attr("stroke-width", 2)
+        .attr("filter", "url(#star-glow)");
+
       const uri = getHeroDataUri(currentHero);
       el.append("image")
         .attr("href", uri)
         .attr("xlink:href", uri)
-        .attr("x", -24)
-        .attr("y", -24)
-        .attr("width", 48)
-        .attr("height", 48)
-        .style("filter", "drop-shadow(0 0 6px #e5be75)");
+        .attr("class", "pixel-art")
+        .attr("x", -14).attr("y", -14)
+        .attr("width", 28).attr("height", 28);
+
     } else {
-      el.append("circle")
-        .attr("r", d.r)
-        .attr("fill", d.color)
-        .attr("stroke", "#fff")
-        .attr("stroke-width", 2);
+      // 주변 노드: 4방향 미세 유영 클래스 및 랜덤 딜레이 적용
+      const driftClass = `star-drift-${index % 4}`;
+      const randomDelay = -(Math.random() * 4).toFixed(2) + "s";
+      const randomDuration = (3.5 + Math.random() * 2).toFixed(2) + "s";
+
+      const gStar = el.append("g")
+        .attr("class", driftClass)
+        .style("animation-delay", randomDelay)
+        .style("animation-duration", randomDuration);
+
+      if (d.shapeType === "item") {
+        // 사물 노드: 성운의 미니 행성 고리
+        gStar.append("ellipse")
+          .attr("rx", 9).attr("ry", 3.5)
+          .attr("fill", "none")
+          .attr("stroke", axisColor)
+          .attr("stroke-width", 1.2)
+          .attr("transform", "rotate(-25)")
+          .attr("opacity", 0.85);
+
+        gStar.append("circle")
+          .attr("r", 3.5)
+          .attr("fill", "#ffffff")
+          .attr("stroke", glowColor)
+          .attr("stroke-width", 1.5)
+          .attr("filter", "url(#star-glow)");
+      } else {
+        // 인물/신/괴수 노드: 4각 미니 스파클 별
+        gStar.append("circle")
+          .attr("r", 6)
+          .attr("fill", glowColor)
+          .attr("opacity", 0.22)
+          .attr("filter", "url(#star-glow)");
+
+        gStar.append("path")
+          .attr("d", "M 0,-6.5 Q 0,0 6.5,0 Q 0,0 0,6.5 Q 0,0 -6.5,0 Q 0,0 0,-6.5 Z")
+          .attr("fill", "#ffffff")
+          .attr("stroke", glowColor)
+          .attr("stroke-width", 0.8)
+          .attr("filter", "url(#star-glow)");
+
+        gStar.append("circle")
+          .attr("r", 1.4)
+          .attr("fill", "#ffffff");
+      }
     }
   });
 
+  // 8. 노드 텍스트 라벨
   node.append("text")
-    .attr("dy", d => d.id === currentHero ? 32 : d.r + 14)
+    .attr("class", "node-text")
+    .attr("dy", d => d.axis === "center" ? 32 : 19)
     .attr("text-anchor", "middle")
-    .attr("fill", "#eee")
-    .attr("font-size", "11px")
-    .attr("font-weight", d => d.id === currentHero ? "bold" : "normal")
     .text(d => d.name);
 
-  // 노드 클릭 이벤트
+  // 9. 노드 클릭 이벤트 (기존 인스펙터 바텀시트 연동 및 라인 발광)
   node.on("click", (e, d) => {
     e.stopPropagation();
+
+    // 클릭된 노드와 연결된 선 강조
+    link.classed("active", l => (l.source.id || l.source) === d.id || (l.target.id || l.target) === d.id);
+
     const ins = document.getElementById("nodeInspector");
     document.getElementById("insType").innerText = d.type;
     document.getElementById("insName").innerText = d.name;
@@ -311,21 +436,34 @@ function renderNetwork() {
     document.getElementById("insInsight").innerText = `💡 ${d.insight}`;
     ins.classList.remove("hidden");
 
-    // 모바일에서 노드 터치 시, 해당 노드가 상단 안전구역에 오도록 자동 화면 이동(Pan)
     if (isMobile) {
-      const targetY = height * 0.25;
-      const transform = d3.zoomIdentity
-        .translate(centerX - d.x, targetY - d.y);
-      svg.transition().duration(400).call(zoomBehavior.transform, transform);
+      const targetY = height * 0.26;
+      const transform = d3.zoomIdentity.translate(cx - d.x, targetY - d.y);
+      svg.transition().duration(350).call(zoomBehavior.transform, transform);
     }
   });
 
-  svg.on("click", () => document.getElementById("nodeInspector").classList.add("hidden"));
-  document.getElementById("closeInsBtn").onclick = () => document.getElementById("nodeInspector").classList.add("hidden");
+  svg.on("click", () => {
+    document.getElementById("nodeInspector").classList.add("hidden");
+    link.classed("active", false);
+  });
+
+  document.getElementById("closeInsBtn").onclick = () => {
+    document.getElementById("nodeInspector").classList.add("hidden");
+    link.classed("active", false);
+  };
 
   simulation.on("tick", () => {
-    link.attr("x1", d => d.source.x).attr("y1", d => d.source.y).attr("x2", d => d.target.x).attr("y2", d => d.target.y);
-    linkText.attr("x", d => (d.source.x + d.target.x) / 2).attr("y", d => (d.source.y + d.target.y) / 2);
+    link
+      .attr("x1", d => d.source.x)
+      .attr("y1", d => d.source.y)
+      .attr("x2", d => d.target.x)
+      .attr("y2", d => d.target.y);
+
+    linkText
+      .attr("x", d => (d.source.x + d.target.x) / 2)
+      .attr("y", d => (d.source.y + d.target.y) / 2);
+
     node.attr("transform", d => `translate(${d.x},${d.y})`);
   });
 }
