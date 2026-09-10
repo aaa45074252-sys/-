@@ -355,6 +355,28 @@ const heroGalleries = {
       imgUrl: "images/lycurgus-2.jpg",
       sourceUrl: "https://commons.wikimedia.org/wiki/File:Young_Spartans_National_Gallery_NG3860.jpg",
       desc: "플루타르코스가 전하는 리쿠르고스의 입법에 따라, 신체를 단련하여 건강한 아이를 낳고 강인한 공동체를 이루기 위해 소년들과 씨름하며 겨루기를 청하는 스파르타 소녀들과 청년들의 모습을 독창적으로 포착한 근대 역사화입니다."
+    },
+    {
+      title: "델포이의 무녀에게 신탁을 구하는 리쿠르고스",
+      originalTitle: "Lycurgus Consulting the Pythia",
+      artist: "외젠 들라크루아 (Eugène Delacroix)",
+      year: "1835-1845년경",
+      museum: "미국 미시간 대학교 미술관 (University of Michigan Museum of Art)",
+      license: "Public Domain",
+      imgUrl: "images/lycurgus-3.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Eug%C3%A8ne_Delacroix_-_Lycurgus_Consulting_the_Pythia_-_Google_Art_Project_4_(detail).jpg",
+      desc: "스파르타의 법률 체계를 반포하기 전, 델포이 아폴론 신전의 무녀 퓌티아를 찾아가 자신이 세울 법률이 신의 뜻에 합당한지 신탁을 구하는 리쿠르고스의 경건한 구도자적 모습을 포착한 낭만주의 유화입니다."
+    },
+    {
+      title: "고대 스파르타의 아크로폴리스 극장 유적",
+      originalTitle: "Ruins of the Theatre at Ancient Sparta",
+      artist: "Peulle (사진 작가)",
+      year: "2015년 촬영 (기원전 1세기경 유적)",
+      museum: "그리스 스파르티 고대 유적지 현장",
+      license: "CC BY-SA 4.0",
+      imgUrl: "images/lycurgus-4.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Sparta_teater.JPG",
+      desc: "벽돌로 된 성벽 대신 단련된 시민의 결속을 조국의 방벽으로 삼았던 리쿠르고스의 철학이 깃든 고대 스파르타 극장 터와 뒤편으로 펼쳐진 현대 스파르티 시가지의 전경입니다."
     }
   ],
   numa: [],
