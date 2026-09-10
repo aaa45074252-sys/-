@@ -537,3 +537,68 @@ header {
 .reply-text { flex: 1; padding: 5px; background: #221a16; border: 1px solid #3d2f26; border-radius: 4px; color: #fff; font-size: 11px; }
 .reply-btn { background: #473a34; color: #eeddcc; border: 1px solid #6b574e; border-radius: 4px; padding: 0 8px; font-size: 11px; cursor: pointer; }
 .no-posts { text-align: center; color: #666; font-size: 12px; padding: 20px 0; }
+
+/* ==========================================
+   성좌형 관계망 전용 스타일 & 미세 유영 키프레임
+   ========================================== */
+.constellation-line {
+  stroke-opacity: 0.35;
+  stroke-width: 1.2px;
+  stroke-dasharray: 2 4;
+  transition: all 0.35s ease;
+}
+
+.constellation-line.active {
+  stroke-opacity: 0.95;
+  stroke-width: 2px;
+  stroke-dasharray: none;
+  filter: drop-shadow(0 0 6px currentColor);
+}
+
+.axis-constellation-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-anchor: middle;
+  fill-opacity: 0.4;
+  user-select: none;
+  pointer-events: none;
+}
+
+.node-text {
+  font-size: 11px;
+  font-weight: 500;
+  fill: #e2e8f0;
+  user-select: none;
+  pointer-events: none;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.95));
+  letter-spacing: -0.3px;
+}
+
+.pixel-art {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* 4방향 랜덤 미세 유영 키프레임 (절반 진폭) */
+@keyframes driftA {
+  0%, 100% { transform: translate(0px, 0px) scale(1); opacity: 0.85; }
+  50% { transform: translate(1.4px, -1.6px) scale(1.04); opacity: 1; }
+}
+@keyframes driftB {
+  0%, 100% { transform: translate(0px, 0px) scale(1.03); opacity: 0.95; }
+  50% { transform: translate(-1.6px, 1.2px) scale(0.97); opacity: 0.8; }
+}
+@keyframes driftC {
+  0%, 100% { transform: translate(0px, 0px) scale(0.98); opacity: 0.82; }
+  50% { transform: translate(1.2px, 1.4px) scale(1.03); opacity: 1; }
+}
+@keyframes driftD {
+  0%, 100% { transform: translate(0px, 0px) scale(1.02); opacity: 1; }
+  50% { transform: translate(-1.3px, -1.1px) scale(0.96); opacity: 0.85; }
+}
+
+.star-drift-0 { animation: driftA 4.2s infinite ease-in-out; transform-origin: center; }
+.star-drift-1 { animation: driftB 5.1s infinite ease-in-out; transform-origin: center; }
+.star-drift-2 { animation: driftC 3.8s infinite ease-in-out; transform-origin: center; }
+.star-drift-3 { animation: driftD 4.7s infinite ease-in-out; transform-origin: center; }
