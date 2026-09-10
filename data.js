@@ -471,5 +471,50 @@ const heroGalleries = {
       desc: "솔론의 개혁으로 평민들의 정치 참여가 확대되면서 모든 시민이 모여 법을 논하고 투표하던 고대 아테네 민회(에클레시아)의 중심 무대이자 민주주의가 태동한 프닉스 언덕 광장 터입니다."
     }
   ],
-  publicola: []
+  publicola: [
+    {
+      title: "테베레강을 건너는 클렐리아",
+      originalTitle: "Cloelia Passing the Tiber (Clélie passant le Tibre)",
+      artist: "페테르 파울 루벤스 공방 (Workshop of Peter Paul Rubens)",
+      year: "1625-1675년경",
+      museum: "프랑스 파리 루브르 박물관 (Louvre Museum)",
+      license: "Public Domain",
+      imgUrl: "images/publicola-1.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Workshop_of_Peter_Paul_Rubens,_possibly_Jan_van_den_Hoecke_-_Cloelia_Passing_the_Tiber.jpg",
+      desc: "푸블리콜라가 에트루리아의 왕 포르센나와 평화 조약을 맺을 당시 인질로 보내졌던 용감한 로마 처녀 클렐리아가 다른 여성 인질들을 이끌고 헤엄쳐 테베레강을 건너 탈출하는 역동적인 일화를 그린 바로크 역사화입니다."
+    },
+    {
+      title: "고대 로마 공화정의 심장 포로 로마노 전경",
+      originalTitle: "Forum Romanum in Rome, Lazio, Italy",
+      artist: "Krzysztof Golik (사진 작가)",
+      year: "2018년 촬영 (기원전 6세기경 기원 유적)",
+      museum: "이탈리아 로마 포로 로마노 (Forum Romanum)",
+      license: "CC BY-SA 4.0",
+      imgUrl: "images/publicola-2.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Forum_Romanum_(5).jpg",
+      desc: "푸블리콜라가 시민들의 오해를 풀기 위해 벨리아 언덕의 웅장한 자택을 스스로 허물고 평지에 다시 집을 지어 '인민의 벗'으로 거듭난 뒤, 공화정의 기초 법률을 반포하고 공무를 수행하던 고대 로마 공화정 정치와 시민 집회의 중심 무대입니다."
+    },
+    {
+      title: "브루투스의 선서 (루크레티아의 죽음 앞에서의 맹세)",
+      originalTitle: "The Oath of Brutus",
+      artist: "개빈 해밀턴 (Gavin Hamilton)",
+      year: "1763-1764년",
+      museum: "미국 예일 영국 미술 센터 (Yale Center for British Art)",
+      license: "Public Domain",
+      imgUrl: "images/publicola-3.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Gavin_Hamilton_-_the_oath_of_brutus.jpg",
+      desc: "폭군 타르퀴니우스 왕가의 폭정에 맞서 숨을 거둔 루크레티아의 시신 앞에서 피 묻은 단도를 치켜들고, 왕정을 영원히 폐지하며 자유로운 공화국을 수립할 것을 결의하는 브루투스와 푸블리콜라 일행의 비장한 건국 선서를 묘사한 신고전주의 명작입니다."
+    },
+    {
+      title: "푸블리우스 발레리우스 푸블리콜라 초상 드로잉",
+      originalTitle: "A drawing of Publius Valerius Publicola",
+      artist: "오스트리아 국립도서관(ÖNB) 소장 작자 미상",
+      year: "2019년 디지털화 (근대 역사 판화 드로잉)",
+      museum: "오스트리아 빈 국립도서관 (Austrian National Library)",
+      license: "CC BY-SA 4.0",
+      imgUrl: "images/publicola-4.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Publius_Valerius_Publicola_(cropped).jpg",
+      desc: "집정관의 권력을 스스로 낮추고 사법 항소권을 보장하여 로마 평민들로부터 '인민을 위하는 자(Publicola)'라는 영예로운 칭호를 얻은 로마 공화정 건국의 주역 푸블리우스 발레리우스 푸블리콜라의 위엄 있는 초상 판화입니다."
+    }
+  ]
 };
