@@ -379,7 +379,52 @@ const heroGalleries = {
       desc: "벽돌로 된 성벽 대신 단련된 시민의 결속을 조국의 방벽으로 삼았던 리쿠르고스의 철학이 깃든 고대 스파르타 극장 터와 뒤편으로 펼쳐진 현대 스파르티 시가지의 전경입니다."
     }
   ],
-  numa: [],
+  numa: [
+    {
+      title: "님프 에게리아에게 로마의 법률을 받는 누마 폼필리우스",
+      originalTitle: "Numa Pompilio riceve dalla ninfa Egeria le leggi di Roma",
+      artist: "펠리체 자니 (Felice Giani)",
+      year: "1806년",
+      museum: "이탈리아 로마 스페인 대사관 궁전 (Palazzo di Spagna - Sala dei Legislatori)",
+      license: "Public Domain",
+      imgUrl: "images/numa-1.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Giani,_-Felice_-_Numa_Pompilio_riceve_dalla_ninfa_Egeria_le_leggi_di_Roma_-_center_-_1806.jpg",
+      desc: "성스러운 숲의 샘가에서 지혜와 예언의 님프 에게리아와 영적으로 교감하며, 거칠고 호전적이던 초기 로마 시민들을 교화할 종교 의례와 평화의 법률을 전수받는 현왕 누마의 모습을 장엄하게 묘사한 신고전주의 벽화입니다."
+    },
+    {
+      title: "베스타의 여사제 투키아",
+      originalTitle: "The Vestal Virgin Tuccia",
+      artist: "시모네 피뇨니 (Simone Pignoni)",
+      year: "17세기 후반",
+      museum: "영국 리버풀 워커 아트 갤러리 (Walker Art Gallery)",
+      license: "Public Domain",
+      imgUrl: "images/numa-2.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Simone_Pignoni_(1611-1698)_-_The_Vestal_Virgin_Tuccia_-_WAG_6261_-_Walker_Art_Gallery.jpg",
+      desc: "누마 폼필리우스가 창설하여 로마의 영원한 성화를 수호하게 했던 베스타 사제단의 대표적 일화로, 부당하게 순결을 의심받자 체로 테베레강의 물을 떠내는 기적으로 결백을 증명한 여사제 투키아를 그린 바로크 회화입니다."
+    },
+    {
+      title: "야누스 신전의 문을 닫음",
+      originalTitle: "Closing of the Temple of Janus by Augustus",
+      artist: "루이 드 실베스트르 (Louis de Silvestre)",
+      year: "1757년",
+      museum: "독일 드레스덴 국립미술관 (Staatliche Kunstsammlungen Dresden)",
+      license: "Public Domain",
+      imgUrl: "images/numa-3.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Closing_of_the_Temple_of_Janus_by_Augustus,_by_Louis_de_Silvestre_(1757).jpg",
+      desc: "누마 폼필리우스가 창건하여 전쟁 시에는 열고 평화 시에는 닫도록 규정한 야누스 신전의 문을 닫는 의식을 그린 작품입니다. 누마의 43년 치세 내내 이 문은 단 한 번도 열리지 않아 평화와 번영의 황금시대를 상징했습니다."
+    },
+    {
+      title: "포로 로마노의 베스타 신전 원형 유적",
+      originalTitle: "Round remains of the temple of Vesta, Forum Romanum, Rome",
+      artist: "Jebulon (사진 작가)",
+      year: "2013년 촬영 (기원전 7세기경 기원 유적)",
+      museum: "이탈리아 로마 포로 로마노 (Forum Romanum)",
+      license: "Public Domain (CC0)",
+      imgUrl: "images/numa-4.jpg",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Temple_Vesta_Forum_Romanum_Rome_Italy.jpg",
+      desc: "누마 폼필리우스가 국가의 안녕과 영속성을 기원하며 세운 성스러운 베스타 신전의 원형 잔존 유적입니다. 제국의 꺼지지 않는 불꽃을 수호하던 베스타 무녀들의 헌신과 초기 로마 종교 제도의 원형을 간직하고 있습니다."
+    }
+  ],
   solon: [],
   publicola: []
 };
