@@ -95,36 +95,33 @@
       <div class="content-box" id="quotesBox"></div>
     </div>
 
-    <!-- 탭 콘텐츠 내부 -->
-<div class="tab-content" id="tabDebate">
-  <div class="content-box">
-    <!-- 추천 탐구 질문 카드 -->
-    <div class="inquiry-anchor-card" id="inquiryAnchorBox"></div>
+   <!-- 🧭 공동탐구질문 탭 -->
+    <div class="tab-content" id="tabDebate">
+      <div class="content-box">
+        <!-- 영웅별 핵심 탐구 과제 카드 (data.js에서 불러옴) -->
+        <div class="inquiry-anchor-card" id="inquiryAnchorBox"></div>
 
-    <!-- 생각 나누기 입력 폼 -->
-    <div class="debate-form-card">
-      <h3 id="debateFormTitle">💭 나의 탐구 생각 남기기</h3>
-      <p class="form-subtext">주어진 질문에 대한 나의 근거 있는 주장이나, 새로운 탐구 질문을 던져보세요.</p>
-      
-      <!-- 관점 태그 선택 -->
-      <div class="inquiry-tags">
-        <label><input type="radio" name="inquiryType" value="[근거/주장]" checked> 💡 나의 주장</label>
-        <label><input type="radio" name="inquiryType" value="[반론/비판]"> ⚡ 반론/비판</label>
-        <label><input type="radio" name="inquiryType" value="[현대적 질문]"> ❓ 새로운 질문</label>
-      </div>
+        <div class="debate-form-card">
+          <h3 id="debateFormTitle">💭 나의 탐구 생각 남기기</h3>
+          <p class="form-subtext">주어진 질문에 대한 나의 근거 있는 주장이나 새로운 관점을 기록해 보세요.</p>
+          
+          <!-- 관점 태그 라디오 버튼 (DB 수정 없이 내용 앞에 붙여 저장) -->
+          <div class="inquiry-tags">
+            <label><input type="radio" name="inquiryTag" value="[💡 나의 주장]" checked> 💡 나의 주장</label>
+            <label><input type="radio" name="inquiryTag" value="[⚡ 반론/비판]"> ⚡ 반론/비판</label>
+            <label><input type="radio" name="inquiryTag" value="[❓ 새로운 질문]"> ❓ 새로운 질문</label>
+          </div>
 
-      <div class="input-row">
-        <input type="text" id="debateAuthor" placeholder="탐구자 닉네임" maxlength="10">
-        <input type="password" id="debatePassword" placeholder="비밀번호(4자리)" maxlength="8">
+          <div class="input-row">
+            <input type="text" id="debateAuthor" placeholder="탐구자 닉네임" maxlength="10">
+            <input type="password" id="debatePassword" placeholder="비밀번호(4자리)" maxlength="8">
+          </div>
+          <textarea id="debateQuestion" placeholder="생각을 남겨주세요 (예: 저는 ~한 이유로 이 결단에 동의/반대합니다...)"></textarea>
+          <button class="submit-debate-btn" onclick="addDebatePost()">탐구 생각 등록</button>
+        </div>
+        <div id="debateList"></div>
       </div>
-      <textarea id="debateQuestion" placeholder="생각을 남겨주세요 (예: 저는 ~한 이유로 이 결단에 동의/반대합니다...)"></textarea>
-      <button class="submit-debate-btn" onclick="addDebatePost()">탐구 생각 등록</button>
     </div>
-
-    <!-- 공유된 탐구 목록 -->
-    <div id="debateList"></div>
-  </div>
-</div>
   </section>
 
   <!-- 캐시 무효화를 적용한 최신 스크립트 연결 -->
