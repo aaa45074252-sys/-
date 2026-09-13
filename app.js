@@ -762,7 +762,7 @@ window.addDebatePost = async function() {
   await renderDebates();
 };
 
-// [선택 호출형] 플루타르코스 AI 조언 요청
+// [선택 호출형] 플루타르코스 AI 조언 요청 (동시 중복 클릭 완벽 차단 Lock 탑재)
 window.requestPlutarchAdvice = async function(postId) {
   const btn = document.getElementById(`ai-req-btn-${postId}`);
   if (btn) {
@@ -770,25 +770,60 @@ window.requestPlutarchAdvice = async function(postId) {
     btn.innerText = "🏛️ 사유하는 중... ⏳";
   }
 
-  const postCard = document.getElementById(`post-card-${postId}`);
-  const postContent = postCard ? postCard.querySelector('.post-content').innerText : "";
+  try {
+    // 1. [동시성 방어] 이미 다른 기기에서 눌렀는지 DB에서 1차 검사
+    const { data: existingAiReplies } = await supabaseClient
+      .from('replies')
+      .select('id')
+      .eq('debate_id', postId)
+      .ilike('author', '%플루타르코스%');
 
-  const heroName = heroDetails[currentHero].name;
-  const aiAnswer = await askPlutarchAI(currentHero, heroName, postContent);
-
-  if (aiAnswer) {
-    await supabaseClient.from('replies').insert([{
-      debate_id: postId,
-      author: "🏛️ 플루타르코스 AI",
-      password: "plutarch_ai_lock",
-      text: aiAnswer
-    }]);
-    await renderDebates();
-  } else {
-    if (btn) {
-      btn.disabled = false;
-      btn.innerText = "🏛️ 플루타르코스의 조언 듣기";
+    if (existingAiReplies && existingAiReplies.length > 0) {
+      alert("다른 친구가 이미 플루타르코스의 조언을 요청했습니다!");
+      await renderDebates();
+      return;
     }
+
+    // 2. [선점 락(Lock)] 모든 기기에 즉시 잠금 신호를 주기 위해 임시 댓글 등록
+    const { data: lockReply, error: lockErr } = await supabaseClient
+      .from('replies')
+      .insert([{
+        debate_id: postId,
+        author: "🏛️ 플루타르코스 AI",
+        password: "9999",
+        text: "깊은 지혜를 떠올리며 사유하고 있네... 잠시 기다려 주게나. ⏳"
+      }])
+      .select()
+      .single();
+
+    if (lockErr) throw lockErr;
+
+    // 본문 내용 획득
+    const postCard = document.getElementById(`post-card-${postId}`);
+    const postContent = postCard ? postCard.querySelector('.post-content').innerText : "";
+    const heroName = heroDetails[currentHero].name;
+
+    // 3. AI 답변 생성 요청
+    const aiAnswer = await askPlutarchAI(currentHero, heroName, postContent);
+
+    if (aiAnswer && lockReply) {
+      // 4. 임시 댓글을 실제 완성된 답변 내용으로 교체(Update)
+      await supabaseClient
+        .from('replies')
+        .update({ text: aiAnswer })
+        .eq('id', lockReply.id);
+    } else {
+      // 생성 실패 시 임시 댓글 롤백
+      if (lockReply) {
+        await supabaseClient.from('replies').delete().eq('id', lockReply.id);
+      }
+      alert("AI 사유를 완료하지 못했습니다. 다시 시도해 주세요.");
+    }
+  } catch (err) {
+    console.error("AI 요청 처리 중 오류:", err);
+    alert("요청 처리 중 오류가 발생했습니다: " + err.message);
+  } finally {
+    await renderDebates();
   }
 };
 
@@ -889,7 +924,6 @@ async function checkAndSyncDebates(forceRender = false) {
   if (isUserTyping()) return;
 
   try {
-    // 가볍게 ID와 업데이트 시간만 조회하여 변경 여부 확인
     const { data: posts } = await supabaseClient
       .from('debates')
       .select('id, created_at')
@@ -901,7 +935,7 @@ async function checkAndSyncDebates(forceRender = false) {
 
     const currentFingerprint = `${(posts || []).length}_${(replies || []).length}_${posts?.[0]?.id || 0}_${replies?.[replies.length - 1]?.id || 0}`;
 
-    // 이전 상태와 비교하여 진짜 새 글/댓글이 생겼거나 삭제되었을 때만 renderDebates 실행
+    // 진짜 변경이 발생했을 때만 renderDebates 실행
     if (forceRender || currentFingerprint !== lastDataFingerprint) {
       lastDataFingerprint = currentFingerprint;
       await renderDebates();
