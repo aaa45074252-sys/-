@@ -124,7 +124,6 @@ function switchHeroTab(tabName) {
   }
 }
 
-// 5. 개요 탭 렌더링 (5개 섹션 및 흥망성쇠 SVG 인터랙티브 차트)
 // 5. 개요 탭 렌더링 (가운데 0 기준 +/- 흥망성쇠 곡선)
 function renderOverview() {
   const h = heroDetails[currentHero];
@@ -148,19 +147,15 @@ function renderOverview() {
   const padY = 35;
   const innerW = svgW - padX * 2;
   const centerY = svgH / 2; // 정중앙 0 기준선
-  const maxAmp = (svgH - padY * 2) / 2; // 상하 최대 진폭
+  const maxAmp = (svgH - padY * 2) / 2;
 
-  // 점수(0~100 기준 또는 -50~+50 기준 모두 대응)를 -1 ~ +1 비율로 정규화
   const coords = points.map((pt, i) => {
     let normalizedVal = 0;
     if (pt.score > 0 && pt.score <= 100 && !points.some(p => p.score < 0)) {
-      // 0~100점 체계인 경우 (50점이 기준 0)
       normalizedVal = (pt.score - 50) / 50;
     } else {
-      // 이미 -50 ~ +50 등 음수를 포함하는 체계인 경우
       normalizedVal = pt.score / 50;
     }
-    // -1(바닥) ~ +1(정상) 제한
     normalizedVal = Math.max(-1, Math.min(1, normalizedVal));
 
     const x = padX + (i / (points.length - 1)) * innerW;
@@ -168,7 +163,6 @@ function renderOverview() {
     return { ...pt, x, y, isPositive: normalizedVal >= 0 };
   });
 
-  // 부드러운 3차 베지어 곡선 패스 생성
   let pathD = `M ${coords[0].x},${coords[0].y}`;
   for (let i = 0; i < coords.length - 1; i++) {
     const p0 = coords[i];
@@ -180,7 +174,6 @@ function renderOverview() {
     pathD += ` C ${cpx1},${cpy1} ${cpx2},${cpy2} ${p1.x},${p1.y}`;
   }
 
-  // 기준선(centerY)을 폐곡선 바닥으로 삼는 영역 패스
   const areaD = `${pathD} L ${coords[coords.length - 1].x},${centerY} L ${coords[0].x},${centerY} Z`;
 
   let pointsHtml = "";
@@ -205,17 +198,14 @@ function renderOverview() {
           </linearGradient>
         </defs>
 
-        <!-- 배경 +/- 구역 표시 텍스트 -->
         <text x="${padX - 8}" y="${padY + 4}" class="axis-guide-label" text-anchor="end">+ 전성/영광</text>
         <text x="${padX - 8}" y="${centerY + 4}" class="axis-guide-label zero" text-anchor="end">0 평온</text>
         <text x="${padX - 8}" y="${svgH - padY}" class="axis-guide-label" text-anchor="end">- 시련/위기</text>
 
-        <!-- 상하 보조선 및 중앙 0 기준축 -->
         <line x1="${padX}" y1="${padY}" x2="${svgW - padX}" y2="${padY}" stroke="#2e241e" stroke-dasharray="2 4"/>
         <line x1="${padX}" y1="${centerY}" x2="${svgW - padX}" y2="${centerY}" stroke="#b89047" stroke-width="1.2" stroke-dasharray="4 4"/>
         <line x1="${padX}" y1="${svgH - padY}" x2="${svgW - padX}" y2="${svgH - padY}" stroke="#2e241e" stroke-dasharray="2 4"/>
 
-        <!-- 곡선 궤적 & 도트 -->
         <path d="${areaD}" fill="url(#curveGradient)"/>
         <path d="${pathD}" fill="none" stroke="#e5be75" stroke-width="3" class="curve-line"/>
         ${pointsHtml}
@@ -738,7 +728,7 @@ async function renderDebates() {
   }
 }
 
-// 공동탐구 생각 등록
+// 공동탐구 생각 등록 (등록 즉시 화면 렌더링)
 window.addDebatePost = async function() {
   const authorInput = document.getElementById("debateAuthor");
   const pwdInput = document.getElementById("debatePassword");
@@ -768,6 +758,9 @@ window.addDebatePost = async function() {
 
   contentInput.value = "";
   pwdInput.value = "";
+
+  // 등록 후 즉시 화면 갱신
+  await renderDebates();
 };
 
 // [선택 호출형] 플루타르코스 AI 조언 요청
@@ -791,6 +784,7 @@ window.requestPlutarchAdvice = async function(postId) {
       password: "plutarch_ai_lock",
       text: aiAnswer
     }]);
+    await renderDebates();
   } else {
     if (btn) {
       btn.disabled = false;
@@ -808,6 +802,7 @@ window.deleteDebatePost = async function(postId, originPwd) {
   if (confirm("정말 이 탐구 기록을 삭제하시겠습니까?")) {
     const { error } = await supabaseClient.from('debates').delete().eq('id', postId);
     if (error) alert("삭제 실패: " + error.message);
+    else await renderDebates();
   }
 };
 
@@ -834,6 +829,7 @@ window.addDebateReply = async function(postId) {
 
   document.getElementById(`replyText-${postId}`).value = "";
   document.getElementById(`replyPwd-${postId}`).value = "";
+  await renderDebates();
 };
 
 // 덧붙인 생각 삭제
@@ -845,25 +841,28 @@ window.deleteDebateReply = async function(replyId, originPwd) {
   if (confirm("이 생각을 삭제하시겠습니까?")) {
     const { error } = await supabaseClient.from('replies').delete().eq('id', replyId);
     if (error) alert("삭제 실패: " + error.message);
+    else await renderDebates();
   }
 };
 
-// 8. 실시간(Realtime) 구독 채널 연결 (누군가 글/댓글을 쓰면 전원 자동 반영)
+// 8. 실시간(Realtime) 구독 채널 (안정형 리스너)
 function setupRealtimeDebates() {
   supabaseClient
-    .channel('public:realtime_forum')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'debates' }, () => {
-      const debateTab = document.getElementById("tabDebate");
-      if (debateTab && debateTab.classList.contains("active")) {
+    .channel('schema-db-changes')
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'debates' },
+      () => {
         renderDebates();
       }
-    })
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'replies' }, () => {
-      const debateTab = document.getElementById("tabDebate");
-      if (debateTab && debateTab.classList.contains("active")) {
+    )
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'replies' },
+      () => {
         renderDebates();
       }
-    })
+    )
     .subscribe();
 }
 
