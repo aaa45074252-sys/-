@@ -546,7 +546,7 @@ function renderNetwork() {
 }
 
 // ========================================================
-// 🤖 플루타르코스 AI 엔진 (Google Gemini API 연동)
+// 🤖 플루타르코스 AI 엔진 (AQ. 키 호환 x-goog-api-key 헤더 전송)
 // ========================================================
 const PLUTARCH_PROMPT_SYSTEM = `
 당신은 고대 그리스의 위대한 전기 작가이자 철학자 '플루타르코스(Plutarch)'입니다.
@@ -565,8 +565,8 @@ async function askPlutarchAI(heroKey, heroName, studentPost) {
     return null;
   }
 
-  // Gemini 2.5 Flash 최신 안정 엔드포인트
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+  // 최신 AQ. 규격 키는 URL 파라미터가 아닌 x-goog-api-key 헤더로 전송해야 안전합니다.
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`;
 
   const promptText = `
 ${PLUTARCH_PROMPT_SYSTEM}
@@ -575,27 +575,36 @@ ${PLUTARCH_PROMPT_SYSTEM}
 [학생의 탐구 생각]:
 "${studentPost}"
 
-위 학생의 생각에 대한 플루타르코스로서의 성찰과 질문을 담은 짧은 답글을 써주게.
+위 학생의 생각에 대해 플루타르코스의 관점에서 도덕적 딜레마를 자극하고 생각을 넓혀주는 2~3문장의 짧은 답글을 써주게.
 `;
 
   try {
     const res = await fetch(endpoint, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "x-goog-api-key": GEMINI_API_KEY
+      },
       body: JSON.stringify({
         contents: [{ parts: [{ text: promptText }] }]
       })
     });
 
-    if (!res.ok) {
-      console.error("Gemini API 호출 실패 (HTTP Status):", res.status);
+    const data = await res.json();
+
+    if (data.error) {
+      console.error("Gemini API Error Detail:", data.error);
+      alert("플루타르코스 AI 응답 오류: " + data.error.message);
       return null;
     }
 
-    const data = await res.json();
-    return data.candidates[0].content.parts[0].text.trim();
+    if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
+      return data.candidates[0].content.parts[0].text.trim();
+    }
+    return null;
   } catch (err) {
-    console.error("AI 응답 생성 에러:", err);
+    console.error("AI 통신 실패:", err);
+    alert("AI 통신 실패: " + err.message);
     return null;
   }
 }
@@ -667,7 +676,7 @@ async function renderDebates() {
       const dateStr = `${dateObj.getMonth() + 1}/${dateObj.getDate()} ${dateObj.getHours()}:${String(dateObj.getMinutes()).padStart(2, '0')}`;
 
       html += `
-        <div class="debate-post">
+        <div class="debate-post" id="post-card-${post.id}">
           <div class="post-header">
             <div>
               <span class="post-author">👤 ${post.author}</span>
@@ -679,7 +688,7 @@ async function renderDebates() {
           </div>
           <div class="post-content">${post.content}</div>
           <div class="reply-section">
-            <div class="reply-list">${repliesHtml}</div>
+            <div class="reply-list" id="reply-list-${post.id}">${repliesHtml}</div>
             <div class="reply-input-row">
               <input type="text" class="reply-nick" id="replyNick-${post.id}" placeholder="닉네임" maxlength="8">
               <input type="password" class="reply-nick reply-pwd" id="replyPwd-${post.id}" placeholder="비번" maxlength="8">
@@ -698,7 +707,7 @@ async function renderDebates() {
   }
 }
 
-// 공동탐구 생각 등록 (선택된 관점 태그 자동 결합 및 AI 자동 답글)
+// 공동탐구 생각 등록 (학생 글 등록 즉시 화면 표시 + AI 답글 자동 생성)
 window.addDebatePost = async function() {
   const authorInput = document.getElementById("debateAuthor");
   const pwdInput = document.getElementById("debatePassword");
@@ -714,7 +723,7 @@ window.addDebatePost = async function() {
 
   const fullContent = selectedTag ? `${selectedTag}\n${rawContent}` : rawContent;
 
-  // 1. 학생 글 DB 등록 (.select()로 새 글의 id 획득)
+  // 1. 학생 글 DB 등록
   const { data: insertedPosts, error } = await supabaseClient
     .from('debates')
     .insert([{
@@ -734,15 +743,25 @@ window.addDebatePost = async function() {
   contentInput.value = "";
   pwdInput.value = "";
 
-  // 학생 글 화면에 즉시 표시
+  // 학생 글을 먼저 즉시 화면에 렌더링
   await renderDebates();
 
-  // 2. 플루타르코스 AI 피드백 백그라운드 호출
+  // 2. 해당 글 바로 아래에 "답변 작성 중" 표시 추가
+  const targetReplyList = document.getElementById(`reply-list-${newPostId}`);
+  let loadingPlaceholder = null;
+  if (targetReplyList) {
+    loadingPlaceholder = document.createElement("div");
+    loadingPlaceholder.className = "reply-item ai-reply";
+    loadingPlaceholder.innerHTML = `<div><span class="reply-author ai-author">🏛️ 플루타르코스 AI:</span> <span style="font-style:italic; opacity:0.8;">자네의 생각을 찬찬히 짚어보는 중일세... ⏳</span></div>`;
+    targetReplyList.appendChild(loadingPlaceholder);
+  }
+
+  // 3. 플루타르코스 AI 백그라운드 호출
   const heroName = heroDetails[currentHero].name;
   const aiAnswer = await askPlutarchAI(currentHero, heroName, rawContent);
 
   if (aiAnswer) {
-    // 3. AI 답변을 해당 글의 댓글(replies)로 자동 저장
+    // 4. 생성된 AI 답변을 댓글(replies)로 자동 저장
     await supabaseClient.from('replies').insert([{
       debate_id: newPostId,
       author: "🏛️ 플루타르코스 AI",
@@ -750,8 +769,10 @@ window.addDebatePost = async function() {
       text: aiAnswer
     }]);
 
-    // AI 댓글이 달린 최신 화면으로 재갱신
-    renderDebates();
+    // 5. AI 답변이 반영된 최신 화면으로 재갱신
+    await renderDebates();
+  } else {
+    if (loadingPlaceholder) loadingPlaceholder.remove();
   }
 };
 
@@ -805,7 +826,7 @@ window.deleteDebateReply = async function(replyId, originPwd) {
   }
 };
 
-// 8. 명화 갤러리 렌더링 (리퍼러 헤더 차단 우회 적용)
+// 8. 명화 갤러리 렌더링
 function renderGallery() {
   const container = document.getElementById("gallery-container");
   if (!container) return;
