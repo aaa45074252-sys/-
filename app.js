@@ -1,7 +1,10 @@
-// 1. Supabase 클라이언트 연결 설정
+// 1. Supabase 및 Gemini AI 클라이언트 연결 설정
 const SUPABASE_URL = "https://xivchaifnztwjyldlphh.supabase.co";
 const SUPABASE_KEY = "sb_publishable_L2H2WzL-L0mOTOwseU_MmQ_POXfn85y"; 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// 발급받으신 Gemini API 키 연동
+const GEMINI_API_KEY = "AQ.Ab8RN6KHSpt5ImiebezTqc--nqjaSZvcEDG7qRw2U0zxnn7iSg";
 
 let mainMap = null;
 let currentHero = "theseus";
@@ -542,12 +545,66 @@ function renderNetwork() {
   });
 }
 
+// ========================================================
+// 🤖 플루타르코스 AI 엔진 (Google Gemini API 연동)
+// ========================================================
+const PLUTARCH_PROMPT_SYSTEM = `
+당신은 고대 그리스의 위대한 전기 작가이자 철학자 '플루타르코스(Plutarch)'입니다.
+학생들이 《비교열전》 영웅들의 생애를 탐구하고 토론하는 학술 웹 아카이브의 멘토 역할을 맡고 있습니다.
+
+[답변 지침]
+1. 어조: 점잖고 지혜로운 고대 철학자의 한국어 어조(~하게나, ~이지 않겠는가, ~생각해보았는가 등)를 유지하세요.
+2. 교육적 의도: 학생의 생각에 정답을 단정하지 말고, 깊이 있는 질문(소크라테스식 반문 또는 윤리적 딜레마)을 던져 생각을 넓혀주세요.
+3. 비교 관점: 가능하면 다른 영웅의 사례(예: 테세우스↔로물루스, 솔론↔푸블리콜라, 리쿠르고스↔누마)를 넌지시 덧붙여 주세요.
+4. 분량: 2~3문장(140자 내외)으로 간결하고 인상 깊게 작성하세요.
+`;
+
+async function askPlutarchAI(heroKey, heroName, studentPost) {
+  if (!GEMINI_API_KEY || GEMINI_API_KEY.includes("여기에")) {
+    console.warn("Gemini API 키가 설정되지 않았습니다.");
+    return null;
+  }
+
+  // Gemini 2.5 Flash 최신 안정 엔드포인트
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+  const promptText = `
+${PLUTARCH_PROMPT_SYSTEM}
+
+[현재 탐구 영웅]: ${heroName} (${heroKey})
+[학생의 탐구 생각]:
+"${studentPost}"
+
+위 학생의 생각에 대한 플루타르코스로서의 성찰과 질문을 담은 짧은 답글을 써주게.
+`;
+
+  try {
+    const res = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: promptText }] }]
+      })
+    });
+
+    if (!res.ok) {
+      console.error("Gemini API 호출 실패 (HTTP Status):", res.status);
+      return null;
+    }
+
+    const data = await res.json();
+    return data.candidates[0].content.parts[0].text.trim();
+  } catch (err) {
+    console.error("AI 응답 생성 에러:", err);
+    return null;
+  }
+}
+
 // 7. 온라인 클라우드 공동탐구 질문 게시판 (Supabase 연동)
 async function renderDebates() {
   const h = heroDetails[currentHero];
   document.getElementById("debateFormTitle").innerText = `💭 ${h.name} 공동탐구 생각 나누기`;
 
-  // 영웅별 핵심 탐구 과제 배너 출력
   const anchorBox = document.getElementById("inquiryAnchorBox");
   if (anchorBox) {
     const questionText = (h.overview && h.overview.lifeQuestion) ? h.overview.lifeQuestion : "이 영웅의 결단에서 우리가 배울 수 있는 핵심 교훈은 무엇인가요?";
@@ -592,14 +649,15 @@ async function renderDebates() {
       
       let repliesHtml = "";
       postReplies.forEach(r => {
+        const isAi = r.author.includes("플루타르코스");
         repliesHtml += `
-          <div class="reply-item">
+          <div class="reply-item ${isAi ? 'ai-reply' : ''}">
             <div>
-              <span class="reply-author">${r.author}:</span>
+              <span class="reply-author ${isAi ? 'ai-author' : ''}">${r.author}:</span>
               <span>${r.text}</span>
             </div>
             <div>
-              <button class="action-btn del" onclick="deleteDebateReply(${r.id}, '${r.password}')">삭제</button>
+              ${!isAi ? `<button class="action-btn del" onclick="deleteDebateReply(${r.id}, '${r.password}')">삭제</button>` : ''}
             </div>
           </div>
         `;
@@ -640,7 +698,7 @@ async function renderDebates() {
   }
 }
 
-// 공동탐구 생각 등록 (선택된 관점 태그를 내용 맨 앞에 자동으로 붙여 전송)
+// 공동탐구 생각 등록 (선택된 관점 태그 자동 결합 및 AI 자동 답글)
 window.addDebatePost = async function() {
   const authorInput = document.getElementById("debateAuthor");
   const pwdInput = document.getElementById("debatePassword");
@@ -654,24 +712,47 @@ window.addDebatePost = async function() {
   if (!rawContent) return alert("탐구 내용을 작성해 주세요.");
   if (!password) return alert("수정/삭제용 비밀번호를 입력해 주세요.");
 
-  // 태그와 내용을 한 문장으로 결합하여 Supabase content 필드에 저장
   const fullContent = selectedTag ? `${selectedTag}\n${rawContent}` : rawContent;
 
-  const { error } = await supabaseClient.from('debates').insert([{
-    hero: currentHero,
-    author: author,
-    password: password,
-    content: fullContent
-  }]);
+  // 1. 학생 글 DB 등록 (.select()로 새 글의 id 획득)
+  const { data: insertedPosts, error } = await supabaseClient
+    .from('debates')
+    .insert([{
+      hero: currentHero,
+      author: author,
+      password: password,
+      content: fullContent
+    }])
+    .select();
 
-  if (error) {
-    alert("등록 실패: " + error.message);
+  if (error || !insertedPosts || insertedPosts.length === 0) {
+    alert("등록 실패: " + (error ? error.message : "알 수 없는 오류"));
     return;
   }
 
+  const newPostId = insertedPosts[0].id;
   contentInput.value = "";
   pwdInput.value = "";
-  renderDebates();
+
+  // 학생 글 화면에 즉시 표시
+  await renderDebates();
+
+  // 2. 플루타르코스 AI 피드백 백그라운드 호출
+  const heroName = heroDetails[currentHero].name;
+  const aiAnswer = await askPlutarchAI(currentHero, heroName, rawContent);
+
+  if (aiAnswer) {
+    // 3. AI 답변을 해당 글의 댓글(replies)로 자동 저장
+    await supabaseClient.from('replies').insert([{
+      debate_id: newPostId,
+      author: "🏛️ 플루타르코스 AI",
+      password: "plutarch_ai_lock",
+      text: aiAnswer
+    }]);
+
+    // AI 댓글이 달린 최신 화면으로 재갱신
+    renderDebates();
+  }
 };
 
 // 탐구 질문 삭제
