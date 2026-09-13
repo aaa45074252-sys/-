@@ -123,44 +123,92 @@ function switchHeroTab(tabName) {
 }
 
 // 5. 인물 정보 & 명언 & 관계망 렌더링
+// 5. 개요 탭 렌더링 (5개 섹션 및 흥망성쇠 SVG 인터랙티브 차트)
 function renderOverview() {
   const h = heroDetails[currentHero];
   const spriteHtml = HERO_SPRITES[currentHero] || "";
+  const ov = h.overview;
 
-  // ★ 쉼표 누락 오류를 수정한 6인 칭호 매핑
   const heroMeta = {
-    theseus: {
-      role: "아테네의 통합자이자 건국 영웅",
-      tagline: "“청동 몽둥이로 불의를 꺾고 크레타의 미궁을 돌파한 자”"
-    },
-    romulus: {
-      role: "영원한 제국 로마의 초대 국왕",
-      tagline: "“늑대의 젖을 먹고 자라 팔라티노 언덕에 성벽을 쌓은 자”"
-    },
-    lycurgus: {
-      role: "스파르타 철혈 규율의 입법자",
-      tagline: "“성벽 대신 시민의 용기를 방패로 삼은 무적의 입법관”"
-    },
-    numa: {
-      role: "로마의 성스러운 2대 평화왕",
-      tagline: "“무기 대신 신앙과 예법으로 야만의 도시를 길들인 현자”"
-    },
-    solon: {
-      role: "아테네 민주정의 기틀을 닦은 대현자",
-      tagline: "“채무의 멍에를 부수고 법률의 균형으로 시민을 지킨 입법관”"
-    },
-    publicola: {
-      role: "로마 공화정을 수호한 시민의 벗",
-      tagline: "“도끼를 내리고 시민 앞에 머리 숙여 자유를 지켜낸 집정관”"
-    }
+    theseus: { role: "아테네의 연방 통합자", tagline: "“청동 몽둥이로 불의를 꺾고 크레타의 미궁을 돌파한 자”" },
+    romulus: { role: "영원한 제국 로마의 시조", tagline: "“늑대의 젖을 먹고 자라 팔라티노 언덕에 성벽을 쌓은 자”" },
+    lycurgus: { role: "스파르타 철혈 규율의 입법관", tagline: "“성벽 대신 시민의 용기를 방패로 삼은 무적의 입법자”" },
+    numa: { role: "로마의 성스러운 평화왕", tagline: "“무기 대신 신앙과 예법으로 야만의 도시를 길들인 현자”" },
+    solon: { role: "아테네 민주정의 주춧돌", tagline: "“채무의 멍에를 부수고 중용의 방패로 시민을 지킨 입법자”" },
+    publicola: { role: "로마 공화정을 지켜낸 시민의 벗", tagline: "“도끼를 내리고 시민 앞에 머리 숙여 자유를 세운 집정관”" }
   };
+  const meta = heroMeta[currentHero] || { role: "플루타르코스 비교열전 영웅", tagline: "“역사의 흐름을 바꾼 거인”" };
 
-  const meta = heroMeta[currentHero] || {
-    role: "플루타르코스가 주목한 위대한 영웅",
-    tagline: "“역사의 흐름을 바꾼 고대의 거인”"
-  };
+  // --- 흥망성쇠 SVG 인터랙티브 라인 차트 동적 생성 ---
+  const points = ov.lifeCurve;
+  const svgW = 600;
+  const svgH = 200;
+  const padX = 50;
+  const padY = 30;
+  const innerW = svgW - padX * 2;
+  const innerH = svgH - padY * 2;
 
+  // 좌표 계산
+  const coords = points.map((pt, i) => {
+    const x = padX + (i / (points.length - 1)) * innerW;
+    const y = svgH - padY - (pt.score / 100) * innerH;
+    return { ...pt, x, y };
+  });
+
+  // 부드러운 큐빅 베지어 패스 스트링 생성
+  let pathD = `M ${coords[0].x},${coords[0].y}`;
+  for (let i = 0; i < coords.length - 1; i++) {
+    const p0 = coords[i];
+    const p1 = coords[i + 1];
+    const cpx1 = p0.x + (p1.x - p0.x) / 2;
+    const cpy1 = p0.y;
+    const cpx2 = p0.x + (p1.x - p0.x) / 2;
+    const cpy2 = p1.y;
+    pathD += ` C ${cpx1},${cpy1} ${cpx2},${cpy2} ${p1.x},${p1.y}`;
+  }
+
+  // 차트 배경 영역 채우기 (Area Gradient)
+  const areaD = `${pathD} L ${coords[coords.length - 1].x},${svgH - padY} L ${coords[0].x},${svgH - padY} Z`;
+
+  let pointsHtml = "";
+  coords.forEach((pt, i) => {
+    pointsHtml += `
+      <g class="curve-point-group" data-idx="${i}" onclick="showCurveDetail(${i})">
+        <circle cx="${pt.x}" cy="${pt.y}" r="6" class="curve-dot"></circle>
+        <circle cx="${pt.x}" cy="${pt.y}" r="14" class="curve-touch-hitbox"></circle>
+        <text x="${pt.x}" y="${pt.y - 12}" class="curve-score-text">${pt.score}점</text>
+        <text x="${pt.x}" y="${svgH - 10}" class="curve-age-label">${pt.age.split(" ")[0]}</text>
+      </g>
+    `;
+  });
+
+  const chartSvg = `
+    <div class="life-curve-container">
+      <svg viewBox="0 0 ${svgW} ${svgH}" class="life-curve-svg">
+        <defs>
+          <linearGradient id="curveGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#b89047" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="#b89047" stop-opacity="0.0"/>
+          </linearGradient>
+        </defs>
+        <!-- 기준선 3줄 (100, 50, 0) -->
+        <line x1="${padX}" y1="${padY}" x2="${svgW - padX}" y2="${padY}" stroke="#2e241e" stroke-dasharray="3 3"/>
+        <line x1="${padX}" y1="${padY + innerH / 2}" x2="${svgW - padX}" y2="${padY + innerH / 2}" stroke="#2e241e" stroke-dasharray="3 3"/>
+        <line x1="${padX}" y1="${svgH - padY}" x2="${svgW - padX}" y2="${svgH - padY}" stroke="#3d3027" stroke-width="1.5"/>
+        
+        <path d="${areaD}" fill="url(#curveGradient)"/>
+        <path d="${pathD}" fill="none" stroke="#e5be75" stroke-width="3" class="curve-line"/>
+        ${pointsHtml}
+      </svg>
+      <div id="curveEventDesc" class="curve-event-panel">
+        <strong>💡 ${coords[2].age} (${coords[2].score}점)</strong> : ${coords[2].event}
+      </div>
+    </div>
+  `;
+
+  // --- 5대 섹션 HTML 조립 ---
   document.getElementById("overviewBox").innerHTML = `
+    <!-- 레트로 스테이터스 프로필 헤더 -->
     <div class="hero-pixel-status">
       <div class="pixel-avatar-box">${spriteHtml}</div>
       <div class="pixel-status-info">
@@ -169,11 +217,66 @@ function renderOverview() {
         <p>${meta.tagline}</p>
       </div>
     </div>
-    <div class="card"><h3>🏛️ 출생과 기원</h3><p>${h.overview.birth}</p></div>
-    <div class="card"><h3>⚔️ 핵심 업적</h3><p>${h.overview.feat}</p></div>
-    <div class="card"><h3>👤 성격과 기질</h3><p>${h.overview.character}</p></div>
-    <div class="card"><h3>📖 플루타르코스의 총평</h3><p>${h.overview.verdict}</p></div>
+
+    <!-- 1. 출생과 시대적 배경 -->
+    <div class="overview-section-card">
+      <div class="ov-sec-header">
+        <span class="ov-sec-icon">🏛️</span>
+        <h3>I. 출생과 시대적 배경</h3>
+      </div>
+      <p class="ov-sec-body">${ov.birthBackground}</p>
+    </div>
+
+    <!-- 2. 인물의 흥망성쇠 (그래프) -->
+    <div class="overview-section-card">
+      <div class="ov-sec-header">
+        <span class="ov-sec-icon">📈</span>
+        <h3>II. 인물의 흥망성쇠 (생애 곡선)</h3>
+      </div>
+      <p class="ov-sec-sub">각 시기별 점을 클릭하면 주요 사건과 삶의 변곡점을 확인할 수 있습니다.</p>
+      ${chartSvg}
+    </div>
+
+    <!-- 3. 성격과 기질 -->
+    <div class="overview-section-card">
+      <div class="ov-sec-header">
+        <span class="ov-sec-icon">👤</span>
+        <h3>III. 성격과 기질</h3>
+      </div>
+      <p class="ov-sec-body">${ov.character}</p>
+    </div>
+
+    <!-- 4. 인생 질문 -->
+    <div class="overview-section-card question-card">
+      <div class="ov-sec-header">
+        <span class="ov-sec-icon">❓</span>
+        <h3>IV. 오늘을 위한 인생 질문</h3>
+      </div>
+      <blockquote class="ov-question-quote">${ov.lifeQuestion}</blockquote>
+    </div>
+
+    <!-- 5. 플루타르코스의 해석 -->
+    <div class="overview-section-card verdict-card">
+      <div class="ov-sec-header">
+        <span class="ov-sec-icon">⚖️</span>
+        <h3>V. 플루타르코스의 해석과 평가</h3>
+      </div>
+      <p class="ov-sec-body">${ov.plutarchVerdict}</p>
+    </div>
   `;
+
+  // 그래프 점 클릭 시 이벤트 설명창 갱신 함수 글로벌 등록
+  window.showCurveDetail = function(idx) {
+    const pt = coords[idx];
+    const descBox = document.getElementById("curveEventDesc");
+    if (!descBox) return;
+    descBox.innerHTML = `<strong>💡 ${pt.age} (${pt.score}점)</strong> : ${pt.event}`;
+    
+    // 점 활성화 클래스 토글
+    document.querySelectorAll(".curve-point-group").forEach((g, i) => {
+      g.classList.toggle("active", i === idx);
+    });
+  };
 }
 
 function renderQuotes() {
