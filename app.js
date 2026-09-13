@@ -280,7 +280,7 @@ function renderQuotes() {
   document.getElementById("quotesBox").innerHTML = html;
 }
 
-// 6. 관계망 성좌형 렌더링 (사방 4대 축 & 터치 히트박스 최적화)
+// 6. 관계망 성좌형 렌더링
 function renderNetwork() {
   const h = heroDetails[currentHero];
   const svg = d3.select("#networkSvg");
@@ -546,7 +546,7 @@ function renderNetwork() {
 }
 
 // ========================================================
-// 🤖 플루타르코스 AI 엔진 (gemini-3.6-flash 최신 안정 규격 적용)
+// 🤖 플루타르코스 AI 엔진 (gemini-3.6-flash 모델 연동)
 // ========================================================
 const PLUTARCH_PROMPT_SYSTEM = `
 당신은 고대 그리스의 위대한 전기 작가이자 철학자 '플루타르코스(Plutarch)'입니다.
@@ -565,7 +565,6 @@ async function askPlutarchAI(heroKey, heroName, studentPost) {
     return null;
   }
 
-  // 구글 공식 권장 모델: gemini-3.6-flash
   const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent`;
 
   const promptText = `
@@ -627,7 +626,9 @@ async function renderDebates() {
   }
 
   const listContainer = document.getElementById("debateList");
-  listContainer.innerHTML = `<div class="no-posts">서버에서 탐구 기록을 불러오는 중...</div>`;
+  if (!listContainer.hasChildNodes() || listContainer.innerHTML.includes("불러오는 중")) {
+    listContainer.innerHTML = `<div class="no-posts">서버에서 탐구 기록을 불러오는 중...</div>`;
+  }
 
   try {
     const { data: posts, error: postErr } = await supabaseClient
@@ -676,7 +677,6 @@ async function renderDebates() {
       const dateObj = new Date(post.created_at);
       const dateStr = `${dateObj.getMonth() + 1}/${dateObj.getDate()} ${dateObj.getHours()}:${String(dateObj.getMinutes()).padStart(2, '0')}`;
 
-      // 선택 호출형 버튼: AI 조언이 아직 없을 때만 버튼 활성화
       const aiBtnHtml = hasAiReply 
         ? `<span style="font-size:10px; color:#ffd15c; margin-right:6px;">✨ 플루타르코스 조언 완료</span>`
         : `<button class="action-btn" id="ai-req-btn-${post.id}" style="color:#ffd15c; font-weight:bold; margin-right:8px; border:1px solid rgba(255,209,92,0.4); border-radius:4px; padding:2px 6px;" onclick="requestPlutarchAdvice(${post.id})">🏛️ 플루타르코스의 조언 듣기</button>`;
@@ -714,7 +714,7 @@ async function renderDebates() {
   }
 }
 
-// 공동탐구 생각 등록 (순수 학생 글만 등록, AI 자동 개입 없음)
+// 공동탐구 생각 등록
 window.addDebatePost = async function() {
   const authorInput = document.getElementById("debateAuthor");
   const pwdInput = document.getElementById("debatePassword");
@@ -744,10 +744,9 @@ window.addDebatePost = async function() {
 
   contentInput.value = "";
   pwdInput.value = "";
-  await renderDebates();
 };
 
-// [선택 호출형] 학생들이 원할 때만 플루타르코스 AI 조언 요청
+// [선택 호출형] 플루타르코스 AI 조언 요청
 window.requestPlutarchAdvice = async function(postId) {
   const btn = document.getElementById(`ai-req-btn-${postId}`);
   if (btn) {
@@ -755,7 +754,6 @@ window.requestPlutarchAdvice = async function(postId) {
     btn.innerText = "🏛️ 사유하는 중... ⏳";
   }
 
-  // 본문 내용 가져오기
   const postCard = document.getElementById(`post-card-${postId}`);
   const postContent = postCard ? postCard.querySelector('.post-content').innerText : "";
 
@@ -769,7 +767,6 @@ window.requestPlutarchAdvice = async function(postId) {
       password: "plutarch_ai_lock",
       text: aiAnswer
     }]);
-    await renderDebates();
   } else {
     if (btn) {
       btn.disabled = false;
@@ -787,11 +784,10 @@ window.deleteDebatePost = async function(postId, originPwd) {
   if (confirm("정말 이 탐구 기록을 삭제하시겠습니까?")) {
     const { error } = await supabaseClient.from('debates').delete().eq('id', postId);
     if (error) alert("삭제 실패: " + error.message);
-    else renderDebates();
   }
 };
 
-// 덧붙인 생각(학생 댓글) 등록
+// 덧붙인 생각 등록
 window.addDebateReply = async function(postId) {
   const nick = document.getElementById(`replyNick-${postId}`).value.trim() || "익명";
   const pwd = document.getElementById(`replyPwd-${postId}`).value.trim();
@@ -812,7 +808,8 @@ window.addDebateReply = async function(postId) {
     return;
   }
 
-  renderDebates();
+  document.getElementById(`replyText-${postId}`).value = "";
+  document.getElementById(`replyPwd-${postId}`).value = "";
 };
 
 // 덧붙인 생각 삭제
@@ -824,11 +821,29 @@ window.deleteDebateReply = async function(replyId, originPwd) {
   if (confirm("이 생각을 삭제하시겠습니까?")) {
     const { error } = await supabaseClient.from('replies').delete().eq('id', replyId);
     if (error) alert("삭제 실패: " + error.message);
-    else renderDebates();
   }
 };
 
-// 8. 명화 갤러리 렌더링
+// 8. 실시간(Realtime) 구독 채널 연결 (누군가 글/댓글을 쓰면 전원 자동 반영)
+function setupRealtimeDebates() {
+  supabaseClient
+    .channel('public:realtime_forum')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'debates' }, () => {
+      const debateTab = document.getElementById("tabDebate");
+      if (debateTab && debateTab.classList.contains("active")) {
+        renderDebates();
+      }
+    })
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'replies' }, () => {
+      const debateTab = document.getElementById("tabDebate");
+      if (debateTab && debateTab.classList.contains("active")) {
+        renderDebates();
+      }
+    })
+    .subscribe();
+}
+
+// 9. 명화 갤러리 렌더링
 function renderGallery() {
   const container = document.getElementById("gallery-container");
   if (!container) return;
@@ -869,8 +884,9 @@ function renderGallery() {
   `).join('');
 }
 
-// 첫 화면 실행
+// 첫 화면 실행 및 실시간 채널 연결
 showMapView();
+setupRealtimeDebates();
 
 // 인물 상세 설명 카드 터치 및 마우스 드래그 이동 기능
 (function enableInspectorDrag() {
