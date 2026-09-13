@@ -844,46 +844,70 @@ window.deleteDebateReply = async function(replyId, originPwd) {
   }
 };
 
-// 8. 실시간(Realtime) + 스마트 백그라운드 동기화 (모바일/방화벽 100% 대응)
+// 8. 스마트 비파괴 실시간 동기화 (입력 중 방해 방지 & 변경 시에만 렌더링)
 let pollTimer = null;
+let lastDataFingerprint = "";
 
 function setupRealtimeDebates() {
-  // 1. Supabase 웹소켓 실시간 연결
+  // 1. Supabase 웹소켓 연결 시도
   try {
     supabaseClient.removeAllChannels();
-
     supabaseClient
       .channel('room-parallel-lives')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'debates' },
-        () => {
-          refreshDebatesIfActive();
-        }
-      )
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'replies' },
-        () => {
-          refreshDebatesIfActive();
-        }
-      )
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'debates' }, () => {
+        checkAndSyncDebates(true);
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'replies' }, () => {
+        checkAndSyncDebates(true);
+      })
       .subscribe();
   } catch (e) {
     console.warn("웹소켓 연결 시도 중:", e);
   }
 
-  // 2. 모바일 통신망/방화벽 웹소켓 차단 대비: 토론 탭 활성 시 3초마다 조용히 동기화
+  // 2. 모바일 백그라운드 체크 (3초마다 조용히 "새 글이 있나" 검사만 수행)
   if (pollTimer) clearInterval(pollTimer);
   pollTimer = setInterval(() => {
-    refreshDebatesIfActive();
+    checkAndSyncDebates(false);
   }, 3000);
 }
 
-function refreshDebatesIfActive() {
+// 사용자가 키보드로 글을 쓰는 중인지 검사
+function isUserTyping() {
+  const active = document.activeElement;
+  if (!active) return false;
+  const tag = active.tagName.toLowerCase();
+  return (tag === "input" || tag === "textarea") && active.closest("#tabDebate");
+}
+
+// 새 데이터가 있을 때만 안전하게 화면 갱신
+async function checkAndSyncDebates(forceRender = false) {
   const debateTab = document.getElementById("tabDebate");
-  if (debateTab && debateTab.classList.contains("active")) {
-    renderDebates();
+  if (!debateTab || !debateTab.classList.contains("active")) return;
+
+  // 학생이 글이나 비번을 입력하고 있다면 화면 갱신을 미룸 (입력 보호)
+  if (isUserTyping()) return;
+
+  try {
+    // 가볍게 ID와 업데이트 시간만 조회하여 변경 여부 확인
+    const { data: posts } = await supabaseClient
+      .from('debates')
+      .select('id, created_at')
+      .eq('hero', currentHero);
+
+    const { data: replies } = await supabaseClient
+      .from('replies')
+      .select('id, created_at');
+
+    const currentFingerprint = `${(posts || []).length}_${(replies || []).length}_${posts?.[0]?.id || 0}_${replies?.[replies.length - 1]?.id || 0}`;
+
+    // 이전 상태와 비교하여 진짜 새 글/댓글이 생겼거나 삭제되었을 때만 renderDebates 실행
+    if (forceRender || currentFingerprint !== lastDataFingerprint) {
+      lastDataFingerprint = currentFingerprint;
+      await renderDebates();
+    }
+  } catch (err) {
+    console.warn("동기화 확인 중 오류:", err);
   }
 }
 
