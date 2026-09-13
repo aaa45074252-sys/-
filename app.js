@@ -6,7 +6,7 @@ const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let mainMap = null;
 let currentHero = "theseus";
 
-// 2. 지도 초기화 (차단 없는 안정적인 타일 레이어 적용)
+// 2. 지도 초기화 (오픈스트리트맵 표준 타일)
 function initMainMap() {
   const mapEl = document.getElementById('mainMap');
   if (!mapEl) return;
@@ -17,7 +17,6 @@ function initMainMap() {
       fadeAnimation: true
     }).setView([39.0, 18.0], 5);
 
-    // API 키나 워터마크가 전혀 없는 오픈스트리트맵 표준 타일
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
       attribution: '© OpenStreetMap contributors'
@@ -122,7 +121,6 @@ function switchHeroTab(tabName) {
   }
 }
 
-// 5. 인물 정보 & 명언 & 관계망 렌더링
 // 5. 개요 탭 렌더링 (5개 섹션 및 흥망성쇠 SVG 인터랙티브 차트)
 function renderOverview() {
   const h = heroDetails[currentHero];
@@ -139,7 +137,6 @@ function renderOverview() {
   };
   const meta = heroMeta[currentHero] || { role: "플루타르코스 비교열전 영웅", tagline: "“역사의 흐름을 바꾼 거인”" };
 
-  // --- 흥망성쇠 SVG 인터랙티브 라인 차트 동적 생성 ---
   const points = ov.lifeCurve;
   const svgW = 600;
   const svgH = 200;
@@ -148,14 +145,12 @@ function renderOverview() {
   const innerW = svgW - padX * 2;
   const innerH = svgH - padY * 2;
 
-  // 좌표 계산
   const coords = points.map((pt, i) => {
     const x = padX + (i / (points.length - 1)) * innerW;
     const y = svgH - padY - (pt.score / 100) * innerH;
     return { ...pt, x, y };
   });
 
-  // 부드러운 큐빅 베지어 패스 스트링 생성
   let pathD = `M ${coords[0].x},${coords[0].y}`;
   for (let i = 0; i < coords.length - 1; i++) {
     const p0 = coords[i];
@@ -167,7 +162,6 @@ function renderOverview() {
     pathD += ` C ${cpx1},${cpy1} ${cpx2},${cpy2} ${p1.x},${p1.y}`;
   }
 
-  // 차트 배경 영역 채우기 (Area Gradient)
   const areaD = `${pathD} L ${coords[coords.length - 1].x},${svgH - padY} L ${coords[0].x},${svgH - padY} Z`;
 
   let pointsHtml = "";
@@ -191,7 +185,6 @@ function renderOverview() {
             <stop offset="100%" stop-color="#b89047" stop-opacity="0.0"/>
           </linearGradient>
         </defs>
-        <!-- 기준선 3줄 (100, 50, 0) -->
         <line x1="${padX}" y1="${padY}" x2="${svgW - padX}" y2="${padY}" stroke="#2e241e" stroke-dasharray="3 3"/>
         <line x1="${padX}" y1="${padY + innerH / 2}" x2="${svgW - padX}" y2="${padY + innerH / 2}" stroke="#2e241e" stroke-dasharray="3 3"/>
         <line x1="${padX}" y1="${svgH - padY}" x2="${svgW - padX}" y2="${svgH - padY}" stroke="#3d3027" stroke-width="1.5"/>
@@ -206,9 +199,7 @@ function renderOverview() {
     </div>
   `;
 
-  // --- 5대 섹션 HTML 조립 ---
   document.getElementById("overviewBox").innerHTML = `
-    <!-- 레트로 스테이터스 프로필 헤더 -->
     <div class="hero-pixel-status">
       <div class="pixel-avatar-box">${spriteHtml}</div>
       <div class="pixel-status-info">
@@ -218,7 +209,6 @@ function renderOverview() {
       </div>
     </div>
 
-    <!-- 1. 출생과 시대적 배경 -->
     <div class="overview-section-card">
       <div class="ov-sec-header">
         <span class="ov-sec-icon">🏛️</span>
@@ -227,7 +217,6 @@ function renderOverview() {
       <p class="ov-sec-body">${ov.birthBackground}</p>
     </div>
 
-    <!-- 2. 인물의 흥망성쇠 (그래프) -->
     <div class="overview-section-card">
       <div class="ov-sec-header">
         <span class="ov-sec-icon">📈</span>
@@ -237,7 +226,6 @@ function renderOverview() {
       ${chartSvg}
     </div>
 
-    <!-- 3. 성격과 기질 -->
     <div class="overview-section-card">
       <div class="ov-sec-header">
         <span class="ov-sec-icon">👤</span>
@@ -246,7 +234,6 @@ function renderOverview() {
       <p class="ov-sec-body">${ov.character}</p>
     </div>
 
-    <!-- 4. 인생 질문 -->
     <div class="overview-section-card question-card">
       <div class="ov-sec-header">
         <span class="ov-sec-icon">❓</span>
@@ -255,7 +242,6 @@ function renderOverview() {
       <blockquote class="ov-question-quote">${ov.lifeQuestion}</blockquote>
     </div>
 
-    <!-- 5. 플루타르코스의 해석 -->
     <div class="overview-section-card verdict-card">
       <div class="ov-sec-header">
         <span class="ov-sec-icon">⚖️</span>
@@ -265,14 +251,12 @@ function renderOverview() {
     </div>
   `;
 
-  // 그래프 점 클릭 시 이벤트 설명창 갱신 함수 글로벌 등록
   window.showCurveDetail = function(idx) {
     const pt = coords[idx];
     const descBox = document.getElementById("curveEventDesc");
     if (!descBox) return;
     descBox.innerHTML = `<strong>💡 ${pt.age} (${pt.score}점)</strong> : ${pt.event}`;
     
-    // 점 활성화 클래스 토글
     document.querySelectorAll(".curve-point-group").forEach((g, i) => {
       g.classList.toggle("active", i === idx);
     });
@@ -293,6 +277,7 @@ function renderQuotes() {
   document.getElementById("quotesBox").innerHTML = html;
 }
 
+// 6. 관계망 성좌형 렌더링 (사방 4대 축 & 터치 히트박스 최적화)
 function renderNetwork() {
   const h = heroDetails[currentHero];
   const svg = d3.select("#networkSvg");
@@ -337,7 +322,6 @@ function renderNetwork() {
     .on("zoom", (e) => g.attr("transform", e.transform));
   svg.call(zoomBehavior);
 
-  // 배경 별무리
   const spaceDust = g.append("g");
   for (let i = 0; i < 80; i++) {
     const rx = Math.random() * width * 1.6 - width * 0.3;
@@ -349,7 +333,6 @@ function renderNetwork() {
       .attr("opacity", Math.random() * 0.5 + 0.15);
   }
 
-  // 4대 축 텍스트
   const celestialGrid = g.append("g");
   Object.values(axes).forEach(axis => {
     celestialGrid.append("text")
@@ -372,11 +355,10 @@ function renderNetwork() {
     }
   });
 
-  // 물리 시뮬레이션: 반발력을 줄이고 감쇄율을 높여 신속히 제자리에 고정
   const simulation = d3.forceSimulation(nodes)
-    .velocityDecay(0.8) // 감쇄율 상향으로 조기 정지
+    .velocityDecay(0.8)
     .force("link", d3.forceLink(links).id(d => d.id).distance(isMobile ? 55 : 75).strength(0.7))
-    .force("charge", d3.forceManyBody().strength(-20)) // 반발력 최소화
+    .force("charge", d3.forceManyBody().strength(-20))
     .force("collide", d3.forceCollide().radius(isMobile ? 24 : 28))
     .force("x", d3.forceX(d => d.axis === "center" ? cx : axes[d.axis].x).strength(0.85))
     .force("y", d3.forceY(d => d.axis === "center" ? cy : axes[d.axis].y).strength(0.85));
@@ -441,7 +423,6 @@ function renderNetwork() {
     const axisColor = isCenter ? "#ffd15c" : (axes[d.axis] ? axes[d.axis].color : "#fff");
     const glowColor = isCenter ? "#f59e0b" : (axes[d.axis] ? axes[d.axis].glow : "#fff");
 
-    // 투명 터치 히트박스 (반경 22px / 지름 44px): 모바일 터치 용이성 확보
     el.append("circle")
       .attr("r", isCenter ? 26 : 22)
       .attr("fill", "transparent")
@@ -511,14 +492,12 @@ function renderNetwork() {
     }
   });
 
-  // 노드 텍스트 라벨
   node.append("text")
     .attr("class", "node-text")
     .attr("dy", d => d.axis === "center" ? 32 : 19)
     .attr("text-anchor", "middle")
     .text(d => d.name);
 
-  // 노드 클릭 이벤트 (히트박스 덕분에 탭이 즉각 반응)
   node.on("click", (e, d) => {
     e.stopPropagation();
 
@@ -563,12 +542,26 @@ function renderNetwork() {
   });
 }
 
-// 6. 온라인 클라우드 토론장
+// 7. 온라인 클라우드 공동탐구 질문 게시판 (Supabase 연동)
 async function renderDebates() {
   const h = heroDetails[currentHero];
-  document.getElementById("debateFormTitle").innerText = `💬 ${h.name}에게 묻고 답하기`;
+  document.getElementById("debateFormTitle").innerText = `💭 ${h.name} 공동탐구 생각 나누기`;
+
+  // 영웅별 핵심 탐구 과제 배너 출력
+  const anchorBox = document.getElementById("inquiryAnchorBox");
+  if (anchorBox) {
+    const questionText = (h.overview && h.overview.lifeQuestion) ? h.overview.lifeQuestion : "이 영웅의 결단에서 우리가 배울 수 있는 핵심 교훈은 무엇인가요?";
+    anchorBox.innerHTML = `
+      <div class="anchor-badge">🧭 오늘의 핵심 공동탐구 과제</div>
+      <div class="anchor-content">
+        <p><strong>Q1. 고전 딜레마:</strong> ${questionText}</p>
+        <p><strong>Q2. 역사적 평가:</strong> 당시 ${h.name}의 선택은 최선이었을까요? 내가 그 시대의 시민 또는 지도자였다면 어떤 선택을 내렸을지 근거와 함께 탐구해 보세요.</p>
+      </div>
+    `;
+  }
+
   const listContainer = document.getElementById("debateList");
-  listContainer.innerHTML = `<div class="no-posts">서버에서 글 목록을 불러오는 중...</div>`;
+  listContainer.innerHTML = `<div class="no-posts">서버에서 탐구 기록을 불러오는 중...</div>`;
 
   try {
     const { data: posts, error: postErr } = await supabaseClient
@@ -580,7 +573,7 @@ async function renderDebates() {
     if (postErr) throw postErr;
 
     if (!posts || posts.length === 0) {
-      listContainer.innerHTML = `<div class="no-posts">아직 등록된 질문이 없습니다.<br>첫 번째 질문을 남겨보세요!</div>`;
+      listContainer.innerHTML = `<div class="no-posts">아직 등록된 탐구 생각이 없습니다.<br>첫 번째 탐구 질문 또는 주장을 남겨보세요!</div>`;
       return;
     }
 
@@ -632,8 +625,8 @@ async function renderDebates() {
             <div class="reply-input-row">
               <input type="text" class="reply-nick" id="replyNick-${post.id}" placeholder="닉네임" maxlength="8">
               <input type="password" class="reply-nick reply-pwd" id="replyPwd-${post.id}" placeholder="비번" maxlength="8">
-              <input type="text" class="reply-text" id="replyText-${post.id}" placeholder="답변 남기기...">
-              <button class="reply-btn" onclick="addDebateReply(${post.id})">답변</button>
+              <input type="text" class="reply-text" id="replyText-${post.id}" placeholder="생각 덧붙이기(반론/보강)...">
+              <button class="reply-btn" onclick="addDebateReply(${post.id})">등록</button>
             </div>
           </div>
         </div>
@@ -643,28 +636,32 @@ async function renderDebates() {
     listContainer.innerHTML = html;
   } catch (err) {
     console.error(err);
-    listContainer.innerHTML = `<div class="no-posts">데이터를 불러오는 중 오류가 발생했습니다. (SQL 테이블 생성 여부를 확인해 주세요)</div>`;
+    listContainer.innerHTML = `<div class="no-posts">데이터를 불러오는 중 오류가 발생했습니다. (네트워크 연결을 확인해 주세요)</div>`;
   }
 }
 
-// 질문 등록
+// 공동탐구 생각 등록 (선택된 관점 태그를 내용 맨 앞에 자동으로 붙여 전송)
 window.addDebatePost = async function() {
   const authorInput = document.getElementById("debateAuthor");
   const pwdInput = document.getElementById("debatePassword");
   const contentInput = document.getElementById("debateQuestion");
+  const selectedTag = document.querySelector('input[name="inquiryTag"]:checked')?.value || "";
 
   const author = authorInput.value.trim() || "익명";
   const password = pwdInput.value.trim();
-  const content = contentInput.value.trim();
+  const rawContent = contentInput.value.trim();
 
-  if (!content) return alert("질문 내용을 작성해 주세요.");
+  if (!rawContent) return alert("탐구 내용을 작성해 주세요.");
   if (!password) return alert("수정/삭제용 비밀번호를 입력해 주세요.");
+
+  // 태그와 내용을 한 문장으로 결합하여 Supabase content 필드에 저장
+  const fullContent = selectedTag ? `${selectedTag}\n${rawContent}` : rawContent;
 
   const { error } = await supabaseClient.from('debates').insert([{
     hero: currentHero,
     author: author,
     password: password,
-    content: content
+    content: fullContent
   }]);
 
   if (error) {
@@ -677,26 +674,26 @@ window.addDebatePost = async function() {
   renderDebates();
 };
 
-// 질문 삭제
+// 탐구 질문 삭제
 window.deleteDebatePost = async function(postId, originPwd) {
   const inputPwd = prompt("글 등록 시 설정한 비밀번호를 입력하세요:");
   if (inputPwd === null) return;
   if (inputPwd !== originPwd) return alert("비밀번호가 일치하지 않습니다!");
 
-  if (confirm("정말 이 질문을 삭제하시겠습니까?")) {
+  if (confirm("정말 이 탐구 기록을 삭제하시겠습니까?")) {
     const { error } = await supabaseClient.from('debates').delete().eq('id', postId);
     if (error) alert("삭제 실패: " + error.message);
     else renderDebates();
   }
 };
 
-// 답변 등록
+// 덧붙인 생각(답변) 등록
 window.addDebateReply = async function(postId) {
   const nick = document.getElementById(`replyNick-${postId}`).value.trim() || "익명";
   const pwd = document.getElementById(`replyPwd-${postId}`).value.trim();
   const text = document.getElementById(`replyText-${postId}`).value.trim();
 
-  if (!text) return alert("답변 내용을 입력하세요.");
+  if (!text) return alert("내용을 입력하세요.");
   if (!pwd) return alert("답변 삭제용 비밀번호를 입력하세요.");
 
   const { error } = await supabaseClient.from('replies').insert([{
@@ -707,28 +704,27 @@ window.addDebateReply = async function(postId) {
   }]);
 
   if (error) {
-    alert("답변 등록 실패: " + error.message);
+    alert("등록 실패: " + error.message);
     return;
   }
 
   renderDebates();
 };
 
-// 답변 삭제
+// 덧붙인 생각 삭제
 window.deleteDebateReply = async function(replyId, originPwd) {
   const inputPwd = prompt("답변 비밀번호를 입력하세요:");
   if (inputPwd === null) return;
   if (inputPwd !== originPwd) return alert("비밀번호가 일치하지 않습니다!");
 
-  if (confirm("답변을 삭제하시겠습니까?")) {
+  if (confirm("이 생각을 삭제하시겠습니까?")) {
     const { error } = await supabaseClient.from('replies').delete().eq('id', replyId);
     if (error) alert("삭제 실패: " + error.message);
     else renderDebates();
   }
 };
 
-// 7. 명화 갤러리 렌더링
-// 7. 명화 갤러리 렌더링 (리퍼러 헤더 차단 우회 적용)
+// 8. 명화 갤러리 렌더링 (리퍼러 헤더 차단 우회 적용)
 function renderGallery() {
   const container = document.getElementById("gallery-container");
   if (!container) return;
