@@ -611,3 +611,136 @@ header {
 .star-drift-1 { animation: driftB 4.8s infinite ease-in-out; transform-origin: center; }
 .star-drift-2 { animation: driftC 3.6s infinite ease-in-out; transform-origin: center; }
 .star-drift-3 { animation: driftD 4.4s infinite ease-in-out; transform-origin: center; }
+
+/* ==========================================
+   개요 탭 5대 섹션 & 흥망성쇠 그래프 전용 스타일
+   ========================================== */
+.overview-section-card {
+  background: #1c1613;
+  border: 1px solid #3d3027;
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+}
+
+.overview-section-card.question-card {
+  border-left: 4px solid #38bdf8;
+  background: rgba(20, 26, 38, 0.7);
+}
+
+.overview-section-card.verdict-card {
+  border-left: 4px solid #e5be75;
+  background: rgba(28, 22, 17, 0.85);
+}
+
+.ov-sec-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.ov-sec-icon {
+  font-size: 16px;
+}
+
+.ov-sec-header h3 {
+  color: #e5be75;
+  font-size: 15px;
+  margin: 0;
+  font-weight: 700;
+}
+
+.ov-sec-sub {
+  font-size: 11px;
+  color: #8c8072;
+  margin: 0 0 10px 0;
+}
+
+.ov-sec-body {
+  color: #ddd;
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.ov-question-quote {
+  margin: 4px 0 0 0;
+  padding: 10px 14px;
+  background: rgba(14, 165, 233, 0.08);
+  border-radius: 6px;
+  color: #7dd3fc;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.55;
+  font-style: normal;
+}
+
+/* 흥망성쇠 SVG 인터랙티브 차트 */
+.life-curve-container {
+  width: 100%;
+  background: #14100d;
+  border: 1px solid #2e241e;
+  border-radius: 8px;
+  padding: 12px 8px 8px 8px;
+}
+
+.life-curve-svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.curve-line {
+  filter: drop-shadow(0 2px 6px rgba(229, 190, 117, 0.4));
+}
+
+.curve-point-group {
+  cursor: pointer;
+}
+
+.curve-dot {
+  fill: #e5be75;
+  stroke: #14100d;
+  stroke-width: 2.5px;
+  transition: r 0.2s, fill 0.2s;
+}
+
+.curve-point-group:hover .curve-dot,
+.curve-point-group.active .curve-dot {
+  r: 8.5px;
+  fill: #fcd34d;
+}
+
+.curve-touch-hitbox {
+  fill: transparent;
+}
+
+.curve-score-text {
+  fill: #fcd34d;
+  font-size: 10px;
+  font-weight: bold;
+  text-anchor: middle;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.9));
+}
+
+.curve-age-label {
+  fill: #a89f91;
+  font-size: 10px;
+  text-anchor: middle;
+}
+
+.curve-event-panel {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: rgba(36, 28, 23, 0.9);
+  border: 1px solid #b89047;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #f1f5f9;
+  line-height: 1.45;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+}
