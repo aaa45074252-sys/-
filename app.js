@@ -845,25 +845,32 @@ window.deleteDebateReply = async function(replyId, originPwd) {
   }
 };
 
-// 8. 실시간(Realtime) 구독 채널 (안정형 리스너)
+// 8. 실시간(Realtime) 동기화 채널 완벽 보강
 function setupRealtimeDebates() {
-  supabaseClient
-    .channel('schema-db-changes')
+  // 중복 구독 방지를 위해 기존 채널이 있다면 제거
+  supabaseClient.removeAllChannels();
+
+  const channel = supabaseClient
+    .channel('room-parallel-lives')
     .on(
       'postgres_changes',
       { event: '*', schema: 'public', table: 'debates' },
-      () => {
+      (payload) => {
+        console.log("실시간 감지 (debates 변경):", payload);
         renderDebates();
       }
     )
     .on(
       'postgres_changes',
       { event: '*', schema: 'public', table: 'replies' },
-      () => {
+      (payload) => {
+        console.log("실시간 감지 (replies 변경):", payload);
         renderDebates();
       }
     )
-    .subscribe();
+    .subscribe((status) => {
+      console.log("Supabase Realtime 연결 상태:", status);
+    });
 }
 
 // 9. 명화 갤러리 렌더링
