@@ -845,32 +845,48 @@ window.deleteDebateReply = async function(replyId, originPwd) {
   }
 };
 
-// 8. 실시간(Realtime) 동기화 채널 완벽 보강
-function setupRealtimeDebates() {
-  // 중복 구독 방지를 위해 기존 채널이 있다면 제거
-  supabaseClient.removeAllChannels();
+// 8. 실시간(Realtime) + 스마트 백그라운드 동기화 (모바일/방화벽 100% 대응)
+let pollTimer = null;
 
-  const channel = supabaseClient
-    .channel('room-parallel-lives')
-    .on(
-      'postgres_changes',
-      { event: '*', schema: 'public', table: 'debates' },
-      (payload) => {
-        console.log("실시간 감지 (debates 변경):", payload);
-        renderDebates();
-      }
-    )
-    .on(
-      'postgres_changes',
-      { event: '*', schema: 'public', table: 'replies' },
-      (payload) => {
-        console.log("실시간 감지 (replies 변경):", payload);
-        renderDebates();
-      }
-    )
-    .subscribe((status) => {
-      console.log("Supabase Realtime 연결 상태:", status);
-    });
+function setupRealtimeDebates() {
+  // 1. Supabase 웹소켓 실시간 연결
+  try {
+    supabaseClient.removeAllChannels();
+
+    supabaseClient
+      .channel('realtime_all_changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'debates' },
+        () => {
+          refreshDebatesIfActive();
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'replies' },
+        () => {
+          refreshDebatesIfActive();
+        }
+      )
+      .subscribe();
+  } catch (e) {
+    console.warn("웹소켓 연결 시도 중:", e);
+  }
+
+  // 2. 모바일/학교망 웹소켓 차단 대비: 토론 탭을 보고 있을 때 3초마다 조용히 최신 데이터 동기화
+  if (pollTimer) clearInterval(pollTimer);
+  pollTimer = setInterval(() => {
+    refreshDebatesIfActive();
+  }, 3000);
+}
+
+// 토론 탭이 켜져 있을 때만 화면 갱신 (입력 중인 폼은 건드리지 않음)
+function refreshDebatesIfActive() {
+  const debateTab = document.getElementById("tabDebate");
+  if (debateTab && debateTab.classList.contains("active")) {
+    renderDebates();
+  }
 }
 
 // 9. 명화 갤러리 렌더링
