@@ -759,7 +759,6 @@ window.addDebatePost = async function() {
   contentInput.value = "";
   pwdInput.value = "";
 
-  // 등록 후 즉시 화면 갱신
   await renderDebates();
 };
 
@@ -854,7 +853,7 @@ function setupRealtimeDebates() {
     supabaseClient.removeAllChannels();
 
     supabaseClient
-      .channel('realtime_all_changes')
+      .channel('room-parallel-lives')
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'debates' },
@@ -874,14 +873,13 @@ function setupRealtimeDebates() {
     console.warn("웹소켓 연결 시도 중:", e);
   }
 
-  // 2. 모바일/학교망 웹소켓 차단 대비: 토론 탭을 보고 있을 때 3초마다 조용히 최신 데이터 동기화
+  // 2. 모바일 통신망/방화벽 웹소켓 차단 대비: 토론 탭 활성 시 3초마다 조용히 동기화
   if (pollTimer) clearInterval(pollTimer);
   pollTimer = setInterval(() => {
     refreshDebatesIfActive();
   }, 3000);
 }
 
-// 토론 탭이 켜져 있을 때만 화면 갱신 (입력 중인 폼은 건드리지 않음)
 function refreshDebatesIfActive() {
   const debateTab = document.getElementById("tabDebate");
   if (debateTab && debateTab.classList.contains("active")) {
