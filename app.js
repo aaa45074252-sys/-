@@ -125,6 +125,7 @@ function switchHeroTab(tabName) {
 }
 
 // 5. 개요 탭 렌더링 (5개 섹션 및 흥망성쇠 SVG 인터랙티브 차트)
+// 5. 개요 탭 렌더링 (가운데 0 기준 +/- 흥망성쇠 곡선)
 function renderOverview() {
   const h = heroDetails[currentHero];
   const spriteHtml = HERO_SPRITES[currentHero] || "";
@@ -142,18 +143,32 @@ function renderOverview() {
 
   const points = ov.lifeCurve;
   const svgW = 600;
-  const svgH = 200;
+  const svgH = 220;
   const padX = 50;
-  const padY = 30;
+  const padY = 35;
   const innerW = svgW - padX * 2;
-  const innerH = svgH - padY * 2;
+  const centerY = svgH / 2; // 정중앙 0 기준선
+  const maxAmp = (svgH - padY * 2) / 2; // 상하 최대 진폭
 
+  // 점수(0~100 기준 또는 -50~+50 기준 모두 대응)를 -1 ~ +1 비율로 정규화
   const coords = points.map((pt, i) => {
+    let normalizedVal = 0;
+    if (pt.score > 0 && pt.score <= 100 && !points.some(p => p.score < 0)) {
+      // 0~100점 체계인 경우 (50점이 기준 0)
+      normalizedVal = (pt.score - 50) / 50;
+    } else {
+      // 이미 -50 ~ +50 등 음수를 포함하는 체계인 경우
+      normalizedVal = pt.score / 50;
+    }
+    // -1(바닥) ~ +1(정상) 제한
+    normalizedVal = Math.max(-1, Math.min(1, normalizedVal));
+
     const x = padX + (i / (points.length - 1)) * innerW;
-    const y = svgH - padY - (pt.score / 100) * innerH;
-    return { ...pt, x, y };
+    const y = centerY - (normalizedVal * maxAmp);
+    return { ...pt, x, y, isPositive: normalizedVal >= 0 };
   });
 
+  // 부드러운 3차 베지어 곡선 패스 생성
   let pathD = `M ${coords[0].x},${coords[0].y}`;
   for (let i = 0; i < coords.length - 1; i++) {
     const p0 = coords[i];
@@ -165,16 +180,16 @@ function renderOverview() {
     pathD += ` C ${cpx1},${cpy1} ${cpx2},${cpy2} ${p1.x},${p1.y}`;
   }
 
-  const areaD = `${pathD} L ${coords[coords.length - 1].x},${svgH - padY} L ${coords[0].x},${svgH - padY} Z`;
+  // 기준선(centerY)을 폐곡선 바닥으로 삼는 영역 패스
+  const areaD = `${pathD} L ${coords[coords.length - 1].x},${centerY} L ${coords[0].x},${centerY} Z`;
 
   let pointsHtml = "";
   coords.forEach((pt, i) => {
     pointsHtml += `
       <g class="curve-point-group" data-idx="${i}" onclick="showCurveDetail(${i})">
-        <circle cx="${pt.x}" cy="${pt.y}" r="6" class="curve-dot"></circle>
-        <circle cx="${pt.x}" cy="${pt.y}" r="14" class="curve-touch-hitbox"></circle>
-        <text x="${pt.x}" y="${pt.y - 12}" class="curve-score-text">${pt.score}점</text>
-        <text x="${pt.x}" y="${svgH - 10}" class="curve-age-label">${pt.age.split(" ")[0]}</text>
+        <circle cx="${pt.x}" cy="${pt.y}" r="6" class="curve-dot ${pt.isPositive ? 'dot-pos' : 'dot-neg'}"></circle>
+        <circle cx="${pt.x}" cy="${pt.y}" r="16" class="curve-touch-hitbox"></circle>
+        <text x="${pt.x}" y="${svgH - 12}" class="curve-age-label">${pt.age.split(" ")[0]}</text>
       </g>
     `;
   });
@@ -184,20 +199,29 @@ function renderOverview() {
       <svg viewBox="0 0 ${svgW} ${svgH}" class="life-curve-svg">
         <defs>
           <linearGradient id="curveGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#b89047" stop-opacity="0.35"/>
-            <stop offset="100%" stop-color="#b89047" stop-opacity="0.0"/>
+            <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.3"/>
+            <stop offset="50%" stop-color="#e5be75" stop-opacity="0.1"/>
+            <stop offset="100%" stop-color="#f43f5e" stop-opacity="0.25"/>
           </linearGradient>
         </defs>
-        <line x1="${padX}" y1="${padY}" x2="${svgW - padX}" y2="${padY}" stroke="#2e241e" stroke-dasharray="3 3"/>
-        <line x1="${padX}" y1="${padY + innerH / 2}" x2="${svgW - padX}" y2="${padY + innerH / 2}" stroke="#2e241e" stroke-dasharray="3 3"/>
-        <line x1="${padX}" y1="${svgH - padY}" x2="${svgW - padX}" y2="${svgH - padY}" stroke="#3d3027" stroke-width="1.5"/>
-        
+
+        <!-- 배경 +/- 구역 표시 텍스트 -->
+        <text x="${padX - 8}" y="${padY + 4}" class="axis-guide-label" text-anchor="end">+ 전성/영광</text>
+        <text x="${padX - 8}" y="${centerY + 4}" class="axis-guide-label zero" text-anchor="end">0 평온</text>
+        <text x="${padX - 8}" y="${svgH - padY}" class="axis-guide-label" text-anchor="end">- 시련/위기</text>
+
+        <!-- 상하 보조선 및 중앙 0 기준축 -->
+        <line x1="${padX}" y1="${padY}" x2="${svgW - padX}" y2="${padY}" stroke="#2e241e" stroke-dasharray="2 4"/>
+        <line x1="${padX}" y1="${centerY}" x2="${svgW - padX}" y2="${centerY}" stroke="#b89047" stroke-width="1.2" stroke-dasharray="4 4"/>
+        <line x1="${padX}" y1="${svgH - padY}" x2="${svgW - padX}" y2="${svgH - padY}" stroke="#2e241e" stroke-dasharray="2 4"/>
+
+        <!-- 곡선 궤적 & 도트 -->
         <path d="${areaD}" fill="url(#curveGradient)"/>
         <path d="${pathD}" fill="none" stroke="#e5be75" stroke-width="3" class="curve-line"/>
         ${pointsHtml}
       </svg>
       <div id="curveEventDesc" class="curve-event-panel">
-        <strong>💡 ${coords[2].age} (${coords[2].score}점)</strong> : ${coords[2].event}
+        <strong>💡 ${coords[2].age}</strong> : ${coords[2].event}
       </div>
     </div>
   `;
@@ -225,7 +249,7 @@ function renderOverview() {
         <span class="ov-sec-icon">📈</span>
         <h3>II. 인물의 흥망성쇠 (생애 곡선)</h3>
       </div>
-      <p class="ov-sec-sub">각 시기별 점을 클릭하면 주요 사건과 삶의 변곡점을 확인할 수 있습니다.</p>
+      <p class="ov-sec-sub">시기별 점을 클릭하면 주요 사건과 삶의 변곡점을 확인할 수 있습니다.</p>
       ${chartSvg}
     </div>
 
@@ -258,7 +282,7 @@ function renderOverview() {
     const pt = coords[idx];
     const descBox = document.getElementById("curveEventDesc");
     if (!descBox) return;
-    descBox.innerHTML = `<strong>💡 ${pt.age} (${pt.score}점)</strong> : ${pt.event}`;
+    descBox.innerHTML = `<strong>💡 ${pt.age}</strong> : ${pt.event}`;
     
     document.querySelectorAll(".curve-point-group").forEach((g, i) => {
       g.classList.toggle("active", i === idx);
