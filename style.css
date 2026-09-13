@@ -802,3 +802,30 @@ header {
   align-items: center;
   gap: 4px;
 }
+
+/* 흥망성쇠 곡선 0 기준선 가이드 라벨 */
+.axis-guide-label {
+  fill: #8c8072;
+  font-size: 9px;
+  font-weight: 500;
+  user-select: none;
+}
+.axis-guide-label.zero {
+  fill: #e5be75;
+  font-weight: bold;
+}
+
+/* 상승/하강 도트 색상 세분화 */
+.curve-dot.dot-pos {
+  fill: #38bdf8; /* 전성기: 푸른빛/밝은톤 */
+}
+.curve-dot.dot-neg {
+  fill: #fb7185; /* 시련기: 붉은빛 */
+}
+.curve-point-group:hover .curve-dot,
+.curve-point-group.active .curve-dot {
+  r: 8px;
+  fill: #ffd15c !important;
+  stroke: #ffffff;
+  stroke-width: 2px;
+}
