@@ -65,7 +65,7 @@ header {
   white-space: nowrap;
 }
 
-/* 메인 화면 뷰 분기 (높이 100% 강제 확보) */
+/* 메인 화면 뷰 분기 */
 .main-view { 
   display: none !important; 
   width: 100%; 
@@ -76,7 +76,7 @@ header {
   display: block !important; 
 }
 
-/* 1. 지도 화면 (검은 화면 방지 핵심 보강) */
+/* 1. 지도 화면 */
 #mapSection { 
   width: 100%; 
   height: calc(100vh - 50px); 
@@ -89,7 +89,6 @@ header {
   background: #262320; 
 }
 
-/* 6인 맞춤 반응형 범례 */
 .map-legend { 
   position: absolute; 
   bottom: 16px; 
@@ -123,7 +122,6 @@ header {
   border: 1px solid #fff;
 }
 
-/* 지도 팝업 커스텀 */
 .leaflet-popup-content-wrapper { 
   background: #1c1613 !important; 
   color: #f0e6d2 !important; 
@@ -156,7 +154,6 @@ header {
   width: 100%; 
 }
 
-/* 지도 도트 핀 애니메이션 */
 .pixel-pin-container {
   background: none !important;
   border: none !important;
@@ -239,7 +236,7 @@ header {
   line-height: 1.5; 
 }
 
-/* 관계망 탭 전용 스타일 (모바일 정중앙 고정용) */
+/* 관계망 탭 전용 */
 #tabNetwork {
   padding: 0 !important;
   width: 100%;
@@ -261,7 +258,6 @@ header {
   height: 100% !important; 
 }
 
-/* 관계망 인스펙터 바텀시트 */
 .node-inspector {
   position: absolute;
   top: 12px;
@@ -278,7 +274,7 @@ header {
   padding: 12px 14px 14px 14px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
   z-index: 1000;
-  cursor: move; /* 드래그 가능 표시 */
+  cursor: move;
   touch-action: none;
 }
 
@@ -341,10 +337,6 @@ header {
     top: 16px;
     margin: 0;
   }
-}
-
- .node-inspector.hidden {
-  display: none !important;
 }
 
 /* 개요 탭 레트로 스테이터스 카드 */
@@ -509,13 +501,13 @@ header {
   color: #e5be75;
 }
 
-/* 4. 토론장 */
+/* 4. 공동탐구 기록소 & 입력 폼 */
 .debate-form-card { background: #1c1613; border: 1px solid #b89047; border-radius: 8px; padding: 16px; margin-bottom: 20px; }
 .debate-form-card h3 { color: #e5be75; font-size: 15px; margin-bottom: 4px; }
 .form-subtext { font-size: 11px; color: #8c8072; margin-bottom: 10px; }
 .input-row { display: flex; gap: 8px; margin-bottom: 8px; }
 .input-row input { flex: 1; padding: 8px; background: #261d17; border: 1px solid #4a3c30; border-radius: 4px; color: #fff; font-size: 12px; }
-.debate-form-card textarea { width: 100%; height: 60px; padding: 8px; background: #261d17; border: 1px solid #4a3c30; border-radius: 4px; color: #fff; font-size: 12px; resize: vertical; margin-bottom: 8px; }
+.debate-form-card textarea { width: 100%; height: 65px; padding: 8px; background: #261d17; border: 1px solid #4a3c30; border-radius: 4px; color: #fff; font-size: 12px; resize: vertical; margin-bottom: 8px; }
 .submit-debate-btn { background: #b89047; color: #111; border: none; padding: 7px 14px; border-radius: 4px; font-weight: bold; font-size: 12px; cursor: pointer; float: right; }
 .debate-form-card::after { content: ""; display: block; clear: both; }
 
@@ -529,8 +521,27 @@ header {
 .action-btn.del:hover { color: #ef4444; }
 
 .reply-section { background: #161210; border-radius: 6px; padding: 8px; border-top: 1px solid #2e241e; }
-.reply-item { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #ccc; padding: 4px 0; border-bottom: 1px dashed #261d18; }
-.reply-author { color: #3b82f6; font-weight: bold; margin-right: 4px; }
+.reply-item { display: flex; justify-content: space-between; align-items: flex-start; font-size: 12px; color: #ccc; padding: 5px 0; border-bottom: 1px dashed #261d18; }
+.reply-author { color: #3b82f6; font-weight: bold; margin-right: 6px; white-space: nowrap; }
+
+/* 🏛️ 플루타르코스 AI 답글 특별 강조 스타일 */
+.reply-item.ai-reply {
+  background: rgba(229, 190, 117, 0.08);
+  border: 1px solid rgba(229, 190, 117, 0.35);
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin: 6px 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+.reply-author.ai-author {
+  color: #ffd15c !important;
+  font-size: 12px;
+}
+.reply-item.ai-reply span:last-child {
+  color: #fef08a;
+  line-height: 1.45;
+}
+
 .reply-input-row { display: flex; gap: 4px; margin-top: 6px; }
 .reply-nick { width: 70px; padding: 5px; background: #221a16; border: 1px solid #3d2f26; border-radius: 4px; color: #fff; font-size: 11px; }
 .reply-pwd { width: 55px; }
@@ -578,7 +589,7 @@ header {
   font-weight: 500;
   fill: #e2e8f0;
   user-select: none;
-  pointer-events: auto; /* 텍스트 탭 허용 */
+  pointer-events: auto;
   cursor: pointer;
   filter: drop-shadow(0 1px 3px rgba(0,0,0,0.95));
   letter-spacing: -0.3px;
@@ -589,7 +600,6 @@ header {
   image-rendering: crisp-edges;
 }
 
-/* 위치 이동을 0.5px 내외로 제한하고 은은한 깜빡임 위주로 동작 */
 @keyframes driftA {
   0%, 100% { transform: translate(0px, 0px) scale(1); opacity: 0.88; }
   50% { transform: translate(0.5px, -0.6px) scale(1.02); opacity: 1; }
@@ -677,7 +687,6 @@ header {
   font-style: normal;
 }
 
-/* 흥망성쇠 SVG 인터랙티브 차트 */
 .life-curve-container {
   width: 100%;
   background: #14100d;
