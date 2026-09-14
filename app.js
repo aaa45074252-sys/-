@@ -769,38 +769,31 @@ window.requestPlutarchAdvice = async function(postId) {
   let lockReplyId = null;
 
   try {
-    const { data: existingAiReplies } = await supabaseClient
-      .from('replies')
-      .select('id')
-      .eq('debate_id', postId)
-      .ilike('author', '%플루타르코스%');
-
-    if (existingAiReplies && existingAiReplies.length > 0) {
-      await renderDebates();
-      return;
-    }
-
+    // 1. 임시 '사유하는 중' 댓글 먼저 삽입
     const { data: lockReply, error: lockErr } = await supabaseClient
       .from('replies')
       .insert([{
         debate_id: postId,
         author: "🏛️ 플루타르코스 AI",
         password: "9999",
-        text: "깊은 지혜를 떠올리며 사유하고 네... 잠시 기다려 주게나. ⏳"
+        text: "깊은 지혜를 떠올리며 사유하고 있네... 잠시 기다려 주게나. ⏳"
       }])
       .select()
       .single();
 
     if (lockErr) throw lockErr;
     lockReplyId = lockReply.id;
-    await renderDebates(); // 잠시 기다리는 화면 즉시 반영
+    await renderDebates();
 
+    // 2. 게시글 내용 가져오기
     const postCard = document.getElementById(`post-card-${postId}`);
     const postContent = postCard ? postCard.querySelector('.post-content').innerText : "";
     const heroName = heroDetails[currentHero].name;
 
+    // 3. 기존에 정의된 askPlutarchAI 함수를 깔끔하게 호출
     const aiAnswer = await askPlutarchAI(currentHero, heroName, postContent);
 
+    // 4. 받아온 진짜 AI 답변으로 DB 업데이트 후 화면 갱신
     if (aiAnswer) {
       await supabaseClient
         .from('replies')
@@ -809,7 +802,7 @@ window.requestPlutarchAdvice = async function(postId) {
     } else {
       await supabaseClient
         .from('replies')
-        .update({ text: "흠, 깊은 사유에 잠겨 순간 답변이 늦어졌군요. 하지만 그대의 탐구 속에서 스스로 답을 찾아가는 과정 자체가 이미 훌륭한 지혜의 시작이라네." })
+        .update({ text: "흠, 깊은 사유에 잠겨 순간 답변이 늦어졌군요. 스스로 답을 찾아가는 과정 자체가 훌륭한 지혜라네." })
         .eq('id', lockReplyId);
     }
 
@@ -818,11 +811,11 @@ window.requestPlutarchAdvice = async function(postId) {
     if (lockReplyId) {
       await supabaseClient
         .from('replies')
-        .update({ text: "지혜의 기록을 불러오는 중 문제가 발생했다네. 다시 시도해 주게나." })
+        .update({ text: "지혜의 기록을 불러오는 중 마찰이 발생했다네. 다시 시도해 주게나." })
         .eq('id', lockReplyId);
     }
   } finally {
-    await renderDebates(); // 최종 답변 화면에 즉시 렌더링
+    await renderDebates();
   }
 };
 
