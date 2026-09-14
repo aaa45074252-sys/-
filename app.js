@@ -3,9 +3,6 @@ const SUPABASE_URL = "https://xivchaifnztwjyldlphh.supabase.co";
 const SUPABASE_KEY = "sb_publishable_L2H2WzL-L0mOTOwseU_MmQ_POXfn85y"; 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// 발급받으신 Gemini API 키 직접 연동 (가장 확실한 방법)
-const GEMINI_API_KEY = "AQ.Ab8RN6Ko4ON-jUQIKxB_0KSqEA0wLVqelSoQEIweXikdES5UZQ";
-
 let mainMap = null;
 let currentHero = "theseus";
 
@@ -560,7 +557,7 @@ function renderNetwork() {
 }
 
 // ========================================================
-// 🤖 플루타르코스 AI 엔진 (직접 호출 방식)
+// 🤖 플루타르코스 AI 엔진 (Supabase Edge Function 보안 호출 방식)
 // ========================================================
 const PLUTARCH_PROMPT_SYSTEM = `
 당신은 고대 그리스의 위대한 전기 작가이자 철학자 '플루타르코스(Plutarch)'입니다.
@@ -574,13 +571,6 @@ const PLUTARCH_PROMPT_SYSTEM = `
 `;
 
 async function askPlutarchAI(heroKey, heroName, studentPost) {
-  if (!GEMINI_API_KEY || GEMINI_API_KEY.includes("여기에")) {
-    alert("Gemini API 키가 설정되지 않았습니다.");
-    return null;
-  }
-
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-
   const promptText = `
 ${PLUTARCH_PROMPT_SYSTEM}
 
@@ -592,28 +582,28 @@ ${PLUTARCH_PROMPT_SYSTEM}
 `;
 
   try {
-    const res = await fetch(endpoint, {
-      method: "POST",
-      headers: { 
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: promptText }] }]
-      })
+    const { data, error } = await supabaseClient.functions.invoke('ai-mentor', {
+      body: { prompt: promptText }
     });
 
-    const data = await res.json();
-
-    if (data.error) {
-      console.error("Gemini API Error Detail:", data.error);
-      alert("플루타르코스 AI 오류: " + data.error.message);
+    if (error) {
+      console.error("Supabase Function Error:", error);
+      alert("플루타르코스 AI 오류: " + error.message);
       return null;
     }
 
-    if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
-      return data.candidates[0].content.parts[0].text.trim();
+    if (data && data.error) {
+      console.error("Gemini API Error Detail:", data.error);
+      alert("플루타르코스 AI 오류: " + data.error);
+      return null;
+    }
+
+    const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (aiText) {
+      return aiText.trim();
     }
     return null;
+
   } catch (err) {
     console.error("AI 통신 실패:", err);
     alert("AI 통신 실패: " + err.message);
