@@ -4,7 +4,7 @@ const SUPABASE_KEY = "sb_publishable_L2H2WzL-L0mOTOwseU_MmQ_POXfn85y";
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // 발급받으신 Gemini API 키 직접 연동 (가장 확실한 방법)
-const GEMINI_API_KEY = "AQ.Ab8RN6KHSpt5ImiebezTqc--nqjaSZvcEDG7qRw2U0zxnn7iSg";
+const GEMINI_API_KEY = "AQ.Ab8RN6Ko4ON-jUQIKxB_0KSqEA0wLVqelSoQEIweXikdES5UZQ";
 
 let mainMap = null;
 let currentHero = "theseus";
