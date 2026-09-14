@@ -1,10 +1,7 @@
-// 1. Supabase 및 Gemini AI 클라이언트 연결 설정
+// 1. Supabase 클라이언트 연결 설정 (Supabase 키는 안전한 Publishable Key)
 const SUPABASE_URL = "https://xivchaifnztwjyldlphh.supabase.co";
 const SUPABASE_KEY = "sb_publishable_L2H2WzL-L0mOTOwseU_MmQ_POXfn85y"; 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-// 발급받으신 Gemini API 키
-const GEMINI_API_KEY = "AQ.Ab8RN6KHSpt5ImiebezTqc--nqjaSZvcEDG7qRw2U0zxnn7iSg";
 
 let mainMap = null;
 let currentHero = "theseus";
@@ -146,7 +143,7 @@ function renderOverview() {
   const padX = 50;
   const padY = 35;
   const innerW = svgW - padX * 2;
-  const centerY = svgH / 2; // 정중앙 0 기준선
+  const centerY = svgH / 2;
   const maxAmp = (svgH - padY * 2) / 2;
 
   const coords = points.map((pt, i) => {
@@ -560,7 +557,7 @@ function renderNetwork() {
 }
 
 // ========================================================
-// 🤖 플루타르코스 AI 엔진 (gemini-3.6-flash 모델 연동)
+// 🤖 플루타르코스 AI 엔진 (Supabase Edge Function 연동)
 // ========================================================
 const PLUTARCH_PROMPT_SYSTEM = `
 당신은 고대 그리스의 위대한 전기 작가이자 철학자 '플루타르코스(Plutarch)'입니다.
@@ -574,13 +571,6 @@ const PLUTARCH_PROMPT_SYSTEM = `
 `;
 
 async function askPlutarchAI(heroKey, heroName, studentPost) {
-  if (!GEMINI_API_KEY || GEMINI_API_KEY.includes("여기에")) {
-    alert("Gemini API 키가 설정되지 않았습니다.");
-    return null;
-  }
-
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent`;
-
   const promptText = `
 ${PLUTARCH_PROMPT_SYSTEM}
 
@@ -592,29 +582,30 @@ ${PLUTARCH_PROMPT_SYSTEM}
 `;
 
   try {
-    const res = await fetch(endpoint, {
-      method: "POST",
-      headers: { 
-        "Content-Type": "application/json",
-        "x-goog-api-key": GEMINI_API_KEY
-      },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: promptText }] }]
-      })
+    // Supabase Edge Function ('ai-mentor') 호출
+    const { data, error } = await supabaseClient.functions.invoke('ai-mentor', {
+      body: { prompt: promptText }
     });
 
-    const data = await res.json();
-
-    if (data.error) {
-      console.error("Gemini API Error Detail:", data.error);
-      alert("플루타르코스 AI 오류: " + data.error.message);
+    if (error) {
+      console.error("Supabase Function Error:", error);
+      alert("플루타르코스 AI 오류: " + error.message);
       return null;
     }
 
-    if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
-      return data.candidates[0].content.parts[0].text.trim();
+    if (data && data.error) {
+      console.error("Gemini API Error Detail:", data.error);
+      alert("플루타르코스 AI 오류: " + data.error);
+      return null;
+    }
+
+    // Gemini API 응답 구조 파싱
+    const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (aiText) {
+      return aiText.trim();
     }
     return null;
+
   } catch (err) {
     console.error("AI 통신 실패:", err);
     alert("AI 통신 실패: " + err.message);
@@ -900,7 +891,6 @@ let pollTimer = null;
 let lastDataFingerprint = "";
 
 function setupRealtimeDebates() {
-  // 1. Supabase 웹소켓 연결 시도
   try {
     supabaseClient.removeAllChannels();
     supabaseClient
@@ -916,14 +906,12 @@ function setupRealtimeDebates() {
     console.warn("웹소켓 연결 시도 중:", e);
   }
 
-  // 2. 모바일 백그라운드 체크 (3초마다 조용히 "새 글이 있나" 검사만 수행)
   if (pollTimer) clearInterval(pollTimer);
   pollTimer = setInterval(() => {
     checkAndSyncDebates(false);
   }, 3000);
 }
 
-// 사용자가 키보드로 글을 쓰는 중인지 검사
 function isUserTyping() {
   const active = document.activeElement;
   if (!active) return false;
@@ -931,12 +919,10 @@ function isUserTyping() {
   return (tag === "input" || tag === "textarea") && active.closest("#tabDebate");
 }
 
-// 새 데이터가 있을 때만 안전하게 화면 갱신
 async function checkAndSyncDebates(forceRender = false) {
   const debateTab = document.getElementById("tabDebate");
   if (!debateTab || !debateTab.classList.contains("active")) return;
 
-  // 학생이 글이나 비번을 입력하고 있다면 화면 갱신을 미룸 (입력 보호)
   if (isUserTyping()) return;
 
   try {
@@ -951,7 +937,6 @@ async function checkAndSyncDebates(forceRender = false) {
 
     const currentFingerprint = `${(posts || []).length}_${(replies || []).length}_${posts?.[0]?.id || 0}_${replies?.[replies.length - 1]?.id || 0}`;
 
-    // 진짜 변경이 발생했을 때만 renderDebates 실행
     if (forceRender || currentFingerprint !== lastDataFingerprint) {
       lastDataFingerprint = currentFingerprint;
       await renderDebates();
@@ -1002,11 +987,9 @@ function renderGallery() {
   `).join('');
 }
 
-// 첫 화면 실행 및 실시간 채널 연결
 showMapView();
 setupRealtimeDebates();
 
-// 인물 상세 설명 카드 터치 및 마우스 드래그 이동 기능
 (function enableInspectorDrag() {
   const inspector = document.getElementById("nodeInspector");
   if (!inspector) return;
