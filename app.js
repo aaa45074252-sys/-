@@ -1,7 +1,10 @@
-// 1. Supabase 클라이언트 연결 설정 (Supabase 키는 안전한 Publishable Key)
+// 1. Supabase 클라이언트 연결 설정
 const SUPABASE_URL = "https://xivchaifnztwjyldlphh.supabase.co";
 const SUPABASE_KEY = "sb_publishable_L2H2WzL-L0mOTOwseU_MmQ_POXfn85y"; 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// 발급받으신 Gemini API 키 직접 연동 (가장 확실한 방법)
+const GEMINI_API_KEY = "AQ.Ab8RN6KHSpt5ImiebezTqc--nqjaSZvcEDG7qRw2U0zxnn7iSg";
 
 let mainMap = null;
 let currentHero = "theseus";
@@ -121,7 +124,7 @@ function switchHeroTab(tabName) {
   }
 }
 
-// 5. 개요 탭 렌더링 (가운데 0 기준 +/- 흥망성쇠 곡선)
+// 5. 개요 탭 렌더링
 function renderOverview() {
   const h = heroDetails[currentHero];
   const spriteHtml = HERO_SPRITES[currentHero] || "";
@@ -557,7 +560,7 @@ function renderNetwork() {
 }
 
 // ========================================================
-// 🤖 플루타르코스 AI 엔진 (Supabase Edge Function 연동)
+// 🤖 플루타르코스 AI 엔진 (직접 호출 방식)
 // ========================================================
 const PLUTARCH_PROMPT_SYSTEM = `
 당신은 고대 그리스의 위대한 전기 작가이자 철학자 '플루타르코스(Plutarch)'입니다.
@@ -571,6 +574,13 @@ const PLUTARCH_PROMPT_SYSTEM = `
 `;
 
 async function askPlutarchAI(heroKey, heroName, studentPost) {
+  if (!GEMINI_API_KEY || GEMINI_API_KEY.includes("여기에")) {
+    alert("Gemini API 키가 설정되지 않았습니다.");
+    return null;
+  }
+
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
   const promptText = `
 ${PLUTARCH_PROMPT_SYSTEM}
 
@@ -582,30 +592,28 @@ ${PLUTARCH_PROMPT_SYSTEM}
 `;
 
   try {
-    // Supabase Edge Function ('ai-mentor') 호출
-    const { data, error } = await supabaseClient.functions.invoke('ai-mentor', {
-      body: { prompt: promptText }
+    const res = await fetch(endpoint, {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: promptText }] }]
+      })
     });
 
-    if (error) {
-      console.error("Supabase Function Error:", error);
-      alert("플루타르코스 AI 오류: " + error.message);
-      return null;
-    }
+    const data = await res.json();
 
-    if (data && data.error) {
+    if (data.error) {
       console.error("Gemini API Error Detail:", data.error);
-      alert("플루타르코스 AI 오류: " + data.error);
+      alert("플루타르코스 AI 오류: " + data.error.message);
       return null;
     }
 
-    // Gemini API 응답 구조 파싱
-    const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (aiText) {
-      return aiText.trim();
+    if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
+      return data.candidates[0].content.parts[0].text.trim();
     }
     return null;
-
   } catch (err) {
     console.error("AI 통신 실패:", err);
     alert("AI 통신 실패: " + err.message);
@@ -719,7 +727,7 @@ async function renderDebates() {
   }
 }
 
-// 공동탐구 생각 등록 (등록 즉시 화면 렌더링)
+// 공동탐구 생각 등록
 window.addDebatePost = async function() {
   const authorInput = document.getElementById("debateAuthor");
   const pwdInput = document.getElementById("debatePassword");
@@ -753,7 +761,7 @@ window.addDebatePost = async function() {
   await renderDebates();
 };
 
-// [선택 호출형] 플루타르코스 AI 조언 요청 (타임아웃 안전장치 탑재)
+// [선택 호출형] 플루타르코스 AI 조언 요청
 window.requestPlutarchAdvice = async function(postId) {
   const btn = document.getElementById(`ai-req-btn-${postId}`);
   if (btn) {
@@ -764,7 +772,6 @@ window.requestPlutarchAdvice = async function(postId) {
   let lockReplyId = null;
 
   try {
-    // 1. 이미 다른 기기에서 눌렀는지 1차 검사
     const { data: existingAiReplies } = await supabaseClient
       .from('replies')
       .select('id')
@@ -777,7 +784,6 @@ window.requestPlutarchAdvice = async function(postId) {
       return;
     }
 
-    // 2. 선점 락(Lock) 등록
     const { data: lockReply, error: lockErr } = await supabaseClient
       .from('replies')
       .insert([{
@@ -796,7 +802,6 @@ window.requestPlutarchAdvice = async function(postId) {
     const postContent = postCard ? postCard.querySelector('.post-content').innerText : "";
     const heroName = heroDetails[currentHero].name;
 
-    // 3. 타임아웃 안전장치 (12초 동안 응답이 없으면 대체 문구 출력)
     const aiPromise = askPlutarchAI(currentHero, heroName, postContent);
     const timeoutPromise = new Promise((_, reject) => 
       setTimeout(() => reject(new Error("AI 응답 시간이 초과되었습니다.")), 12000)
@@ -811,7 +816,6 @@ window.requestPlutarchAdvice = async function(postId) {
     }
 
     if (aiAnswer) {
-      // 4. 완성된 답변으로 업데이트
       await supabaseClient
         .from('replies')
         .update({ text: aiAnswer })
@@ -834,7 +838,6 @@ window.requestPlutarchAdvice = async function(postId) {
   }
 };
 
-// 탐구 질문 삭제
 window.deleteDebatePost = async function(postId, originPwd) {
   const inputPwd = prompt("글 등록 시 설정한 비밀번호를 입력하세요:");
   if (inputPwd === null) return;
@@ -847,7 +850,6 @@ window.deleteDebatePost = async function(postId, originPwd) {
   }
 };
 
-// 덧붙인 생각 등록
 window.addDebateReply = async function(postId) {
   const nick = document.getElementById(`replyNick-${postId}`).value.trim() || "익명";
   const pwd = document.getElementById(`replyPwd-${postId}`).value.trim();
@@ -873,7 +875,6 @@ window.addDebateReply = async function(postId) {
   await renderDebates();
 };
 
-// 덧붙인 생각 삭제
 window.deleteDebateReply = async function(replyId, originPwd) {
   const inputPwd = prompt("답변 비밀번호를 입력하세요:");
   if (inputPwd === null) return;
@@ -886,7 +887,7 @@ window.deleteDebateReply = async function(replyId, originPwd) {
   }
 };
 
-// 8. 스마트 비파괴 실시간 동기화 (입력 중 방해 방지 & 변경 시에만 렌더링)
+// 8. 스마트 비파괴 실시간 동기화
 let pollTimer = null;
 let lastDataFingerprint = "";
 
