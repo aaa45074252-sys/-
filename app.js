@@ -557,7 +557,7 @@ function renderNetwork() {
 }
 
 // ========================================================
-// 🤖 플루타르코스 AI 엔진 (Supabase Edge Function 보안 호출 방식)
+// 🤖 플루타르코스 AI 엔진 (Supabase Edge Function 보안 호출 방식 - 수정됨)
 // ========================================================
 const PLUTARCH_PROMPT_SYSTEM = `
 당신은 고대 그리스의 위대한 전기 작가이자 철학자 '플루타르코스(Plutarch)'입니다.
@@ -582,17 +582,26 @@ ${PLUTARCH_PROMPT_SYSTEM}
 `;
 
   try {
-    const { data, error } = await supabaseClient.functions.invoke('ai-mentor', {
-      body: { prompt: promptText }
+    // 💡 Supabase 클라이언트 인증 헤더 우회 및 직접 fetch 호출 방식으로 안정성 극대화
+    const functionUrl = `${SUPABASE_URL}/functions/v1/ai-mentor`;
+    const res = await fetch(functionUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${SUPABASE_KEY}`
+      },
+      body: JSON.stringify({ prompt: promptText })
     });
 
-    if (error) {
-      console.error("Supabase Function Error:", error);
-      alert("플루타르코스 AI 오류: " + error.message);
+    const data = await res.json();
+
+    if (!res.ok) {
+      console.error("Edge Function Error Detail:", data);
+      alert("플루타르코스 AI 오류: " + (data.error || "서버 통신 실패"));
       return null;
     }
 
-    if (data && data.error) {
+    if (data.error) {
       console.error("Gemini API Error Detail:", data.error);
       alert("플루타르코스 AI 오류: " + data.error);
       return null;
@@ -1002,7 +1011,7 @@ setupRealtimeDebates();
   }
 
   function onMove(e) {
-    if (!isDragging) return;
+    if (-isDragging) return;
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
     const dx = clientX - startX;
