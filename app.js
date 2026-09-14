@@ -762,7 +762,7 @@ window.addDebatePost = async function() {
   await renderDebates();
 };
 
-// [선택 호출형] 플루타르코스 AI 조언 요청 (동시 중복 클릭 완벽 차단 Lock 탑재)
+// [선택 호출형] 플루타르코스 AI 조언 요청 (타임아웃 안전장치 탑재)
 window.requestPlutarchAdvice = async function(postId) {
   const btn = document.getElementById(`ai-req-btn-${postId}`);
   if (btn) {
@@ -770,8 +770,10 @@ window.requestPlutarchAdvice = async function(postId) {
     btn.innerText = "🏛️ 사유하는 중... ⏳";
   }
 
+  let lockReplyId = null;
+
   try {
-    // 1. [동시성 방어] 이미 다른 기기에서 눌렀는지 DB에서 1차 검사
+    // 1. 이미 다른 기기에서 눌렀는지 1차 검사
     const { data: existingAiReplies } = await supabaseClient
       .from('replies')
       .select('id')
@@ -784,7 +786,7 @@ window.requestPlutarchAdvice = async function(postId) {
       return;
     }
 
-    // 2. [선점 락(Lock)] 모든 기기에 즉시 잠금 신호를 주기 위해 임시 댓글 등록
+    // 2. 선점 락(Lock) 등록
     const { data: lockReply, error: lockErr } = await supabaseClient
       .from('replies')
       .insert([{
@@ -797,31 +799,45 @@ window.requestPlutarchAdvice = async function(postId) {
       .single();
 
     if (lockErr) throw lockErr;
+    lockReplyId = lockReply.id;
 
-    // 본문 내용 획득
     const postCard = document.getElementById(`post-card-${postId}`);
     const postContent = postCard ? postCard.querySelector('.post-content').innerText : "";
     const heroName = heroDetails[currentHero].name;
 
-    // 3. AI 답변 생성 요청
-    const aiAnswer = await askPlutarchAI(currentHero, heroName, postContent);
+    // 3. 타임아웃 안전장치 (12초 동안 응답이 없으면 대체 문구 출력)
+    const aiPromise = askPlutarchAI(currentHero, heroName, postContent);
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error("AI 응답 시간이 초과되었습니다.")), 12000)
+    );
 
-    if (aiAnswer && lockReply) {
-      // 4. 임시 댓글을 실제 완성된 답변 내용으로 교체(Update)
+    let aiAnswer = null;
+    try {
+      aiAnswer = await Promise.race([aiPromise, timeoutPromise]);
+    } catch (timeoutErr) {
+      console.warn("AI 응답 지연, 대체 문구 사용:", timeoutErr);
+      aiAnswer = "흠, 깊은 사유에 잠겨 순간 답변이 늦어졌군요. 하지만 그대의 탐구 속에서 스스로 답을 찾아가는 과정 자체가 이미 훌륭한 지혜의 시작이라네.";
+    }
+
+    if (aiAnswer) {
+      // 4. 완성된 답변으로 업데이트
       await supabaseClient
         .from('replies')
         .update({ text: aiAnswer })
-        .eq('id', lockReply.id);
+        .eq('id', lockReplyId);
     } else {
-      // 생성 실패 시 임시 댓글 롤백
-      if (lockReply) {
-        await supabaseClient.from('replies').delete().eq('id', lockReply.id);
-      }
-      alert("AI 사유를 완료하지 못했습니다. 다시 시도해 주세요.");
+      throw new Error("AI 답변을 생성하지 못했습니다.");
     }
+
   } catch (err) {
     console.error("AI 요청 처리 중 오류:", err);
-    alert("요청 처리 중 오류가 발생했습니다: " + err.message);
+    if (lockReplyId) {
+      await supabaseClient
+        .from('replies')
+        .update({ text: "지혜의 기록을 불러오는 중 잠시 마찰이 있었다네. 다시 시도해 주게나." })
+        .eq('id', lockReplyId);
+    }
+    alert("AI 조언 요청 중 문제가 발생했습니다: " + err.message);
   } finally {
     await renderDebates();
   }
