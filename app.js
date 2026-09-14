@@ -778,7 +778,6 @@ window.requestPlutarchAdvice = async function(postId) {
       .ilike('author', '%플루타르코스%');
 
     if (existingAiReplies && existingAiReplies.length > 0) {
-      alert("이미 플루타르코스의 조언이 등록되어 있습니다!");
       await renderDebates();
       return;
     }
@@ -789,13 +788,14 @@ window.requestPlutarchAdvice = async function(postId) {
         debate_id: postId,
         author: "🏛️ 플루타르코스 AI",
         password: "9999",
-        text: "깊은 지혜를 떠올리며 사유하고 있네... 잠시 기다려 주게나. ⏳"
+        text: "깊은 지혜를 떠올리며 사유하고 네... 잠시 기다려 주게나. ⏳"
       }])
       .select()
       .single();
 
     if (lockErr) throw lockErr;
     lockReplyId = lockReply.id;
+    await renderDebates(); // 잠시 기다리는 화면 즉시 반영
 
     const postCard = document.getElementById(`post-card-${postId}`);
     const postContent = postCard ? postCard.querySelector('.post-content').innerText : "";
@@ -823,9 +823,8 @@ window.requestPlutarchAdvice = async function(postId) {
         .update({ text: "지혜의 기록을 불러오는 중 문제가 발생했다네. 다시 시도해 주게나." })
         .eq('id', lockReplyId);
     }
-    alert("AI 조언 요청 중 문제가 발생했습니다: " + err.message);
   } finally {
-    await renderDebates();
+    await renderDebates(); // 최종 답변 화면에 즉시 렌더링
   }
 };
 
