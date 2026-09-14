@@ -598,26 +598,15 @@ ${PLUTARCH_PROMPT_SYSTEM}
     const data = await res.json();
 
     if (!res.ok) {
-      console.error("Edge Function Error Detail:", data);
-      alert("플루타르코스 AI 오류: " + (data.error || "서버 통신 실패"));
+      console.error("Error:", data);
       return null;
     }
 
-    if (data.error) {
-      console.error("Gemini API Error Detail:", data.error);
-      alert("플루타르코스 AI 오류: " + data.error);
-      return null;
-    }
-
-    const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (aiText) {
-      return aiText.trim();
-    }
-    return null;
+    // 엣지 함수가 정제해 준 text를 바로 리턴
+    return data.text ? data.text.trim() : null;
 
   } catch (err) {
     console.error("AI 통신 실패:", err);
-    alert("AI 통신 실패: " + err.message);
     return null;
   }
 }
