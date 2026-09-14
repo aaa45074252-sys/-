@@ -1,4 +1,7 @@
-// 1. Supabase 클라이언트 연결 설정
+// ========================================================
+// 🏛️ 플루타르코스 비교열전 웹 아카이브 최종 통합 코드 (app.js)
+// ========================================================
+
 const SUPABASE_URL = "https://xivchaifnztwjyldlphh.supabase.co";
 const SUPABASE_KEY = "sb_publishable_L2H2WzL-L0mOTOwseU_MmQ_POXfn85y"; 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -557,7 +560,7 @@ function renderNetwork() {
 }
 
 // ========================================================
-// 🤖 플루타르코스 AI 엔진 (Supabase Edge Function 보안 호출 방식 - 수정됨)
+// 🤖 플루타르코스 AI 엔진 (Supabase Edge Function 보안 호출)
 // ========================================================
 const PLUTARCH_PROMPT_SYSTEM = `
 당신은 고대 그리스의 위대한 전기 작가이자 철학자 '플루타르코스(Plutarch)'입니다.
@@ -582,7 +585,6 @@ ${PLUTARCH_PROMPT_SYSTEM}
 `;
 
   try {
-    // 💡 Supabase 클라이언트 인증 헤더 우회 및 직접 fetch 호출 방식으로 안정성 극대화
     const functionUrl = `${SUPABASE_URL}/functions/v1/ai-mentor`;
     const res = await fetch(functionUrl, {
       method: "POST",
@@ -620,7 +622,7 @@ ${PLUTARCH_PROMPT_SYSTEM}
   }
 }
 
-// 7. 온라인 클라우드 공동탐구 질문 게시판 (선택 호출형 AI 탑재)
+// 7. 온라인 클라우드 공동탐구 질문 게시판
 async function renderDebates() {
   const h = heroDetails[currentHero];
   document.getElementById("debateFormTitle").innerText = `💭 ${h.name} 공동탐구 생각 나누기`;
@@ -726,14 +728,13 @@ async function renderDebates() {
   }
 }
 
-// 공동탐구 생각 등록
 window.addDebatePost = async function() {
-  const authorInput = document.getElementById("debateAuthor");
   const pwdInput = document.getElementById("debatePassword");
   const contentInput = document.getElementById("debateQuestion");
+  const authorInput = document.getElementById("debateAuthor");
   const selectedTag = document.querySelector('input[name="inquiryTag"]:checked')?.value || "";
 
-  const author = authorInput.value.trim() || "익명";
+  const author = authorInput ? authorInput.value.trim() : "익명";
   const password = pwdInput.value.trim();
   const rawContent = contentInput.value.trim();
 
@@ -760,7 +761,6 @@ window.addDebatePost = async function() {
   await renderDebates();
 };
 
-// [선택 호출형] 플루타르코스 AI 조언 요청
 window.requestPlutarchAdvice = async function(postId) {
   const btn = document.getElementById(`ai-req-btn-${postId}`);
   if (btn) {
@@ -778,7 +778,7 @@ window.requestPlutarchAdvice = async function(postId) {
       .ilike('author', '%플루타르코스%');
 
     if (existingAiReplies && existingAiReplies.length > 0) {
-      alert("다른 친구가 이미 플루타르코스의 조언을 요청했습니다!");
+      alert("이미 플루타르코스의 조언이 등록되어 있습니다!");
       await renderDebates();
       return;
     }
@@ -801,18 +801,7 @@ window.requestPlutarchAdvice = async function(postId) {
     const postContent = postCard ? postCard.querySelector('.post-content').innerText : "";
     const heroName = heroDetails[currentHero].name;
 
-    const aiPromise = askPlutarchAI(currentHero, heroName, postContent);
-    const timeoutPromise = new Promise((_, reject) => 
-      setTimeout(() => reject(new Error("AI 응답 시간이 초과되었습니다.")), 12000)
-    );
-
-    let aiAnswer = null;
-    try {
-      aiAnswer = await Promise.race([aiPromise, timeoutPromise]);
-    } catch (timeoutErr) {
-      console.warn("AI 응답 지연, 대체 문구 사용:", timeoutErr);
-      aiAnswer = "흠, 깊은 사유에 잠겨 순간 답변이 늦어졌군요. 하지만 그대의 탐구 속에서 스스로 답을 찾아가는 과정 자체가 이미 훌륭한 지혜의 시작이라네.";
-    }
+    const aiAnswer = await askPlutarchAI(currentHero, heroName, postContent);
 
     if (aiAnswer) {
       await supabaseClient
@@ -820,7 +809,10 @@ window.requestPlutarchAdvice = async function(postId) {
         .update({ text: aiAnswer })
         .eq('id', lockReplyId);
     } else {
-      throw new Error("AI 답변을 생성하지 못했습니다.");
+      await supabaseClient
+        .from('replies')
+        .update({ text: "흠, 깊은 사유에 잠겨 순간 답변이 늦어졌군요. 하지만 그대의 탐구 속에서 스스로 답을 찾아가는 과정 자체가 이미 훌륭한 지혜의 시작이라네." })
+        .eq('id', lockReplyId);
     }
 
   } catch (err) {
@@ -828,7 +820,7 @@ window.requestPlutarchAdvice = async function(postId) {
     if (lockReplyId) {
       await supabaseClient
         .from('replies')
-        .update({ text: "지혜의 기록을 불러오는 중 잠시 마찰이 있었다네. 다시 시도해 주게나." })
+        .update({ text: "지혜의 기록을 불러오는 중 문제가 발생했다네. 다시 시도해 주게나." })
         .eq('id', lockReplyId);
     }
     alert("AI 조언 요청 중 문제가 발생했습니다: " + err.message);
@@ -886,7 +878,6 @@ window.deleteDebateReply = async function(replyId, originPwd) {
   }
 };
 
-// 8. 스마트 비파괴 실시간 동기화
 let pollTimer = null;
 let lastDataFingerprint = "";
 
@@ -946,7 +937,6 @@ async function checkAndSyncDebates(forceRender = false) {
   }
 }
 
-// 9. 명화 갤러리 렌더링
 function renderGallery() {
   const container = document.getElementById("gallery-container");
   if (!container) return;
@@ -1011,7 +1001,7 @@ setupRealtimeDebates();
   }
 
   function onMove(e) {
-    if (-isDragging) return;
+    if (!isDragging) return;
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
     const dx = clientX - startX;
