@@ -602,8 +602,17 @@ ${PLUTARCH_PROMPT_SYSTEM}
       return null;
     }
 
-    // 엣지 함수가 정제해 준 text를 바로 리턴
-    return data.text ? data.text.trim() : null;
+    // 💡 수정된 부분: 엣지 함수가 주는 구조와 원본 Gemini 응답 구조 모두를 완벽하게 커버하도록 추출
+    if (data.text) {
+      return data.text.trim();
+    }
+    
+    const candidateText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (candidateText) {
+      return candidateText.trim();
+    }
+
+    return null;
 
   } catch (err) {
     console.error("AI 통신 실패:", err);
